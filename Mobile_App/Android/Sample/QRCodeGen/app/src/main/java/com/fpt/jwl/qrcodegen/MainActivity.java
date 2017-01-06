@@ -14,9 +14,12 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
-    EditText editText, editText1;
+    EditText editText;
     Button button;
     ImageView imageView;
     String info2Qr;
@@ -27,14 +30,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         editText = (EditText) findViewById(R.id.editText);
-        editText1 = (EditText) findViewById(R.id.editText1);
         button = (Button) findViewById(R.id.button);
         imageView = (ImageView) findViewById(R.id.image);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                info2Qr = editText.getText().toString().trim() + TAG + editText1.getText().toString().trim();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                String currentTime = sdf.format(new Date());
+                info2Qr = editText.getText().toString().trim() + TAG + currentTime;
                 System.out.println(info2Qr);
                 MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
                 try {
