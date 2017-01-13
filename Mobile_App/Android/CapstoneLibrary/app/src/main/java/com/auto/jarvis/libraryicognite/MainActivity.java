@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements Callback<List<Use
     @BindView(R.id.btnLogin)
     Button btnLogin;
 
+    @BindView(R.id.btnRegister)
+    Button btnREgister;
     @BindView(R.id.etUsername)
     EditText etUsername;
 
@@ -85,6 +87,12 @@ public class MainActivity extends AppCompatActivity implements Callback<List<Use
                 });
 
 
+            }
+        });
+        btnREgister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(ProfileActivity.getIntentNewTask(MainActivity.this));
             }
         });
     }
