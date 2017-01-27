@@ -12,6 +12,17 @@ public class TblUserEntity {
     private String username;
     private String password;
     private boolean gender;
+    private String fullname;
+
+    @Basic
+    @Column(name = "gender")
+    public Boolean getGender() {
+        return gender;
+    }
+
+    public void setGender(Boolean gender) {
+        this.gender = gender;
+    }
 
     @Id
     @Column(name = "user_id", nullable = false)
@@ -43,16 +54,6 @@ public class TblUserEntity {
         this.password = password;
     }
 
-    @Basic
-    @Column(name = "gender", nullable = false)
-    public boolean isGender() {
-        return gender;
-    }
-
-    public void setGender(boolean gender) {
-        this.gender = gender;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -75,5 +76,15 @@ public class TblUserEntity {
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (gender ? 1 : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "fullname")
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 }
