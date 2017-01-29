@@ -1,6 +1,6 @@
 package jwl.fpt.service;
 
-import jwl.fpt.entity.TblUserEntity;
+import jwl.fpt.model.dto.UserDto;
 
 import java.util.List;
 
@@ -8,10 +8,9 @@ import java.util.List;
  * Created by HaVH on 1/9/17.
  */
 public interface IUserService {
-    List<TblUserEntity> getAllUser();
+    List<UserDto> getAllUser();
 
-    TblUserEntity findByUsernameAndPassword(String username, String password);
+    UserDto findByUsernameAndPassword(String username, String password);
 
-    List<TblUserEntity> findByUsernameLike(String q);
-
+    List<UserDto> findByUsernameLike(String q);
 }

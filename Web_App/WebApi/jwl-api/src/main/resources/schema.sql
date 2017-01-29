@@ -1,3 +1,13 @@
+-- example purpose only.
+CREATE TABLE IF NOT EXISTS tbl_user
+(
+  user_id INTEGER PRIMARY KEY NOT NULL,
+  username TEXT,
+  password TEXT,
+  gender BIT,
+  fullname TEXT
+);
+
 -- account:
 -- user_id, password, and other frequent access attributes.
 CREATE TABLE IF NOT EXISTS public.account

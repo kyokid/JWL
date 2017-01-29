@@ -17,6 +17,8 @@
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
+.idea/misc.xml
+.idea/sqldialects.xml
 
 # Gradle:
 .idea/gradle.xml
@@ -56,6 +58,9 @@ fabric.properties
 
 ### Java ###
 *.class
+
+### Built files ###
+target
 
 # BlueJ files
 *.ctxt

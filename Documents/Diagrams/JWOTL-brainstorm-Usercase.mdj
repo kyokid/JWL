@@ -26831,12 +26831,12 @@
 										},
 										{
 											"_type": "ERDColumnView",
-											"_id": "AAAAAAFZpsEtskBnUzU=",
+											"_id": "AAAAAAFZsRbS3SCXmB4=",
 											"_parent": {
 												"$ref": "AAAAAAFZpsEtskBoPHM="
 											},
 											"model": {
-												"$ref": "AAAAAAFZpsEttEEOLow="
+												"$ref": "AAAAAAFZsRbStyCUUnc="
 											},
 											"visible": true,
 											"enabled": true,
@@ -26855,12 +26855,12 @@
 										},
 										{
 											"_type": "ERDColumnView",
-											"_id": "AAAAAAFZsRbS3SCXmB4=",
+											"_id": "AAAAAAFZpsEtskBnUzU=",
 											"_parent": {
 												"$ref": "AAAAAAFZpsEtskBoPHM="
 											},
 											"model": {
-												"$ref": "AAAAAAFZsRbStyCUUnc="
+												"$ref": "AAAAAAFZpsEttEEOLow="
 											},
 											"visible": true,
 											"enabled": true,
@@ -31111,7 +31111,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFZpsEttEEPoRc="
 							},
-							"name": "username",
+							"name": "user_id",
 							"length": 0,
 							"primaryKey": false,
 							"foreignKey": false,
@@ -31124,7 +31124,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFZpsEttEEPoRc="
 							},
-							"name": "borrow_limit_day",
+							"name": "borrow_limit_days",
 							"length": 0,
 							"primaryKey": false,
 							"foreignKey": false,
@@ -31172,11 +31172,11 @@
 						},
 						{
 							"_type": "ERDColumn",
-							"_id": "AAAAAAFZpsEttEEOLow=",
+							"_id": "AAAAAAFZsRbStyCUUnc=",
 							"_parent": {
 								"$ref": "AAAAAAFZpsEttEEPoRc="
 							},
-							"name": "return_date",
+							"name": "borrowed_date",
 							"length": 0,
 							"primaryKey": false,
 							"foreignKey": false,
@@ -31185,11 +31185,11 @@
 						},
 						{
 							"_type": "ERDColumn",
-							"_id": "AAAAAAFZsRbStyCUUnc=",
+							"_id": "AAAAAAFZpsEttEEOLow=",
 							"_parent": {
 								"$ref": "AAAAAAFZpsEttEEPoRc="
 							},
-							"name": "borrowed_date",
+							"name": "return_date",
 							"length": 0,
 							"primaryKey": false,
 							"foreignKey": false,
@@ -31394,7 +31394,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFZpsEttEEhe+8="
 							},
-							"name": "borrow_limit_day",
+							"name": "borrow_limit_days",
 							"length": 0,
 							"primaryKey": false,
 							"foreignKey": false,
