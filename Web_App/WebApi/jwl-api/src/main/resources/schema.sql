@@ -1,3 +1,12 @@
+
+-- user_role:
+-- Store all role of the system.
+CREATE TABLE IF NOT EXISTS public.user_role
+(
+  id SERIAL PRIMARY KEY,
+  role text NOT NULL
+);
+
 -- example purpose only.
 CREATE TABLE IF NOT EXISTS tbl_user
 (
@@ -7,6 +16,7 @@ CREATE TABLE IF NOT EXISTS tbl_user
   gender BIT,
   fullname TEXT
 );
+
 
 -- account:
 -- user_id, password, and other frequent access attributes.
@@ -40,18 +50,54 @@ CREATE TABLE IF NOT EXISTS public.profile
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
--- user_role:
--- Store all role of the system.
-CREATE TABLE IF NOT EXISTS public.user_role
-(
-  id SERIAL PRIMARY KEY,
-  role text NOT NULL
-);
+
 CREATE UNIQUE INDEX IF NOT EXISTS user_role_role_uindex
   ON public.user_role
   USING btree
   (role COLLATE pg_catalog."default");
 
+-- author:
+-- Writer of books.
+CREATE TABLE IF NOT EXISTS public.author
+(
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL,
+  description text
+);
+
+-- category:
+-- Categories of books: science, literature, art, ...
+CREATE TABLE IF NOT EXISTS public.category
+(
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL,
+  description text
+);
+CREATE UNIQUE INDEX IF NOT EXISTS category_name_uindex
+  ON public.category
+  USING btree
+  (name COLLATE pg_catalog."default");
+
+
+-- book_position:
+-- Position of a book: its shelf, floor.
+CREATE TABLE IF NOT EXISTS public.book_position
+(
+  id SERIAL PRIMARY KEY,
+  shelf text NOT NULL,
+  floor text NOT NULL
+);
+
+-- book_type:
+-- Each type comes with a specific number of borrow limit days.
+CREATE TABLE IF NOT EXISTS public.book_type
+(
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  borrow_limit_days INT NOT NULL,
+  days_per_extend INT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS book_type_name_uindex ON public.book_type (name);
 -- book:
 -- Hold all information of a book, and the number of its copies.
 CREATE TABLE IF NOT EXISTS public.book
@@ -74,13 +120,20 @@ CREATE TABLE IF NOT EXISTS public.book
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
--- author:
--- Writer of books.
-CREATE TABLE IF NOT EXISTS public.author
+
+-- book_category:
+-- Relation table of book and category.
+CREATE TABLE IF NOT EXISTS public.book_category
 (
-  id SERIAL PRIMARY KEY,
-  name text NOT NULL,
-  description text
+  book_id integer NOT NULL,
+  category_id integer NOT NULL,
+  CONSTRAINT book_category_pkey PRIMARY KEY (category_id, book_id),
+  CONSTRAINT book_category_book_id_fk FOREIGN KEY (book_id)
+  REFERENCES public.book (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT book_category_category_id_fk FOREIGN KEY (category_id)
+  REFERENCES public.category (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
 -- book_author:
@@ -98,53 +151,7 @@ CREATE TABLE IF NOT EXISTS public.book_author
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
--- category:
--- Categories of books: science, literature, art, ...
-CREATE TABLE IF NOT EXISTS public.category
-(
-  id SERIAL PRIMARY KEY,
-  name text NOT NULL,
-  description text
-);
-CREATE UNIQUE INDEX IF NOT EXISTS category_name_uindex
-  ON public.category
-  USING btree
-  (name COLLATE pg_catalog."default");
 
--- book_category:
--- Relation table of book and category.
-CREATE TABLE IF NOT EXISTS public.book_category
-(
-  book_id integer NOT NULL,
-  category_id integer NOT NULL,
-  CONSTRAINT book_category_pkey PRIMARY KEY (category_id, book_id),
-  CONSTRAINT book_category_book_id_fk FOREIGN KEY (book_id)
-  REFERENCES public.book (id) MATCH SIMPLE
-  ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT book_category_category_id_fk FOREIGN KEY (category_id)
-  REFERENCES public.category (id) MATCH SIMPLE
-  ON UPDATE NO ACTION ON DELETE NO ACTION
-);
-
--- book_position:
--- Position of a book: its shelf, floor.
-CREATE TABLE IF NOT EXISTS public.book_position
-(
-  id SERIAL PRIMARY KEY,
-  shelf text NOT NULL,
-  floor text NOT NULL
-);
-
--- book_type:
--- Each type comes with a specific number of borrow limit days.
-CREATE TABLE IF NOT EXISTS public.book_type
-(
-  id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
-  borrow_limit_days INT NOT NULL,
-  days_per_extend INT NOT NULL
-);
-CREATE UNIQUE INDEX IF NOT EXISTS book_type_name_uindex ON public.book_type (name);
 
 -- wish_book:
 -- book in a wish list of a user.
