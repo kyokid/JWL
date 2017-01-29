@@ -20,7 +20,7 @@ public class UserService implements IUserService {
     private UserRepository userRepository;
 
     @Autowired
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @Override
     public List<UserDto> getAllUser() {

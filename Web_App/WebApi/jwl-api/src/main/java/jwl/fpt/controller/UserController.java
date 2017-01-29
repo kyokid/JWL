@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 public class UserController {
     @Autowired
-    IUserService userService;
+    private IUserService userService;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public List<UserDto> getAllUser() {
