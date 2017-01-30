@@ -57,38 +57,49 @@ public class MainActivity extends AppCompatActivity implements Callback<List<Use
     private void initView() {
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
+//        btnLogin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String username = etUsername.getText().toString().trim();
+//                String password = etPassword.getText().toString().trim();
+//                User user = new User(username, password);
+//                Call<RestService<User>> callLogin = apiService.login(user);
+//
+//                callLogin.enqueue(new Callback<RestService<User>>() {
+//                    @Override
+//                    public void onResponse(Call<RestService<User>> call, Response<RestService<User>> response) {
+//                        if (response.isSuccessful()) {
+//                            if (response.body().isSucceed()) {
+//                                User user = response.body().getData();
+//                                Intent intent = new Intent(MainActivity.this, BarCodeActivity.class);
+//                                intent.putExtra(USER_TAG, user);
+//                                startActivity(intent);
+//                            } else {
+//                                Toast.makeText(MainActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<RestService<User>> call, Throwable t) {
+//                        t.printStackTrace();
+//                    }
+//                });
+//            }
+//        });
+
+        //Login with dummy data.
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                String username = etUsername.getText().toString().trim();
-                String password = etPassword.getText().toString().trim();
-                User user = new User(username, password);
-                Call<RestService<User>> callLogin = apiService.login(user);
-
-                callLogin.enqueue(new Callback<RestService<User>>() {
-                    @Override
-                    public void onResponse(Call<RestService<User>> call, Response<RestService<User>> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body().isSucceed()) {
-                                User user = response.body().getData();
-                                Intent intent = new Intent(MainActivity.this, BarCodeActivity.class);
-                                intent.putExtra(USER_TAG, user);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(MainActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<RestService<User>> call, Throwable t) {
-                        t.printStackTrace();
-                    }
-                });
-
-
+            public void onClick(View v) {
+                Toast.makeText(getBaseContext(), "da toi day", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, BarCodeActivity.class);
+                User user = new User("thiendn", "234234");
+                intent.putExtra(USER_TAG, user);
+                startActivity(intent);
             }
         });
+
         btnREgister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
