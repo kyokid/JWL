@@ -3,13 +3,12 @@ package jwl.fpt.controller;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.AccountDto;
 import jwl.fpt.model.dto.BookCopyDto;
+import jwl.fpt.model.dto.BookCopyDtoList;
+import jwl.fpt.model.dto.BorrowerDto;
 import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -23,32 +22,33 @@ public class BookBorrowController {
     @Autowired
     IBookBorrowService accountService;
 
-    @RequestMapping(value = "/borrower/init/borrow", method = RequestMethod.POST)
-    public RestServiceModel<AccountDto> initBorrowSession(HttpServletRequest request,
-                                                          @RequestBody AccountDto accountDto) {
+    @RequestMapping(value = "/init/borrow", method = RequestMethod.POST)
+    public RestServiceModel<BorrowerDto> initBorrowSession(HttpServletRequest request,
+                                                          @RequestBody BorrowerDto borrowerDto) {
         // TODO: Add necessary validations.
-        String userId = accountDto.getUserId();
-        boolean result = accountService.initBorrowSession(request, userId);
+        boolean result = accountService.initBorrowSession(request, borrowerDto);
         System.out.print(request.getSession().getAttribute(Constant.SESSION_BORROWER));
 
-        RestServiceModel<AccountDto> returnObj = new RestServiceModel<>();
-        returnObj.setData(accountDto);
+        RestServiceModel<BorrowerDto> returnObj = new RestServiceModel<>();
+        returnObj.setData(borrowerDto);
 
         return returnObj;
     }
 
-    @RequestMapping(value = "/borrower/add/copies", method = RequestMethod.POST)
-    public RestServiceModel<List<BookCopyDto>> addCopiesToSession(HttpServletRequest request,
-                                                           @RequestBody List<BookCopyDto> bookCopyDtos) {
+    @RequestMapping(value = "/add/copies", method = RequestMethod.POST)
+    public RestServiceModel<BookCopyDtoList> addCopiesToSession(@RequestBody BookCopyDtoList bookCopyDtoList) {
         // TODO: Add necessary validations.
-        boolean result = accountService.addCopiesToSession(request, bookCopyDtos);
+        BookCopyDtoList result = accountService.addCopiesToSession(bookCopyDtoList);
+        RestServiceModel<BookCopyDtoList> returnObj = new RestServiceModel<>();
 
-        HttpSession session = request.getSession(false);
-        List<BookCopyDto> bookCopies = (List<BookCopyDto>) session.getAttribute(Constant.SESSION_PENDING_COPIES);
-        System.out.print(bookCopies.toString());
+        if (result == null) {
+            returnObj.setSucceed(false);
+            returnObj.setMessage("Invalid user!");
+        }
 
-        RestServiceModel<List<BookCopyDto>> returnObj = new RestServiceModel<>();
-        returnObj.setData(bookCopyDtos);
+        System.out.print(result.toString());
+
+        returnObj.setData(result);
 
         return returnObj;
     }
