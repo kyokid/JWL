@@ -14,6 +14,8 @@ public class BorrowerTicketEntity {
     private Date createDate;
     private Date scanDate;
     private Date deleteDate;
+    private String sessionId;
+    private String ibeaconId;
 
     @Id
     @Column(name = "qr_id")
@@ -89,5 +91,25 @@ public class BorrowerTicketEntity {
         result = 31 * result + (scanDate != null ? scanDate.hashCode() : 0);
         result = 31 * result + (deleteDate != null ? deleteDate.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "session_id")
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    @Basic
+    @Column(name = "ibeacon_id")
+    public String getIbeaconId() {
+        return ibeaconId;
+    }
+
+    public void setIbeaconId(String ibeaconId) {
+        this.ibeaconId = ibeaconId;
     }
 }

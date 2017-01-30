@@ -1,6 +1,5 @@
 package jwl.fpt.service;
 
-import jwl.fpt.model.dto.BookCopyDto;
 import jwl.fpt.model.dto.BookCopyDtoList;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.BorrowerDto;
