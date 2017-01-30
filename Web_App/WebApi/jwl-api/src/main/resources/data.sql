@@ -10,5 +10,8 @@ INSERT INTO user_role (id, role)
 VALUES (1, 'admin'), (2, 'librarian'), (3, 'borrower');
 -- ON CONFLICT (id) DO UPDATE SET role = EXCLUDED.role;
 
+INSERT INTO account (user_id, password, role_id, is_in_library, is_activated)
+VALUES  ('SE61476', '123', '3', TRUE, TRUE);
+
 INSERT INTO borrower_ticket (qr_id, user_id, create_date)
 VALUES  ('123', 'SE61476', '2017-01-01')
