@@ -12,6 +12,7 @@ public class BookTypeEntity {
     private String name;
     private int borrowLimitDays;
     private int daysPerExtend;
+    private int extendTimesLimit;
 
     @Id
     @Column(name = "id")
@@ -75,5 +76,15 @@ public class BookTypeEntity {
         result = 31 * result + borrowLimitDays;
         result = 31 * result + daysPerExtend;
         return result;
+    }
+
+    @Basic
+    @Column(name = "extend_times_limit")
+    public int getExtendTimesLimit() {
+        return extendTimesLimit;
+    }
+
+    public void setExtendTimesLimit(int extendTimesLimit) {
+        this.extendTimesLimit = extendTimesLimit;
     }
 }

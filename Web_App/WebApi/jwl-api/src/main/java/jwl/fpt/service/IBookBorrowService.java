@@ -13,5 +13,5 @@ import java.util.List;
 public interface IBookBorrowService {
     boolean initBorrowSession(HttpServletRequest request, BorrowerDto borrowerDto);
     BookCopyDtoList addCopiesToSession(BookCopyDtoList bookCopyDtoList);
-    List<BorrowedBookCopyDto> saveBorrowedCopies(HttpServletRequest request);
+    List<BorrowedBookCopyDto> saveBorrowedCopies();
 }

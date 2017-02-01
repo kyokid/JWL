@@ -117,6 +117,8 @@ CREATE TABLE IF NOT EXISTS public.book_type
   days_per_extend INT NOT NULL
 );
 CREATE UNIQUE INDEX IF NOT EXISTS book_type_name_uindex ON public.book_type (name);
+ALTER TABLE public.book_type ADD COLUMN extend_times_limit INT NOT NULL DEFAULT 3;
+
 -- book:
 -- Hold all information of a book, and the number of its copies.
 CREATE TABLE IF NOT EXISTS public.book
@@ -228,7 +230,5 @@ CREATE TABLE IF NOT EXISTS public.borrower_ticket
   delete_date DATE,
   CONSTRAINT borrower_ticket_account_user_id_fk FOREIGN KEY (user_id) REFERENCES account (user_id)
 );
-ALTER TABLE public.borrower_ticket
-  ADD COLUMN session_id TEXT;
-ALTER TABLE public.borrower_ticket
-  ADD COLUMN ibeacon_id TEXT;
+ALTER TABLE public.borrower_ticket ADD COLUMN session_id TEXT;
+ALTER TABLE public.borrower_ticket ADD COLUMN ibeacon_id TEXT;
