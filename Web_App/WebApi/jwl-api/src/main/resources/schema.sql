@@ -235,5 +235,5 @@ CREATE TABLE IF NOT EXISTS public.borrower_ticket
   delete_date DATE,
   CONSTRAINT borrower_ticket_account_user_id_fk FOREIGN KEY (user_id) REFERENCES account (user_id)
 );
-ALTER TABLE public.borrower_ticket ADD COLUMN session_id TEXT;
-ALTER TABLE public.borrower_ticket ADD COLUMN ibeacon_id TEXT;
+ALTER TABLE public.borrower_ticket DROP COLUMN session_id;
+ALTER TABLE public.borrower_ticket DROP COLUMN ibeacon_id;

@@ -1,9 +1,9 @@
 package jwl.fpt.controller;
 
 import jwl.fpt.model.RestServiceModel;
-import jwl.fpt.model.dto.RfidDtoList;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.BorrowerDto;
+import jwl.fpt.model.dto.RfidDtoList;
 import jwl.fpt.service.IBookBorrowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

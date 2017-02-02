@@ -8,5 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface BorrowerTicketRepo extends JpaRepository<BorrowerTicketEntity, String> {
     BorrowerTicketEntity findByUserIdAndDeleteDateIsNull(String userId);
-    BorrowerTicketEntity findByIbeaconIdAndDeleteDateIsNull(String ibeaconId);
 }

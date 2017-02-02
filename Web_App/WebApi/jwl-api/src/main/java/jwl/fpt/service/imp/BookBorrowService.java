@@ -1,18 +1,17 @@
 package jwl.fpt.service.imp;
 
 import jwl.fpt.entity.*;
-import jwl.fpt.model.dto.BookCopyDto;
-import jwl.fpt.model.dto.RfidDtoList;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.BorrowerDto;
+import jwl.fpt.model.dto.RfidDtoList;
 import jwl.fpt.repository.*;
 import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.util.Constant;
 import jwl.fpt.util.Helper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
-import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +21,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Entaard on 1/29/17.
@@ -40,20 +40,21 @@ public class BookBorrowService implements IBookBorrowService {
     private BookCopyRepo bookCopyRepo;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private FindByIndexNameSessionRepository sessionRepository;
+
+    private final String principalName = FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
 
     @Override
-    @Transactional
     public boolean initBorrowSession(HttpServletRequest request, BorrowerDto borrowerDto) {
         // TODO: Add necessary validations.
         String iBeaconId = borrowerDto.getIBeaconId();
         String userId = borrowerDto.getUserId();
         HttpSession session = request.getSession(true);
         session.setAttribute(Constant.SESSION_BORROWER, userId);
-        session.setMaxInactiveInterval(10);
+        session.setAttribute(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, iBeaconId);
+        session.setMaxInactiveInterval(Constant.SESSION_INIT_TIMEOUT);
 
-        BorrowerTicketEntity borrowerTicketEntity = borrowerTicketRepo.findByUserIdAndDeleteDateIsNull(userId);
-        borrowerTicketEntity.setIbeaconId(iBeaconId);
-        borrowerTicketEntity.setSessionId(session.getId());
         return true;
     }
 
@@ -61,36 +62,21 @@ public class BookBorrowService implements IBookBorrowService {
     It seems that Spring's SessionRepository cannot setAttribute to the session,
     or the attribute will not be saved in the database.
     -> Spring team recommends: only interact with normal HttpSession.
-    QUICKFIX: in this function, we find the user_id saved in the initBorrowSession step,
-    and create and save it in a new session.
 
-    In short, we init 1 session to hold the borrower id, then create another session to
+    SOLUTION: we init 1 session to hold the borrower id, then create another session to
     hold the real transaction of the borrower and the copies.
      */
     @Override
-    @Transactional
     public RfidDtoList addCopiesToSession(HttpServletRequest request, RfidDtoList rfidDtoList) {
         // TODO: Add necessary validations.
-        SessionRepository<Session> sessionRepo = (SessionRepository<Session>)
-                request.getAttribute(SessionRepository.class.getName());
-        String ibeaconId = rfidDtoList.getIbeaconId();
-        BorrowerTicketEntity borrowerTicketEntity = borrowerTicketRepo.findByIbeaconIdAndDeleteDateIsNull(ibeaconId);
-        if (borrowerTicketEntity == null) {
-            return null;
-        }
-
-        String initSessionId = borrowerTicketEntity.getSessionId();
-        Session initSession = sessionRepo.getSession(initSessionId);
+        Session initSession = getSessionByPrincipalName(rfidDtoList.getIbeaconId());
         if (initSession == null) {
             return null;
         }
 
-        HttpSession transactionalSession = request.getSession(true);
-        transactionalSession.setAttribute(Constant.SESSION_BORROWER, initSession.getAttribute(Constant.SESSION_BORROWER));
-        transactionalSession.setAttribute(Constant.SESSION_PENDING_COPIES, rfidDtoList);
-        transactionalSession.setMaxInactiveInterval(20);
-        borrowerTicketEntity.setSessionId(transactionalSession.getId());
-        sessionRepo.delete(initSession.getId());
+        createTransactionalSession(request, initSession, rfidDtoList);
+
+//        sessionRepository.delete(initSession.getId());
 
         return rfidDtoList;
     }
@@ -99,15 +85,14 @@ public class BookBorrowService implements IBookBorrowService {
     @Transactional
     public List<BorrowedBookCopyDto> checkoutSession(HttpServletRequest request, String userId) {
         // TODO: Add necessary validations.
-        BorrowerTicketEntity borrowerTicketEntity = borrowerTicketRepo.findByUserIdAndDeleteDateIsNull(userId);
-        String sessionId = borrowerTicketEntity.getSessionId();
-        System.out.println(sessionId);
-        SessionRepository<Session> sessionRepo = (SessionRepository<Session>)
-                request.getAttribute(SessionRepository.class.getName());
-        Session session = sessionRepo.getSession(sessionId);
-        List<BorrowedBookCopyDto> result = saveBorrowedCopies(session);
-        borrowerTicketEntity.setDeleteDate(new Date(Calendar.getInstance().getTimeInMillis()));
-        sessionRepo.delete(session.getId());
+        Session transactionalSession = getSessionByPrincipalName(userId);
+        List<BorrowedBookCopyDto> result = saveBorrowedCopies(transactionalSession);
+
+        // TODO: Call deleteBorrowerTicket.
+        // This function is commented, so that the ticket can be tested many times.
+//        deleteBorrowerTicket(userId);
+
+        sessionRepository.delete(transactionalSession.getId());
 
         return result;
     }
@@ -118,7 +103,6 @@ public class BookBorrowService implements IBookBorrowService {
         if (rfidDtoList == null) {
             return null;
         }
-        // TODO: Create sample data.
         List<String> rfids = rfidDtoList.getRfids();
         List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAll(rfids);
 
@@ -152,5 +136,28 @@ public class BookBorrowService implements IBookBorrowService {
             result.add(dto);
         }
         return result;
+    }
+
+    private Session getSessionByPrincipalName(String principalValue) {
+        Map.Entry firstEntry = (Map.Entry) sessionRepository.
+                findByIndexNameAndIndexValue(principalName, principalValue).entrySet().iterator().next();
+
+        return (Session) firstEntry.getValue();
+    }
+
+    private void createTransactionalSession(HttpServletRequest request,
+                                            Session initSession, RfidDtoList rfidDtoList) {
+        String userId = initSession.getAttribute(Constant.SESSION_BORROWER);
+        HttpSession transactionalSession = request.getSession(true);
+
+        transactionalSession.setAttribute(principalName, userId);
+        transactionalSession.setAttribute(Constant.SESSION_BORROWER, userId);
+        transactionalSession.setAttribute(Constant.SESSION_PENDING_COPIES, rfidDtoList);
+        transactionalSession.setMaxInactiveInterval(Constant.SESSION_TRANSACT_TIMEOUT);
+    }
+
+    private void deleteBorrowerTicket(String userId) {
+        BorrowerTicketEntity borrowerTicketEntity = borrowerTicketRepo.findByUserIdAndDeleteDateIsNull(userId);
+        borrowerTicketEntity.setDeleteDate(new Date(Calendar.getInstance().getTimeInMillis()));
     }
 }

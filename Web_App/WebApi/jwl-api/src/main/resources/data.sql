@@ -15,6 +15,7 @@ VALUES  ('SE61476', '123', '3', TRUE, TRUE);
 
 INSERT INTO borrower_ticket (qr_id, user_id, create_date)
 VALUES  ('123', 'SE61476', '2017-01-01');
+UPDATE borrower_ticket SET delete_date = NULL WHERE qr_id = '123';
 
 INSERT INTO author (id, name, description)
 VALUES (1, 'Bert Bates', ''), (2, 'Kathy Sierra', ''), (3, 'Michael Hartl', '');
