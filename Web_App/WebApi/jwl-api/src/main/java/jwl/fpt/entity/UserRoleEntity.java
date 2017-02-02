@@ -13,6 +13,8 @@ public class UserRoleEntity {
 
     @Id
     @Column(name = "id")
+    @SequenceGenerator(name="SEQ_GEN", sequenceName="user_role_id_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_GEN")
     public int getId() {
         return id;
     }

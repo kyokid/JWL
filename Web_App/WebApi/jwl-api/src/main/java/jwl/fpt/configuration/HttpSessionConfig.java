@@ -1,7 +1,5 @@
 package jwl.fpt.configuration;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.session.MapSessionRepository;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 
 /**
@@ -9,8 +7,4 @@ import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHtt
  */
 @EnableJdbcHttpSession
 public class HttpSessionConfig {
-    @Bean
-    public MapSessionRepository sessionRepository() {
-        return new MapSessionRepository();
-    }
 }

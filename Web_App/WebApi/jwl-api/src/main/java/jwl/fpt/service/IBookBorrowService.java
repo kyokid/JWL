@@ -1,6 +1,6 @@
 package jwl.fpt.service;
 
-import jwl.fpt.model.dto.BookCopyDtoList;
+import jwl.fpt.model.dto.RfidDtoList;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.BorrowerDto;
 
@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface IBookBorrowService {
     boolean initBorrowSession(HttpServletRequest request, BorrowerDto borrowerDto);
-    BookCopyDtoList addCopiesToSession(BookCopyDtoList bookCopyDtoList);
-    List<BorrowedBookCopyDto> saveBorrowedCopies();
+    RfidDtoList addCopiesToSession(HttpServletRequest request, RfidDtoList rfidDtoList);
+    List<BorrowedBookCopyDto> checkoutSession(HttpServletRequest request, String userId);
 }

@@ -12,15 +12,16 @@ public class BorrowedBookCopyEntity {
     private int id;
     private String bookCopyId;
     private String userId;
-    private int borrowLimitDays;
-    private int extendTimes;
-    private int extendTimesLimit;
-    private int daysPerExtend;
     private Date borrowedDate;
     private Date returnDate;
+    private Date deadlineDate;
+    private int extendNumber;
+    private Integer rootId;
 
     @Id
     @Column(name = "id")
+    @SequenceGenerator(name="SEQ_GEN", sequenceName="borrowed_book_copy_id_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_GEN")
     public int getId() {
         return id;
     }
@@ -50,46 +51,6 @@ public class BorrowedBookCopyEntity {
     }
 
     @Basic
-    @Column(name = "borrow_limit_days")
-    public int getBorrowLimitDays() {
-        return borrowLimitDays;
-    }
-
-    public void setBorrowLimitDays(int borrowLimitDays) {
-        this.borrowLimitDays = borrowLimitDays;
-    }
-
-    @Basic
-    @Column(name = "extend_times")
-    public int getExtendTimes() {
-        return extendTimes;
-    }
-
-    public void setExtendTimes(int extendTimes) {
-        this.extendTimes = extendTimes;
-    }
-
-    @Basic
-    @Column(name = "extend_times_limit")
-    public int getExtendTimesLimit() {
-        return extendTimesLimit;
-    }
-
-    public void setExtendTimesLimit(int extendTimesLimit) {
-        this.extendTimesLimit = extendTimesLimit;
-    }
-
-    @Basic
-    @Column(name = "days_per_extend")
-    public int getDaysPerExtend() {
-        return daysPerExtend;
-    }
-
-    public void setDaysPerExtend(int daysPerExtend) {
-        this.daysPerExtend = daysPerExtend;
-    }
-
-    @Basic
     @Column(name = "borrowed_date")
     public Date getBorrowedDate() {
         return borrowedDate;
@@ -109,6 +70,36 @@ public class BorrowedBookCopyEntity {
         this.returnDate = returnDate;
     }
 
+    @Basic
+    @Column(name = "deadline_date")
+    public Date getDeadlineDate() {
+        return deadlineDate;
+    }
+
+    public void setDeadlineDate(Date deadlineDate) {
+        this.deadlineDate = deadlineDate;
+    }
+
+    @Basic
+    @Column(name = "extend_number")
+    public int getExtendNumber() {
+        return extendNumber;
+    }
+
+    public void setExtendNumber(int extendNumber) {
+        this.extendNumber = extendNumber;
+    }
+
+    @Basic
+    @Column(name = "root_id")
+    public Integer getRootId() {
+        return rootId;
+    }
+
+    public void setRootId(Integer rootId) {
+        this.rootId = rootId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -117,14 +108,11 @@ public class BorrowedBookCopyEntity {
         BorrowedBookCopyEntity that = (BorrowedBookCopyEntity) o;
 
         if (id != that.id) return false;
-        if (borrowLimitDays != that.borrowLimitDays) return false;
-        if (extendTimes != that.extendTimes) return false;
-        if (extendTimesLimit != that.extendTimesLimit) return false;
-        if (daysPerExtend != that.daysPerExtend) return false;
-        if (bookCopyId != null ? !bookCopyId.equals(that.bookCopyId) : that.bookCopyId != null) return false;
-        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
+        if (extendNumber != that.extendNumber) return false;
         if (borrowedDate != null ? !borrowedDate.equals(that.borrowedDate) : that.borrowedDate != null) return false;
         if (returnDate != null ? !returnDate.equals(that.returnDate) : that.returnDate != null) return false;
+        if (deadlineDate != null ? !deadlineDate.equals(that.deadlineDate) : that.deadlineDate != null) return false;
+        if (rootId != null ? !rootId.equals(that.rootId) : that.rootId != null) return false;
 
         return true;
     }
@@ -132,14 +120,11 @@ public class BorrowedBookCopyEntity {
     @Override
     public int hashCode() {
         int result = id;
-        result = 31 * result + (bookCopyId != null ? bookCopyId.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + borrowLimitDays;
-        result = 31 * result + extendTimes;
-        result = 31 * result + extendTimesLimit;
-        result = 31 * result + daysPerExtend;
         result = 31 * result + (borrowedDate != null ? borrowedDate.hashCode() : 0);
         result = 31 * result + (returnDate != null ? returnDate.hashCode() : 0);
+        result = 31 * result + (deadlineDate != null ? deadlineDate.hashCode() : 0);
+        result = 31 * result + extendNumber;
+        result = 31 * result + (rootId != null ? rootId.hashCode() : 0);
         return result;
     }
 }

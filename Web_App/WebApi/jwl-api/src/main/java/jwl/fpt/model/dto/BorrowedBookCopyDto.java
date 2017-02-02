@@ -18,4 +18,7 @@ public class BorrowedBookCopyDto {
     private int daysPerExtend;
     private Date borrowedDate;
     private Date returnDate;
+    private Date deadlineDate;
+    private int extendNumber;
+    private Integer rootId;
 }

@@ -1,10 +1,10 @@
 package jwl.fpt.controller;
 
 import jwl.fpt.model.RestServiceModel;
-import jwl.fpt.model.dto.BookCopyDtoList;
+import jwl.fpt.model.dto.RfidDtoList;
+import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.BorrowerDto;
 import jwl.fpt.service.IBookBorrowService;
-import jwl.fpt.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by Entaard on 1/29/17.
@@ -26,26 +27,48 @@ public class BookBorrowController {
                                                           @RequestBody BorrowerDto borrowerDto) {
         // TODO: Add necessary validations.
         boolean result = bookBorrowService.initBorrowSession(request, borrowerDto);
-        System.out.print(request.getSession().getAttribute(Constant.SESSION_BORROWER));
 
-        RestServiceModel<BorrowerDto> returnObj = new RestServiceModel<>();
-        returnObj.setData(borrowerDto);
+        RestServiceModel<BorrowerDto> responseObj = new RestServiceModel<>();
+        responseObj.setData(borrowerDto);
 
-        return returnObj;
+        return responseObj;
     }
 
     @RequestMapping(value = "/add/copies", method = RequestMethod.POST)
-    public RestServiceModel<BookCopyDtoList> addCopiesToSession(@RequestBody BookCopyDtoList bookCopyDtoList) {
+    public RestServiceModel<RfidDtoList> addCopiesToSession(HttpServletRequest request,
+                                                            @RequestBody RfidDtoList rfidDtoList) {
         // TODO: Add necessary validations.
-        BookCopyDtoList result = bookBorrowService.addCopiesToSession(bookCopyDtoList);
-        RestServiceModel<BookCopyDtoList> returnObj = new RestServiceModel<>();
+        RfidDtoList result = bookBorrowService.addCopiesToSession(request, rfidDtoList);
+        RestServiceModel<RfidDtoList> responseObj = new RestServiceModel<>();
 
         if (result == null) {
-            returnObj.setSucceed(false);
-            returnObj.setMessage("Invalid user!");
+            responseObj.setSucceed(false);
+            responseObj.setMessage("Invalid user!");
+        } else {
+            responseObj.setData(result);
+            responseObj.setSucceed(true);
+            responseObj.setMessage("Copies added!");
         }
-        returnObj.setData(result);
 
-        return returnObj;
+        return responseObj;
+    }
+
+    @RequestMapping(value = "/checkout", method = RequestMethod.POST)
+    public RestServiceModel<List<BorrowedBookCopyDto>> checkoutSession(HttpServletRequest request,
+                                                                       @RequestBody BorrowerDto borrowerDto) {
+        // TODO: Add necessary validations.
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.checkoutSession(request, borrowerDto.getUserId());
+        RestServiceModel<List<BorrowedBookCopyDto>> responseObj = new RestServiceModel<>();
+
+        if (borrowedBookCopyDtos == null) {
+            responseObj.setSucceed(false);
+            responseObj.setMessage("Checkout failed!");
+        } else {
+            responseObj.setData(borrowedBookCopyDtos);
+            responseObj.setSucceed(true);
+            responseObj.setMessage("User checked out!");
+        }
+
+        return responseObj;
     }
 }

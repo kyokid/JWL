@@ -14,6 +14,8 @@ public class BookPositionEntity {
 
     @Id
     @Column(name = "id")
+    @SequenceGenerator(name="SEQ_GEN", sequenceName="book_position_id_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_GEN")
     public int getId() {
         return id;
     }

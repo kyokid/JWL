@@ -14,6 +14,8 @@ public class AuthorEntity {
 
     @Id
     @Column(name = "id")
+    @SequenceGenerator(name="SEQ_GEN", sequenceName="author_id_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_GEN")
     public int getId() {
         return id;
     }
