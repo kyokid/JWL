@@ -30,6 +30,8 @@ public class BookBorrowController {
 
         RestServiceModel<BorrowerDto> responseObj = new RestServiceModel<>();
         responseObj.setData(borrowerDto);
+        responseObj.setSucceed(true);
+        responseObj.setMessage("Init Checkout");
 
         return responseObj;
     }
