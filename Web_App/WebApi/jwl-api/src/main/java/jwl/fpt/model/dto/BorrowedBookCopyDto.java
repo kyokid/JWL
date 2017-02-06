@@ -10,8 +10,8 @@ import java.sql.Date;
 @Data
 public class BorrowedBookCopyDto {
     private int id;
-    private String bookCopyId;
-    private String userId;
+    private String bookCopyRfid;
+    private String accountUserId;
     private int borrowLimitDays;
     private int extendTimes;
     private int extendTimesLimit;

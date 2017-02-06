@@ -152,6 +152,7 @@ public class BookBorrowService implements IBookBorrowService {
         transactionalSession.setMaxInactiveInterval(Constant.SESSION_TRANSACT_TIMEOUT);
     }
 
+    // TODO: Will be used later.
     private void deleteBorrowerTicket(String userId) {
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setUserId(userId);
