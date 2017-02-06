@@ -1,18 +1,23 @@
 package jwl.fpt.entity;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
- * Created by Entaard on 1/27/17.
+ * Created by Entaard on 2/5/17.
  */
 @Entity
 @Table(name = "account", schema = "public", catalog = "jwl_test")
 public class AccountEntity {
     private String userId;
     private String password;
-    private int roleId;
-    private boolean isInLibrary;
-    private boolean isActivated;
+    private Boolean isInLibrary;
+    private Boolean isActivated;
+    private UserRoleEntity userRole;
+    private ProfileEntity profile;
+    private Collection<BorrowedBookCopyEntity> borrowedBookCopies;
+    private Collection<BorrowerTicketEntity> borrowerTickets;
+    private Collection<WishBookEntity> wishBooks;
 
     @Id
     @Column(name = "user_id")
@@ -35,32 +40,22 @@ public class AccountEntity {
     }
 
     @Basic
-    @Column(name = "role_id")
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
-    @Basic
     @Column(name = "is_in_library")
-    public boolean isInLibrary() {
+    public Boolean getInLibrary() {
         return isInLibrary;
     }
 
-    public void setInLibrary(boolean inLibrary) {
+    public void setInLibrary(Boolean inLibrary) {
         isInLibrary = inLibrary;
     }
 
     @Basic
     @Column(name = "is_activated")
-    public boolean isActivated() {
+    public Boolean getActivated() {
         return isActivated;
     }
 
-    public void setActivated(boolean activated) {
+    public void setActivated(Boolean activated) {
         isActivated = activated;
     }
 
@@ -71,11 +66,10 @@ public class AccountEntity {
 
         AccountEntity that = (AccountEntity) o;
 
-        if (roleId != that.roleId) return false;
-        if (isInLibrary != that.isInLibrary) return false;
-        if (isActivated != that.isActivated) return false;
         if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
+        if (isInLibrary != null ? !isInLibrary.equals(that.isInLibrary) : that.isInLibrary != null) return false;
+        if (isActivated != null ? !isActivated.equals(that.isActivated) : that.isActivated != null) return false;
 
         return true;
     }
@@ -84,9 +78,60 @@ public class AccountEntity {
     public int hashCode() {
         int result = userId != null ? userId.hashCode() : 0;
         result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + roleId;
-        result = 31 * result + (isInLibrary ? 1 : 0);
-        result = 31 * result + (isActivated ? 1 : 0);
+        result = 31 * result + (isInLibrary != null ? isInLibrary.hashCode() : 0);
+        result = 31 * result + (isActivated != null ? isActivated.hashCode() : 0);
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+    public UserRoleEntity getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRoleEntity userRoleByRoleId) {
+        this.userRole = userRoleByRoleId;
+    }
+
+    public void setUserRole(Integer roleId) {
+        UserRoleEntity userRoleEntity = new UserRoleEntity();
+        userRoleEntity.setId(roleId);
+        this.userRole = userRoleEntity;
+    }
+
+    @OneToMany(mappedBy = "account")
+    public Collection<BorrowedBookCopyEntity> getBorrowedBookCopies() {
+        return borrowedBookCopies;
+    }
+
+    public void setBorrowedBookCopies(Collection<BorrowedBookCopyEntity> borrowedBookCopiesByUserId) {
+        this.borrowedBookCopies = borrowedBookCopiesByUserId;
+    }
+
+    @OneToMany(mappedBy = "account")
+    public Collection<BorrowerTicketEntity> getBorrowerTickets() {
+        return borrowerTickets;
+    }
+
+    public void setBorrowerTickets(Collection<BorrowerTicketEntity> borrowerTicketsByUserId) {
+        this.borrowerTickets = borrowerTicketsByUserId;
+    }
+
+    @OneToOne(mappedBy = "account")
+    public ProfileEntity getProfile() {
+        return profile;
+    }
+
+    public void setProfile(ProfileEntity profileByUserId) {
+        this.profile = profileByUserId;
+    }
+
+    @OneToMany(mappedBy = "account")
+    public Collection<WishBookEntity> getWishBooks() {
+        return wishBooks;
+    }
+
+    public void setWishBooks(Collection<WishBookEntity> wishBooksByUserId) {
+        this.wishBooks = wishBooksByUserId;
     }
 }

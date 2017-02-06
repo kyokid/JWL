@@ -31,10 +31,6 @@ public class BookBorrowService implements IBookBorrowService {
     @Autowired
     private BorrowerTicketRepo borrowerTicketRepo;
     @Autowired
-    private BookRepo bookRepo;
-    @Autowired
-    private BookTypeRepo bookTypeRepo;
-    @Autowired
     private BorrowedBookCopyRepo borrowedBookCopyRepo;
     @Autowired
     private BookCopyRepo bookCopyRepo;
@@ -111,12 +107,12 @@ public class BookBorrowService implements IBookBorrowService {
 
         for (BookCopyEntity bookCopyEntity:
              bookCopyEntities) {
-            BookEntity bookEntity = bookRepo.findById(bookCopyEntity.getBookId());
-            BookTypeEntity bookTypeEntity = bookTypeRepo.findById(bookEntity.getBookTypeId());
+            BookEntity bookEntity = bookCopyEntity.getBook();
+            BookTypeEntity bookTypeEntity = bookEntity.getBookType();
             BorrowedBookCopyEntity entity = new BorrowedBookCopyEntity();
 
-            entity.setUserId(userId);
-            entity.setBookCopyId(bookCopyEntity.getRfid());
+            entity.setAccount(userId);
+            entity.setBookCopy(bookCopyEntity.getRfid());
             entity.setBorrowedDate(new Date(Calendar.getInstance().getTimeInMillis()));
             Date deadline = Helper.GetDateAfter(entity.getBorrowedDate(), bookTypeEntity.getBorrowLimitDays());
             entity.setDeadlineDate(deadline);
@@ -157,7 +153,10 @@ public class BookBorrowService implements IBookBorrowService {
     }
 
     private void deleteBorrowerTicket(String userId) {
-        BorrowerTicketEntity borrowerTicketEntity = borrowerTicketRepo.findByUserIdAndDeleteDateIsNull(userId);
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(userId);
+        BorrowerTicketEntity borrowerTicketEntity = borrowerTicketRepo
+                .findByAccountAndDeleteDateIsNull(accountEntity);
         borrowerTicketEntity.setDeleteDate(new Date(Calendar.getInstance().getTimeInMillis()));
     }
 }

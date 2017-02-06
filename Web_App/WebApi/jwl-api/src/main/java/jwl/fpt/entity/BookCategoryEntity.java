@@ -3,33 +3,25 @@ package jwl.fpt.entity;
 import javax.persistence.*;
 
 /**
- * Created by Entaard on 1/27/17.
+ * Created by Entaard on 2/5/17.
  */
 @Entity
 @Table(name = "book_category", schema = "public", catalog = "jwl_test")
-@IdClass(BookCategoryEntityPK.class)
 public class BookCategoryEntity {
-    private int bookId;
-    private int categoryId;
+    private Integer id;
+    private BookEntity book;
+    private CategoryEntity category;
 
     @Id
-    @Column(name = "book_id")
-    public int getBookId() {
-        return bookId;
+    @Column(name = "id")
+    @SequenceGenerator(name="SEQ_GEN", sequenceName="book_category_id_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_GEN")
+    public Integer getId() {
+        return id;
     }
 
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
-    }
-
-    @Id
-    @Column(name = "category_id")
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override
@@ -39,16 +31,46 @@ public class BookCategoryEntity {
 
         BookCategoryEntity that = (BookCategoryEntity) o;
 
-        if (bookId != that.bookId) return false;
-        if (categoryId != that.categoryId) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = bookId;
-        result = 31 * result + categoryId;
+        int result = id != null ? id.hashCode() : 0;
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", referencedColumnName = "id", nullable = false)
+    public BookEntity getBook() {
+        return book;
+    }
+
+    public void setBook(BookEntity bookByBookId) {
+        this.book = bookByBookId;
+    }
+
+    public void setBook(Integer bookId) {
+        BookEntity bookEntity = new BookEntity();
+        bookEntity.setId(bookId);
+        this.book = bookEntity;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
+    public CategoryEntity getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryEntity categoryByCategoryId) {
+        this.category = categoryByCategoryId;
+    }
+
+    public void setCategory(Integer categoryId) {
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setId(categoryId);
+        this.category = categoryEntity;
     }
 }

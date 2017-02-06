@@ -4,50 +4,30 @@ import javax.persistence.*;
 import java.sql.Date;
 
 /**
- * Created by Entaard on 1/27/17.
+ * Created by Entaard on 2/5/17.
  */
 @Entity
 @Table(name = "borrowed_book_copy", schema = "public", catalog = "jwl_test")
 public class BorrowedBookCopyEntity {
-    private int id;
-    private String bookCopyId;
-    private String userId;
+    private Integer id;
     private Date borrowedDate;
     private Date returnDate;
     private Date deadlineDate;
-    private int extendNumber;
+    private Integer extendNumber;
     private Integer rootId;
+    private BookCopyEntity bookCopy;
+    private AccountEntity account;
 
     @Id
     @Column(name = "id")
     @SequenceGenerator(name="SEQ_GEN", sequenceName="borrowed_book_copy_id_seq")
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_GEN")
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Basic
-    @Column(name = "book_copy_id")
-    public String getBookCopyId() {
-        return bookCopyId;
-    }
-
-    public void setBookCopyId(String bookCopyId) {
-        this.bookCopyId = bookCopyId;
-    }
-
-    @Basic
-    @Column(name = "user_id")
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     @Basic
@@ -82,11 +62,11 @@ public class BorrowedBookCopyEntity {
 
     @Basic
     @Column(name = "extend_number")
-    public int getExtendNumber() {
+    public Integer getExtendNumber() {
         return extendNumber;
     }
 
-    public void setExtendNumber(int extendNumber) {
+    public void setExtendNumber(Integer extendNumber) {
         this.extendNumber = extendNumber;
     }
 
@@ -107,11 +87,11 @@ public class BorrowedBookCopyEntity {
 
         BorrowedBookCopyEntity that = (BorrowedBookCopyEntity) o;
 
-        if (id != that.id) return false;
-        if (extendNumber != that.extendNumber) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (borrowedDate != null ? !borrowedDate.equals(that.borrowedDate) : that.borrowedDate != null) return false;
         if (returnDate != null ? !returnDate.equals(that.returnDate) : that.returnDate != null) return false;
         if (deadlineDate != null ? !deadlineDate.equals(that.deadlineDate) : that.deadlineDate != null) return false;
+        if (extendNumber != null ? !extendNumber.equals(that.extendNumber) : that.extendNumber != null) return false;
         if (rootId != null ? !rootId.equals(that.rootId) : that.rootId != null) return false;
 
         return true;
@@ -119,12 +99,44 @@ public class BorrowedBookCopyEntity {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (borrowedDate != null ? borrowedDate.hashCode() : 0);
         result = 31 * result + (returnDate != null ? returnDate.hashCode() : 0);
         result = 31 * result + (deadlineDate != null ? deadlineDate.hashCode() : 0);
-        result = 31 * result + extendNumber;
+        result = 31 * result + (extendNumber != null ? extendNumber.hashCode() : 0);
         result = 31 * result + (rootId != null ? rootId.hashCode() : 0);
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "book_copy_id", referencedColumnName = "rfid", nullable = false)
+    public BookCopyEntity getBookCopy() {
+        return bookCopy;
+    }
+
+    public void setBookCopy(BookCopyEntity bookCopyByBookCopyId) {
+        this.bookCopy = bookCopyByBookCopyId;
+    }
+
+    public void setBookCopy(String rfid) {
+        BookCopyEntity bookCopyEntity = new BookCopyEntity();
+        bookCopyEntity.setRfid(rfid);
+        this.bookCopy = bookCopyEntity;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    public AccountEntity getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountEntity accountByUserId) {
+        this.account = accountByUserId;
+    }
+
+    public void setAccount(String userId) {
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(userId);
+        this.account = accountEntity;
     }
 }

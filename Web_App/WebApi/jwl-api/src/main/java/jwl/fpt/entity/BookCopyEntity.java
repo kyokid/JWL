@@ -1,16 +1,18 @@
 package jwl.fpt.entity;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
- * Created by Entaard on 1/27/17.
+ * Created by Entaard on 2/5/17.
  */
 @Entity
 @Table(name = "book_copy", schema = "public", catalog = "jwl_test")
 public class BookCopyEntity {
     private String rfid;
-    private int bookId;
-    private int price;
+    private Integer price;
+    private BookEntity book;
+    private Collection<BorrowedBookCopyEntity> borrowedBookCopies;
 
     @Id
     @Column(name = "rfid")
@@ -23,22 +25,12 @@ public class BookCopyEntity {
     }
 
     @Basic
-    @Column(name = "book_id")
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
-    }
-
-    @Basic
     @Column(name = "price")
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
@@ -49,9 +41,8 @@ public class BookCopyEntity {
 
         BookCopyEntity that = (BookCopyEntity) o;
 
-        if (bookId != that.bookId) return false;
-        if (price != that.price) return false;
         if (rfid != null ? !rfid.equals(that.rfid) : that.rfid != null) return false;
+        if (price != null ? !price.equals(that.price) : that.price != null) return false;
 
         return true;
     }
@@ -59,8 +50,32 @@ public class BookCopyEntity {
     @Override
     public int hashCode() {
         int result = rfid != null ? rfid.hashCode() : 0;
-        result = 31 * result + bookId;
-        result = 31 * result + price;
+        result = 31 * result + (price != null ? price.hashCode() : 0);
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", referencedColumnName = "id", nullable = false)
+    public BookEntity getBook() {
+        return book;
+    }
+
+    public void setBook(BookEntity bookByBookId) {
+        this.book = bookByBookId;
+    }
+
+    public void setBook(Integer bookId) {
+        BookEntity bookEntity = new BookEntity();
+        bookEntity.setId(bookId);
+        this.book = bookEntity;
+    }
+
+    @OneToMany(mappedBy = "bookCopy")
+    public Collection<BorrowedBookCopyEntity> getBorrowedBookCopies() {
+        return borrowedBookCopies;
+    }
+
+    public void setBorrowedBookCopies(Collection<BorrowedBookCopyEntity> borrowedBookCopiesByRfid) {
+        this.borrowedBookCopies = borrowedBookCopiesByRfid;
     }
 }

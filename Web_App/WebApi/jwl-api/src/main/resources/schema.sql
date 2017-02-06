@@ -139,7 +139,6 @@ CREATE TABLE IF NOT EXISTS public.book
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-
 -- book_category:
 -- Relation table of book and category.
 CREATE TABLE IF NOT EXISTS public.book_category
@@ -154,6 +153,9 @@ CREATE TABLE IF NOT EXISTS public.book_category
   REFERENCES public.category (id) MATCH SIMPLE
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+ALTER TABLE public.book_category DROP CONSTRAINT book_category_pkey;
+ALTER TABLE public.book_category ADD id SERIAL;
+ALTER TABLE public.book_category ADD CONSTRAINT book_category_pk PRIMARY KEY (id);
 
 -- book_author:
 -- Relation table of book and author.
@@ -169,8 +171,9 @@ CREATE TABLE IF NOT EXISTS public.book_author
   REFERENCES public.book (id) MATCH SIMPLE
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
-
-
+ALTER TABLE public.book_author DROP CONSTRAINT book_author_pkey;
+ALTER TABLE public.book_author ADD id SERIAL;
+ALTER TABLE public.book_author ADD CONSTRAINT book_author_pk PRIMARY KEY (id);
 
 -- wish_book:
 -- book in a wish list of a user.
@@ -186,6 +189,9 @@ CREATE TABLE IF NOT EXISTS public.wish_book
   REFERENCES public.book (id) MATCH SIMPLE
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+ALTER TABLE public.wish_book DROP CONSTRAINT wish_book_user_id_book_id_pk;
+ALTER TABLE public.wish_book ADD id SERIAL;
+ALTER TABLE public.wish_book ADD CONSTRAINT wish_book_pk PRIMARY KEY (id);
 
 -- book_copy:
 -- A copy of a book.

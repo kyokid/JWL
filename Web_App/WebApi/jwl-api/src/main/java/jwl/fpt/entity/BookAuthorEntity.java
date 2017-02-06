@@ -3,33 +3,25 @@ package jwl.fpt.entity;
 import javax.persistence.*;
 
 /**
- * Created by Entaard on 1/27/17.
+ * Created by Entaard on 2/5/17.
  */
 @Entity
 @Table(name = "book_author", schema = "public", catalog = "jwl_test")
-@IdClass(BookAuthorEntityPK.class)
 public class BookAuthorEntity {
-    private int bookId;
-    private int authorId;
+    private Integer id;
+    private BookEntity book;
+    private AuthorEntity author;
 
     @Id
-    @Column(name = "book_id")
-    public int getBookId() {
-        return bookId;
+    @Column(name = "id")
+    @SequenceGenerator(name="SEQ_GEN", sequenceName="book_author_id_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_GEN")
+    public Integer getId() {
+        return id;
     }
 
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
-    }
-
-    @Id
-    @Column(name = "author_id")
-    public int getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override
@@ -39,16 +31,46 @@ public class BookAuthorEntity {
 
         BookAuthorEntity that = (BookAuthorEntity) o;
 
-        if (bookId != that.bookId) return false;
-        if (authorId != that.authorId) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = bookId;
-        result = 31 * result + authorId;
+        int result = id != null ? id.hashCode() : 0;
         return result;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", referencedColumnName = "id", nullable = false)
+    public BookEntity getBook() {
+        return book;
+    }
+
+    public void setBook(BookEntity bookByBookId) {
+        this.book = bookByBookId;
+    }
+
+    public void setBook(Integer bookId) {
+        BookEntity bookEntity = new BookEntity();
+        bookEntity.setId(bookId);
+        this.book = bookEntity;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
+    public AuthorEntity getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(AuthorEntity authorByAuthorId) {
+        this.author = authorByAuthorId;
+    }
+
+    public void setAuthor(Integer authorId) {
+        AuthorEntity authorEntity = new AuthorEntity();
+        authorEntity.setId(authorId);
+        this.author = authorEntity;
     }
 }

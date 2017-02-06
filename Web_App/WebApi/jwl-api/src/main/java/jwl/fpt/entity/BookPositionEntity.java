@@ -1,26 +1,28 @@
 package jwl.fpt.entity;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
- * Created by Entaard on 1/27/17.
+ * Created by Entaard on 2/5/17.
  */
 @Entity
 @Table(name = "book_position", schema = "public", catalog = "jwl_test")
 public class BookPositionEntity {
-    private int id;
+    private Integer id;
     private String shelf;
     private String floor;
+    private Collection<BookEntity> books;
 
     @Id
     @Column(name = "id")
     @SequenceGenerator(name="SEQ_GEN", sequenceName="book_position_id_seq")
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_GEN")
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -51,7 +53,7 @@ public class BookPositionEntity {
 
         BookPositionEntity that = (BookPositionEntity) o;
 
-        if (id != that.id) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (shelf != null ? !shelf.equals(that.shelf) : that.shelf != null) return false;
         if (floor != null ? !floor.equals(that.floor) : that.floor != null) return false;
 
@@ -60,9 +62,18 @@ public class BookPositionEntity {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (shelf != null ? shelf.hashCode() : 0);
         result = 31 * result + (floor != null ? floor.hashCode() : 0);
         return result;
+    }
+
+    @OneToMany(mappedBy = "bookPosition")
+    public Collection<BookEntity> getBooks() {
+        return books;
+    }
+
+    public void setBooks(Collection<BookEntity> booksById) {
+        this.books = booksById;
     }
 }

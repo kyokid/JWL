@@ -1,26 +1,28 @@
 package jwl.fpt.entity;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 /**
- * Created by Entaard on 1/27/17.
+ * Created by Entaard on 2/5/17.
  */
 @Entity
 @Table(name = "category", schema = "public", catalog = "jwl_test")
 public class CategoryEntity {
-    private int id;
+    private Integer id;
     private String name;
     private String description;
+    private Collection<BookCategoryEntity> bookCategories;
 
     @Id
     @Column(name = "id")
     @SequenceGenerator(name="SEQ_GEN", sequenceName="category_id_seq")
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_GEN")
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -51,7 +53,7 @@ public class CategoryEntity {
 
         CategoryEntity that = (CategoryEntity) o;
 
-        if (id != that.id) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
 
@@ -60,9 +62,18 @@ public class CategoryEntity {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
+    }
+
+    @OneToMany(mappedBy = "category")
+    public Collection<BookCategoryEntity> getBookCategories() {
+        return bookCategories;
+    }
+
+    public void setBookCategories(Collection<BookCategoryEntity> bookCategoriesById) {
+        this.bookCategories = bookCategoriesById;
     }
 }

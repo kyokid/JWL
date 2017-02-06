@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Date;
 
 /**
- * Created by Entaard on 1/27/17.
+ * Created by Entaard on 2/5/17.
  */
 @Entity
 @Table(name = "profile", schema = "public", catalog = "jwl_test")
@@ -16,6 +16,7 @@ public class ProfileEntity {
     private Date dateOfBirth;
     private String phoneNo;
     private String placeOfWork;
+    private AccountEntity account;
 
     @Id
     @Column(name = "user_id")
@@ -115,5 +116,21 @@ public class ProfileEntity {
         result = 31 * result + (phoneNo != null ? phoneNo.hashCode() : 0);
         result = 31 * result + (placeOfWork != null ? placeOfWork.hashCode() : 0);
         return result;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    public AccountEntity getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountEntity accountByUserId) {
+        this.account = accountByUserId;
+    }
+
+    public void setAccount(String userId) {
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(userId);
+        this.account = accountEntity;
     }
 }
