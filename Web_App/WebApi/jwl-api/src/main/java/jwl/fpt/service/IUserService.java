@@ -1,5 +1,7 @@
 package jwl.fpt.service;
 
+import jwl.fpt.model.dto.AccountDto;
+import jwl.fpt.model.dto.ProfileDto;
 import jwl.fpt.model.dto.UserDto;
 
 import java.util.List;
@@ -10,7 +12,9 @@ import java.util.List;
 public interface IUserService {
     List<UserDto> getAllUser();
 
-    UserDto findByUsernameAndPassword(String username, String password);
+    AccountDto findByUsernameAndPassword(String username, String password);
 
     List<UserDto> findByUsernameLike(String q);
+
+    ProfileDto findProfileByUserId(String userId);
 }

@@ -1,6 +1,10 @@
 package jwl.fpt.service.imp;
 
+import jwl.fpt.entity.AccountEntity;
+import jwl.fpt.entity.ProfileEntity;
 import jwl.fpt.entity.TblUserEntity;
+import jwl.fpt.model.dto.AccountDto;
+import jwl.fpt.model.dto.ProfileDto;
 import jwl.fpt.model.dto.UserDto;
 import jwl.fpt.repository.UserRepository;
 import jwl.fpt.service.IUserService;
@@ -37,14 +41,14 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserDto findByUsernameAndPassword(String username, String password) {
-        TblUserEntity entity = userRepository.findByUsernameAndPassword(username, password);
+    public AccountDto findByUsernameAndPassword(String username, String password) {
+        AccountEntity entity = userRepository.findByUserIdAndPassword(username, password);
 
         if (entity == null) {
             return null;
         }
 
-        UserDto dto = modelMapper.map(entity, UserDto.class);
+        AccountDto dto = modelMapper.map(entity, AccountDto.class);
 
         return dto;
     }
@@ -61,5 +65,14 @@ public class UserService implements IUserService {
         }
 
         return results;
+    }
+
+    @Override
+    public ProfileDto findProfileByUserId(String userId) {
+        ProfileEntity profileEntity = userRepository.findProfileByUserId(userId);
+        if (profileEntity == null) return null;
+        ProfileDto profileDTO = modelMapper.map(profileEntity, ProfileDto.class);
+
+        return profileDTO;
     }
 }
