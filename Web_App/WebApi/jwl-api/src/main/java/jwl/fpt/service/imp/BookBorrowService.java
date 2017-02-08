@@ -159,6 +159,10 @@ public class BookBorrowService implements IBookBorrowService {
 
     private List<BorrowedBookCopyDto> saveBorrowCart(BorrowCart borrowCart) {
         Set<String> rfids = borrowCart.getRfids();
+        if (rfids == null || rfids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
         rfids.remove(null);
         List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAll(rfids);
         String userId = borrowCart.getUserId();
