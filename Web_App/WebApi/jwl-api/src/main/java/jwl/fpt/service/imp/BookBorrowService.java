@@ -1,10 +1,13 @@
 package jwl.fpt.service.imp;
 
 import jwl.fpt.entity.*;
+import jwl.fpt.model.BorrowCart;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.BorrowerDto;
 import jwl.fpt.model.dto.RfidDtoList;
-import jwl.fpt.repository.*;
+import jwl.fpt.repository.BookCopyRepo;
+import jwl.fpt.repository.BorrowedBookCopyRepo;
+import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.util.Constant;
 import jwl.fpt.util.Helper;
@@ -18,16 +21,15 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Entaard on 1/29/17.
  */
 @Service
 public class BookBorrowService implements IBookBorrowService {
+    private final String principalName = FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
+
     @Autowired
     private BorrowerTicketRepo borrowerTicketRepo;
     @Autowired
@@ -39,7 +41,7 @@ public class BookBorrowService implements IBookBorrowService {
     @Autowired
     private FindByIndexNameSessionRepository sessionRepository;
 
-    private final String principalName = FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
+    private List<BorrowCart> borrowCarts = new ArrayList<>();
 
     @Override
     public boolean initBorrowSession(HttpServletRequest request, BorrowerDto borrowerDto) {
@@ -82,6 +84,8 @@ public class BookBorrowService implements IBookBorrowService {
 
         createTransactionalSession(request, initSession, rfidDtoList);
 
+//        sessionRepository.delete(initSession.getId());
+
         return rfidDtoList;
     }
 
@@ -101,34 +105,106 @@ public class BookBorrowService implements IBookBorrowService {
         return result;
     }
 
+    @Override
+    public BorrowerDto initBorrowCart(BorrowerDto borrowerDto) {
+        // TODO: Add necessary validations.
+        String ibeaconId = borrowerDto.getIBeaconId();
+        BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
+        if (borrowCart != null) {
+            return borrowerDto;
+        }
+
+        borrowCart = new BorrowCart();
+        borrowCart.setIbeaconId(ibeaconId);
+        borrowCart.setUserId(borrowerDto.getUserId());
+        borrowCarts.add(borrowCart);
+        return borrowerDto;
+    }
+
+    @Override
+    public RfidDtoList addCopiesToCart(RfidDtoList rfidDtoList) {
+        // TODO: Add necessary validations.
+        String ibeaconId = rfidDtoList.getIbeaconId();
+        BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
+        if (borrowCart == null) {
+            return null;
+        }
+        Set<String> rfids = borrowCart.getRfids();
+        if (rfids == null || rfids.isEmpty()) {
+            borrowCart.setRfids(rfidDtoList.getRfids());
+        } else {
+            borrowCart.getRfids().addAll(rfidDtoList.getRfids());
+        }
+
+        rfidDtoList.setRfids(borrowCart.getRfids());
+        return rfidDtoList;
+    }
+
+    @Override
+    public List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto) {
+        // TODO: Add necessary validations.
+        String ibeaconId = borrowerDto.getIBeaconId();
+        String userId = borrowerDto.getUserId();
+        BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
+        if (borrowCart == null || !borrowCart.getUserId().equals(userId)) {
+            return null;
+        }
+
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = saveBorrowCart(borrowCart);
+
+        borrowCarts.remove(borrowCart);
+
+        return borrowedBookCopyDtos;
+    }
+
+    private List<BorrowedBookCopyDto> saveBorrowCart(BorrowCart borrowCart) {
+        Set<String> rfids = borrowCart.getRfids();
+        rfids.remove(null);
+        List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAll(rfids);
+        String userId = borrowCart.getUserId();
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = createBorrowedBookCopyEntities(bookCopyEntities, userId);
+        borrowedBookCopyEntities = borrowedBookCopyRepo.save(borrowedBookCopyEntities);
+        if (borrowedBookCopyEntities.isEmpty()) {
+            return null;
+        }
+
+        List<BorrowedBookCopyDto> result = new ArrayList<>();
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity :
+                borrowedBookCopyEntities) {
+            BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+            result.add(dto);
+        }
+        return result;
+    }
+
+    private BorrowCart getCartByIbeaconId(String ibeaconId) {
+        // TODO: check expire date.
+        if (borrowCarts.isEmpty()) {
+            return null;
+        }
+
+        for (BorrowCart borrowCart :
+                borrowCarts) {
+            if (borrowCart.getIbeaconId().equals(ibeaconId)) {
+                return borrowCart;
+            }
+        }
+
+        return null;
+    }
+
     private List<BorrowedBookCopyDto> saveBorrowedCopies(Session session) {
         // TODO: Add necessary validations.
         RfidDtoList rfidDtoList = session.getAttribute(Constant.SESSION_PENDING_COPIES);
         if (rfidDtoList == null) {
             return null;
         }
-        List<String> rfids = rfidDtoList.getRfids();
+        Set<String> rfids = rfidDtoList.getRfids();
         rfids.remove(null);
         List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAll(rfids);
 
         String userId = session.getAttribute(Constant.SESSION_BORROWER);
-        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = new ArrayList<>();
-
-        for (BookCopyEntity bookCopyEntity:
-             bookCopyEntities) {
-            BookEntity bookEntity = bookCopyEntity.getBook();
-            BookTypeEntity bookTypeEntity = bookEntity.getBookType();
-            BorrowedBookCopyEntity entity = new BorrowedBookCopyEntity();
-
-            entity.setAccount(userId);
-            entity.setBookCopy(bookCopyEntity.getRfid());
-            entity.setBorrowedDate(new Date(Calendar.getInstance().getTimeInMillis()));
-            Date deadline = Helper.GetDateAfter(entity.getBorrowedDate(), bookTypeEntity.getBorrowLimitDays());
-            entity.setDeadlineDate(deadline);
-            entity.setExtendNumber(0);
-
-            borrowedBookCopyEntities.add(entity);
-        }
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = createBorrowedBookCopyEntities(bookCopyEntities, userId);
         borrowedBookCopyEntities = borrowedBookCopyRepo.save(borrowedBookCopyEntities);
         if (borrowedBookCopyEntities.isEmpty()) {
             return null;
@@ -173,5 +249,27 @@ public class BookBorrowService implements IBookBorrowService {
         BorrowerTicketEntity borrowerTicketEntity = borrowerTicketRepo
                 .findByAccountAndDeleteDateIsNull(accountEntity);
         borrowerTicketEntity.setDeleteDate(new Date(Calendar.getInstance().getTimeInMillis()));
+    }
+
+    private List<BorrowedBookCopyEntity> createBorrowedBookCopyEntities(List<BookCopyEntity> bookCopyEntities,
+                                                                        String userId) {
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = new ArrayList<>();
+
+        for (BookCopyEntity bookCopyEntity:
+                bookCopyEntities) {
+            BookEntity bookEntity = bookCopyEntity.getBook();
+            BookTypeEntity bookTypeEntity = bookEntity.getBookType();
+            BorrowedBookCopyEntity entity = new BorrowedBookCopyEntity();
+
+            entity.setAccount(userId);
+            entity.setBookCopy(bookCopyEntity.getRfid());
+            entity.setBorrowedDate(new Date(Calendar.getInstance().getTimeInMillis()));
+            Date deadline = Helper.GetDateAfter(entity.getBorrowedDate(), bookTypeEntity.getBorrowLimitDays());
+            entity.setDeadlineDate(deadline);
+            entity.setExtendNumber(0);
+
+            borrowedBookCopyEntities.add(entity);
+        }
+        return borrowedBookCopyEntities;
     }
 }

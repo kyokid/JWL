@@ -14,4 +14,8 @@ public interface IBookBorrowService {
     boolean initBorrowSession(HttpServletRequest request, BorrowerDto borrowerDto);
     RfidDtoList addCopiesToSession(HttpServletRequest request, RfidDtoList rfidDtoList);
     List<BorrowedBookCopyDto> checkoutSession(HttpServletRequest request, String userId);
+
+    BorrowerDto initBorrowCart(BorrowerDto borrowerDto);
+    RfidDtoList addCopiesToCart(RfidDtoList rfidDtoList);
+    List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto);
 }

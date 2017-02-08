@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Entaard on 1/29/17.
@@ -25,13 +27,12 @@ public class BookBorrowController {
     private IBookBorrowService bookBorrowService;
 
     @RequestMapping(value = "/init/borrow", method = RequestMethod.POST)
-    public RestServiceModel<BorrowerDto> initBorrowSession(HttpServletRequest request,
-                                                          @RequestBody BorrowerDto borrowerDto) {
+    public RestServiceModel<BorrowerDto> initBorrowCart(@RequestBody BorrowerDto borrowerDto) {
         // TODO: Add necessary validations.
-        boolean result = bookBorrowService.initBorrowSession(request, borrowerDto);
+        BorrowerDto result = bookBorrowService.initBorrowCart(borrowerDto);
 
         RestServiceModel<BorrowerDto> responseObj = new RestServiceModel<>();
-        responseObj.setData(borrowerDto);
+        responseObj.setData(result);
         responseObj.setSucceed(true);
         responseObj.setMessage("Init Checkout");
 
@@ -39,10 +40,9 @@ public class BookBorrowController {
     }
 
     @RequestMapping(value = "/add/copies", method = RequestMethod.POST)
-    public RestServiceModel<RfidDtoList> addCopiesToSession(HttpServletRequest request,
-                                                            @RequestBody RfidDtoList rfidDtoList) {
+    public RestServiceModel<RfidDtoList> addCopiesToCart(@RequestBody RfidDtoList rfidDtoList) {
         // TODO: Add necessary validations.
-        RfidDtoList result = bookBorrowService.addCopiesToSession(request, rfidDtoList);
+        RfidDtoList result = bookBorrowService.addCopiesToCart(rfidDtoList);
         RestServiceModel<RfidDtoList> responseObj = new RestServiceModel<>();
         String[] messages = {"Invalid user!", "Copies added!"};
 
@@ -51,22 +51,15 @@ public class BookBorrowController {
         return responseObj;
     }
 
-    /**
-     * Add a single copy to user's session.
-     * @param request user request.
-     * @param rfidDto dto that holds the ibeaconId and the rfid of a book copy.
-     * @return RestServiceModel
-     */
     @RequestMapping(value = "/add/copy", method = RequestMethod.POST)
-    public RestServiceModel<RfidDtoList> addCopyToSession(HttpServletRequest request,
-                                                            @RequestBody RfidDto rfidDto) {
+    public RestServiceModel<RfidDtoList> addCopyToCart(@RequestBody RfidDto rfidDto) {
         // TODO: Add necessary validations.
         RfidDtoList rfidDtoList = new RfidDtoList();
         rfidDtoList.setIbeaconId(rfidDto.getIbeaconId());
-        List<String> rfids = new ArrayList<>();
+        Set<String> rfids = new HashSet<>();
         rfids.add(rfidDto.getRfid());
         rfidDtoList.setRfids(rfids);
-        RfidDtoList result = bookBorrowService.addCopiesToSession(request, rfidDtoList);
+        RfidDtoList result = bookBorrowService.addCopiesToCart(rfidDtoList);
         RestServiceModel<RfidDtoList> responseObj = new RestServiceModel<>();
         String[] messages = {"Invalid user!", "Copy added!"};
 
@@ -76,10 +69,9 @@ public class BookBorrowController {
     }
 
     @RequestMapping(value = "/checkout", method = RequestMethod.POST)
-    public RestServiceModel<List<BorrowedBookCopyDto>> checkoutSession(HttpServletRequest request,
-                                                                       @RequestBody BorrowerDto borrowerDto) {
+    public RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(@RequestBody BorrowerDto borrowerDto) {
         // TODO: Add necessary validations.
-        List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.checkoutSession(request, borrowerDto.getUserId());
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.checkoutCart(borrowerDto);
         RestServiceModel<List<BorrowedBookCopyDto>> responseObj = new RestServiceModel<>();
         String[] messages = {"Checkout failed!", "User checked out!"};
 
