@@ -6,8 +6,8 @@ def senPostRequest(data):
     print data
     url = 'https://jwl-api-v0.herokuapp.com/add/copy'
     data = {
-        "ibeaconId": 123,
-        "rfids": data
+        "ibeaconId": "D8:CF:F3:6B:8E:01",
+        "rfid": data
     }
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, data=json.dumps(data), headers=headers)

@@ -34,4 +34,4 @@ VALUES (1, 'Java', 'Zert', 'The beginning part to greatness.', '2015', '400', 2,
   (2, 'Ruby on Rails', 'Rails', 'The quickest way to web development.', '2015', '200', 1, 2, '');
 
 INSERT INTO book_copy (rfid, book_id, price)
-VALUES ('J1', 1, 400), ('J2', 1, 350), ('R1', 2, 100), ('R2', 2, 100);
+VALUES ('0009599367', 1, 400), ('0009951006', 1, 350), ('0010323151', 2, 100), ('0010315397', 2, 100);
