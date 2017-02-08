@@ -3,6 +3,7 @@ package jwl.fpt.controller;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.BorrowerDto;
+import jwl.fpt.model.dto.RfidDto;
 import jwl.fpt.model.dto.RfidDtoList;
 import jwl.fpt.service.IBookBorrowService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,15 +44,33 @@ public class BookBorrowController {
         // TODO: Add necessary validations.
         RfidDtoList result = bookBorrowService.addCopiesToSession(request, rfidDtoList);
         RestServiceModel<RfidDtoList> responseObj = new RestServiceModel<>();
+        String[] messages = {"Invalid user!", "Copies added!"};
 
-        if (result == null) {
-            responseObj.setSucceed(false);
-            responseObj.setMessage("Invalid user!");
-        } else {
-            responseObj.setData(result);
-            responseObj.setSucceed(true);
-            responseObj.setMessage("Copies added!");
-        }
+        RestServiceModel.checkResult(result, responseObj, messages);
+
+        return responseObj;
+    }
+
+    /**
+     * Add a single copy to user's session.
+     * @param request user request.
+     * @param rfidDto dto that holds the ibeaconId and the rfid of a book copy.
+     * @return RestServiceModel
+     */
+    @RequestMapping(value = "/add/copy", method = RequestMethod.POST)
+    public RestServiceModel<RfidDtoList> addCopyToSession(HttpServletRequest request,
+                                                            @RequestBody RfidDto rfidDto) {
+        // TODO: Add necessary validations.
+        RfidDtoList rfidDtoList = new RfidDtoList();
+        rfidDtoList.setIbeaconId(rfidDto.getIbeaconId());
+        List<String> rfids = new ArrayList<>();
+        rfids.add(rfidDto.getRfid());
+        rfidDtoList.setRfids(rfids);
+        RfidDtoList result = bookBorrowService.addCopiesToSession(request, rfidDtoList);
+        RestServiceModel<RfidDtoList> responseObj = new RestServiceModel<>();
+        String[] messages = {"Invalid user!", "Copy added!"};
+
+        RestServiceModel.checkResult(result, responseObj, messages);
 
         return responseObj;
     }
@@ -61,15 +81,9 @@ public class BookBorrowController {
         // TODO: Add necessary validations.
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.checkoutSession(request, borrowerDto.getUserId());
         RestServiceModel<List<BorrowedBookCopyDto>> responseObj = new RestServiceModel<>();
+        String[] messages = {"Checkout failed!", "User checked out!"};
 
-        if (borrowedBookCopyDtos == null) {
-            responseObj.setSucceed(false);
-            responseObj.setMessage("Checkout failed!");
-        } else {
-            responseObj.setData(borrowedBookCopyDtos);
-            responseObj.setSucceed(true);
-            responseObj.setMessage("User checked out!");
-        }
+        RestServiceModel.checkResult(borrowedBookCopyDtos, responseObj, messages);
 
         return responseObj;
     }

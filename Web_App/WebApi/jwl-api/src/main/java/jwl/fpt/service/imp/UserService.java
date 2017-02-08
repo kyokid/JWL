@@ -6,6 +6,7 @@ import jwl.fpt.entity.TblUserEntity;
 import jwl.fpt.model.dto.AccountDto;
 import jwl.fpt.model.dto.ProfileDto;
 import jwl.fpt.model.dto.UserDto;
+import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.UserRepository;
 import jwl.fpt.service.IUserService;
 import org.modelmapper.ModelMapper;
@@ -24,14 +25,17 @@ public class UserService implements IUserService {
     private UserRepository userRepository;
 
     @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Override
     public List<UserDto> getAllUser() {
-        List<TblUserEntity> users = userRepository.findAll();
+        List<AccountEntity> users = accountRepository.findAll();
         List<UserDto> results = new ArrayList<>();
 
-        for (TblUserEntity user:
+        for (AccountEntity user:
                 users) {
             UserDto dto = modelMapper.map(user, UserDto.class);
             results.add(dto);

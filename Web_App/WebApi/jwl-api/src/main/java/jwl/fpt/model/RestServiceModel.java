@@ -12,4 +12,14 @@ public class RestServiceModel<T> {
     private String Code;
     private T Data;
 
+    public static void checkResult(Object result, RestServiceModel responseObj, String[] messages) {
+        if (result == null) {
+            responseObj.setSucceed(false);
+            responseObj.setMessage(messages[0]);
+        } else {
+            responseObj.setData(result);
+            responseObj.setSucceed(true);
+            responseObj.setMessage(messages[1]);
+        }
+    }
 }

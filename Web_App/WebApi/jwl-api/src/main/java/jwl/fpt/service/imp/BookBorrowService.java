@@ -65,14 +65,22 @@ public class BookBorrowService implements IBookBorrowService {
     @Override
     public RfidDtoList addCopiesToSession(HttpServletRequest request, RfidDtoList rfidDtoList) {
         // TODO: Add necessary validations.
+        HttpSession currentSession = request.getSession(false);
+        if (currentSession != null) {
+            RfidDtoList currentRfidDtoList = (RfidDtoList) currentSession.getAttribute(Constant.SESSION_PENDING_COPIES);
+            if (currentRfidDtoList != null) {
+                rfidDtoList.getRfids().addAll(currentRfidDtoList.getRfids());
+                currentSession.setAttribute(Constant.SESSION_PENDING_COPIES, rfidDtoList);
+                return  rfidDtoList;
+            }
+        }
+
         Session initSession = getSessionByPrincipalName(rfidDtoList.getIbeaconId());
         if (initSession == null) {
             return null;
         }
 
         createTransactionalSession(request, initSession, rfidDtoList);
-
-//        sessionRepository.delete(initSession.getId());
 
         return rfidDtoList;
     }
@@ -100,6 +108,7 @@ public class BookBorrowService implements IBookBorrowService {
             return null;
         }
         List<String> rfids = rfidDtoList.getRfids();
+        rfids.remove(null);
         List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAll(rfids);
 
         String userId = session.getAttribute(Constant.SESSION_BORROWER);
@@ -135,8 +144,13 @@ public class BookBorrowService implements IBookBorrowService {
     }
 
     private Session getSessionByPrincipalName(String principalValue) {
-        Map.Entry firstEntry = (Map.Entry) sessionRepository.
-                findByIndexNameAndIndexValue(principalName, principalValue).entrySet().iterator().next();
+        Map<String, Session> sessionMap = sessionRepository
+                .findByIndexNameAndIndexValue(principalName, principalValue);
+        if (sessionMap.isEmpty()) {
+            return null;
+        }
+
+        Map.Entry firstEntry = sessionMap.entrySet().iterator().next();
 
         return (Session) firstEntry.getValue();
     }

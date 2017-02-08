@@ -2,6 +2,8 @@ package jwl.fpt.model.dto;
 
 import lombok.Data;
 
+import java.sql.Date;
+
 /**
  * Created by Entaard on 1/29/17.
  *
@@ -10,8 +12,15 @@ import lombok.Data;
 @Data
 public class UserDto {
     private String userId;
-    private String username;
     private String password;
-    private boolean gender;
-    private String fullname;
+    private boolean isInLibrary;
+    private boolean isActivated;
+    private String userRoleRole;
+    //    private ProfileDto profile;
+    private String profileFullname;
+    private String profileEmail;
+    private String profileAddress;
+    private Date profileDateOfBirth;
+    private String profilePhoneNo;
+    private String profilePlaceOfWork;
 }

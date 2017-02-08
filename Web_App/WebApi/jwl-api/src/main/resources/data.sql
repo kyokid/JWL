@@ -35,3 +35,6 @@ VALUES (1, 'Java', 'Zert', 'The beginning part to greatness.', '2015', '400', 2,
 
 INSERT INTO book_copy (rfid, book_id, price)
 VALUES ('0009599367', 1, 400), ('0009951006', 1, 350), ('0010323151', 2, 100), ('0010315397', 2, 100);
+
+INSERT INTO profile (user_id, fullname, email, address, date_of_birth, phone_no, place_of_work)
+VALUES ('SE61476', 'NGuyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn F12 Gò Vấp', '1992-04-26', '01692536559', 'FPT');
