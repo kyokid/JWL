@@ -1,12 +1,13 @@
 import requests
 import json
+import serial
 
 def senPostRequest(data):
     print data
-    url = 'https://jwl-api-v0.herokuapp.com/add/copies'
+    url = 'https://jwl-api-v0.herokuapp.com/add/copy'
     data = {
         "ibeaconId": 123,
-        "rfids": [data]
+        "rfids": data
     }
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, data=json.dumps(data), headers=headers)
