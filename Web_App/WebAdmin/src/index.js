@@ -4,8 +4,8 @@ import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import { Router, browserHistory } from 'react-router'
-import Routes from './Routes';
-import Store from './Store';
+import Routes from './routes';
+import Store from './store';
 
 ReactDOM.render(
   <Provider store={Store}>

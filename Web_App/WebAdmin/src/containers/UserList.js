@@ -28,13 +28,13 @@ class UserList extends Component {
 	}
 
 	renderUser(user) {
-		const id = user.id;
+		const userId = user.userId;
 		return (
-			<tr key={id}>
-				<th scope="row">{id}</th>
-				<td>{user.name}</td>
-				<td>{user.username}</td>
-				<td>{user.email}</td>
+			<tr key={userId}>
+				{/*<th scope="row">{id}</th>*/}
+				<td scope="row">{userId}</td>
+				<td>{user.profileFullname}</td>
+				<td>{user.profileEmail}</td>
 			</tr>
 		);
 	}

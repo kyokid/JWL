@@ -5,9 +5,10 @@
   "main": "index.js",
   "repository": "git@github.com:StephenGrider/ReduxSimpleStarter.git",
   "scripts": {
-    "start": "node ./src/app.js",
-    "dev": "webpack -w --config webpack.config.js",
+    "start": "webpack && node ./src/app.js",
+    "dev": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 8000",
     "build": "webpack -p --config webpack.prod.config.js --progress --profile --colors",
+    "build:dev": "webpack -w --config webpack.config.js --colors",
     "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive ./test",
     "test:watch": "npm run test -- --watch"
   },
@@ -25,10 +26,12 @@
     "babel-preset-stage-0": "^6.5.0",
     "babel-preset-stage-1": "^6.1.18",
     "babel-runtime": "^6.6.1",
+    "compression": "^1.6.2",
     "es5-shim": "^4.5.7",
     "expose-loader": "^0.7.1",
-    "express": "^4.14.0",
+    "express": "^4.14.1",
     "history": "^3.2.1",
+    "if-env": "^1.0.0",
     "imports-loader": "^0.6.5",
     "lodash": "^4.17.2",
     "moment": "^2.17.1",
@@ -67,6 +70,7 @@
     "react-addons-test-utils": "^15.4.1",
     "redux-mock-store": "^1.2.1",
     "sinon": "^1.17.6",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "webpack-dev-server": "^1.14.0"
   }
 }
