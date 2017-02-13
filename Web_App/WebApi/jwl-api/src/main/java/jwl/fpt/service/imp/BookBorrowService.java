@@ -183,7 +183,7 @@ public class BookBorrowService implements IBookBorrowService {
 
     private BorrowCart getCartByIbeaconId(String ibeaconId) {
         // TODO: check expire date.
-        if (borrowCarts.isEmpty()) {
+        if (borrowCarts == null || borrowCarts.isEmpty()) {
             return null;
         }
 

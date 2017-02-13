@@ -15,7 +15,7 @@ import jwl.com.ibeacondemo.estimote.BeaconNotiManager;
  */
 
 public class MyApplication extends Application{
-    private static final String UUID = "B9407F30-F5F8-466E-AFF9-25556B57FE6E";
+    private static final String UUID = "B9407F30-F5F8-466E-AFF9-25556B57FE6D";
     private boolean beaconNotificationEnabled = false;
     private List<Beacon> beaconList = new ArrayList<>();
 
