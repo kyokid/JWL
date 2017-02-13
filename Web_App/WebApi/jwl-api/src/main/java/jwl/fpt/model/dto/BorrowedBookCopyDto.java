@@ -21,4 +21,5 @@ public class BorrowedBookCopyDto {
     private Date deadlineDate;
     private int extendNumber;
     private Integer rootId;
+    private String bookCopyBookTitle;
 }

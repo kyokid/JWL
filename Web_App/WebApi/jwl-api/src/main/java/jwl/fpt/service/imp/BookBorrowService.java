@@ -162,7 +162,7 @@ public class BookBorrowService implements IBookBorrowService {
         if (rfids == null || rfids.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         rfids.remove(null);
         List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAll(rfids);
         String userId = borrowCart.getUserId();
@@ -184,6 +184,9 @@ public class BookBorrowService implements IBookBorrowService {
     private BorrowCart getCartByIbeaconId(String ibeaconId) {
         // TODO: check expire date.
         if (borrowCarts == null || borrowCarts.isEmpty()) {
+            return null;
+        }
+        if (ibeaconId == null || ibeaconId.isEmpty()) {
             return null;
         }
 
@@ -266,7 +269,7 @@ public class BookBorrowService implements IBookBorrowService {
             BorrowedBookCopyEntity entity = new BorrowedBookCopyEntity();
 
             entity.setAccount(userId);
-            entity.setBookCopy(bookCopyEntity.getRfid());
+            entity.setBookCopy(bookCopyEntity);
             entity.setBorrowedDate(new Date(Calendar.getInstance().getTimeInMillis()));
             Date deadline = Helper.GetDateAfter(entity.getBorrowedDate(), bookTypeEntity.getBorrowLimitDays());
             entity.setDeadlineDate(deadline);
