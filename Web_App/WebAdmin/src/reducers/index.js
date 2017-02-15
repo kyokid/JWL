@@ -1,10 +1,13 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
-import UsersReducer from './UsersReducer'
+
+import AccountsReducer from './AccountsReducer'
+import ImgsReducer from './ImgsReducer'
 
 const rootReducer = combineReducers({
 	routing: routerReducer,
-	users: UsersReducer
-});
+	accounts: AccountsReducer,
+	img: ImgsReducer
+})
 
-export default rootReducer;
+export default rootReducer

@@ -6,4 +6,4 @@ import { createStore, applyMiddleware } from 'redux'
 const storeWithMiddleware = applyMiddleware(ReduxPromise)(createStore)
 const store = storeWithMiddleware(reducers)
 
-export default store;
+export default store

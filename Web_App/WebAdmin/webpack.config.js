@@ -1,8 +1,8 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
 	entry: [
-		'./src/index.js'
+		'./src/AccountsAction.js'
 	],
 	output: {
 		path: path.join(__dirname, 'public'),
@@ -26,4 +26,4 @@ module.exports = {
 		contentBase: './public',
 		publicPath: '/'
 	}
-};
+}
