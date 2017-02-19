@@ -1,7 +1,7 @@
 import React from 'react'
 import SearchBar from '../containers/SearchBar'
 import AccountList from '../containers/AccountList'
-import AccountNew from './AccountNew'
+import AccountNew from '../containers/AccountNew'
 
 export default function () {
 	return (

@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = {
 	entry: [
-		'./src/AccountsAction.js'
+		'./src/index'
 	],
 	output: {
 		path: path.join(__dirname, 'public'),

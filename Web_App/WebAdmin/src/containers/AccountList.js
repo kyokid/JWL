@@ -4,6 +4,10 @@ import { bindActionCreators } from 'redux'
 import { getAllAccounts } from '../actions/AccountsAction'
 
 class AccountList extends Component {
+	constructor(props) {
+		super(props)
+	}
+
 	componentWillMount() {
 		this.props.getAllAccounts()
 	}

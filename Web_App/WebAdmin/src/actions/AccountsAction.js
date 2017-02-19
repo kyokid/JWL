@@ -26,18 +26,16 @@ export function getUserByUsername(term) {
 }
 
 export function submitImg() {
-	console.log("start submitting img!")
 	const fileInput = document.getElementById("inputImg")
-	const fd = new FormData()
-	fd.append("img", fileInput.files[0])
+	const formData = new FormData()
+	formData.append("img", fileInput.files[0])
 
 	const request = axios({
 		method: 'POST',
-		url: 'http://uploads.im/api?upload&resize_width=50&format=xml',
-		data: fd
+		url: Api.IMG_UPLOAD,
+		data: formData
 	})
 
-	console.log("Call submitting img!")
 	return {
 		type: Types.ACC_IMG_URL,
 		payload: request

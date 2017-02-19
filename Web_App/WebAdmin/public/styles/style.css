@@ -72,7 +72,7 @@ p {
 }
 
 /**
- * Profile image component
+ * Header profile image component
  */
 
 .profile-header-img {
@@ -129,9 +129,46 @@ p {
   margin-left: 5px;
 }
 
-.img-input-container > img {
+.img-placeholder {
+  overflow: hidden;
+  height: 200px;
+  width: 200px;
+  position: relative;
+  border: 1px solid cadetblue;
+  border-radius: 4px;
+}
+
+#uploadImg {
   display: none;
   height: 200px;
   width: 200px;
-  border: 1px solid black;
+}
+
+#inputImg {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+#inputImg + label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 200px;
+  width: 200px;
+  border: 1px solid cadetblue;
+  border-radius: 4px;
+  padding-top: 80px;
+  text-align: center;
+  color: gray;
+  opacity: 0;
+  cursor: pointer;
+}
+
+#inputImg + label:hover {
+  background-color: black;
+  opacity: 0.6;
 }
