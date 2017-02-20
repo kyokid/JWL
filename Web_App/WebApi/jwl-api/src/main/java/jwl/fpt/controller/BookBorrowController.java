@@ -1,10 +1,7 @@
 package jwl.fpt.controller;
 
 import jwl.fpt.model.RestServiceModel;
-import jwl.fpt.model.dto.BorrowedBookCopyDto;
-import jwl.fpt.model.dto.BorrowerDto;
-import jwl.fpt.model.dto.RfidDto;
-import jwl.fpt.model.dto.RfidDtoList;
+import jwl.fpt.model.dto.*;
 import jwl.fpt.service.IBookBorrowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -77,6 +74,16 @@ public class BookBorrowController {
 
         RestServiceModel.checkResult(borrowedBookCopyDtos, responseObj, messages);
 
+        return responseObj;
+    }
+
+    @RequestMapping(value = "/getBorrowedBooks", method = RequestMethod.POST)
+    public RestServiceModel<List<BorrowedBookCopyDto>> getBorrowedBookByUserId(@RequestBody AccountDto accountDto) {
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.getBorrowedBookByUserId(accountDto);
+        RestServiceModel<List<BorrowedBookCopyDto>> responseObj = new RestServiceModel<>();
+        responseObj.setSucceed(true);
+        responseObj.setData(borrowedBookCopyDtos);
+        responseObj.setMessage("Borrowed of User");
         return responseObj;
     }
 }

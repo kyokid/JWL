@@ -20,6 +20,7 @@ public interface UserRepository extends JpaRepository<TblUserEntity, Integer> {
 
     List<TblUserEntity> findByUsernameLike(String q);
 
+
     @Query("select p from ProfileEntity p where p.userId = ?1")
     ProfileEntity findProfileByUserId(String userId);
 }

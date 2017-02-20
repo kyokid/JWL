@@ -2,6 +2,7 @@ package jwl.fpt.service.imp;
 
 import jwl.fpt.entity.*;
 import jwl.fpt.model.BorrowCart;
+import jwl.fpt.model.dto.AccountDto;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.BorrowerDto;
 import jwl.fpt.model.dto.RfidDtoList;
@@ -154,6 +155,20 @@ public class BookBorrowService implements IBookBorrowService {
 
         borrowCarts.remove(borrowCart);
 
+        return borrowedBookCopyDtos;
+    }
+
+    @Override
+    public List<BorrowedBookCopyDto> getBorrowedBookByUserId(AccountDto accountDto) {
+        String userId = accountDto.getUserId();
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(userId);
+        List<BorrowedBookCopyEntity> bookCopyEntities = borrowedBookCopyRepo.findByAccount(accountEntity);
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
+        for (BorrowedBookCopyEntity entity: bookCopyEntities) {
+            BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
+            borrowedBookCopyDtos.add(dto);
+        }
         return borrowedBookCopyDtos;
     }
 

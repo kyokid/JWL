@@ -22,4 +22,5 @@ public class BorrowedBookCopyDto {
     private int extendNumber;
     private Integer rootId;
     private String bookCopyBookTitle;
+    private String bookCopyBookPublisher;
 }

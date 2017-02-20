@@ -1,5 +1,6 @@
 package jwl.fpt.service;
 
+import jwl.fpt.model.dto.AccountDto;
 import jwl.fpt.model.dto.RfidDtoList;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.BorrowerDto;
@@ -18,4 +19,6 @@ public interface IBookBorrowService {
     BorrowerDto initBorrowCart(BorrowerDto borrowerDto);
     RfidDtoList addCopiesToCart(RfidDtoList rfidDtoList);
     List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto);
+    List<BorrowedBookCopyDto> getBorrowedBookByUserId(AccountDto accountDto);
+
 }
