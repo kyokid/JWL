@@ -1,9 +1,6 @@
 package jwl.fpt.service;
 
-import jwl.fpt.model.dto.AccountDto;
-import jwl.fpt.model.dto.RfidDtoList;
-import jwl.fpt.model.dto.BorrowedBookCopyDto;
-import jwl.fpt.model.dto.BorrowerDto;
+import jwl.fpt.model.dto.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -20,5 +17,5 @@ public interface IBookBorrowService {
     RfidDtoList addCopiesToCart(RfidDtoList rfidDtoList);
     List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto);
     List<BorrowedBookCopyDto> getBorrowedBookByUserId(AccountDto accountDto);
-
+    List<BorrowedBookCopyDto> deleteBorrowingCopy(BorrowedBookCopyDto borrowedBookCopyDto);
 }

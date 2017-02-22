@@ -18,4 +18,6 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     @Modifying
     @Query("update AccountEntity a set a.inLibrary = ?1 where a.userId = ?2")
     int setStateOfAccount(boolean state, String userId);
+
+    AccountEntity findByUserId(String userId);
 }

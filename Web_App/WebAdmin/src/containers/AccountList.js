@@ -18,9 +18,9 @@ class AccountList extends Component {
 				<thead>
 					<tr>
 						<th>No.</th>
-						<th>name</th>
-						<th>username</th>
-						<th>email</th>
+						<th>Username</th>
+						<th>Full name</th>
+						<th>Email</th>
 						<th>Tools</th>
 					</tr>
 				</thead>
@@ -40,7 +40,6 @@ class AccountList extends Component {
 				<td>{account.profileFullname}</td>
 				<td>{account.profileEmail}</td>
 				<td>
-					<a href="#"><span className="glyphicon glyphicon-pencil" aria-hidden="true" /></a>
 					<a href="#"><span className="glyphicon glyphicon-remove" aria-hidden="true" /></a>
 				</td>
 			</tr>
@@ -48,8 +47,8 @@ class AccountList extends Component {
 	}
 }
 
-function mapStateToProps({ accounts }) {
-	return { accounts }
+function mapStateToProps(state) {
+	return { accounts: state.accounts.all }
 }
 
 function mapDispatchToProps(dispatch) {

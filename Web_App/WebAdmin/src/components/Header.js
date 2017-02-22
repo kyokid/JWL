@@ -19,7 +19,7 @@ export default function () {
 							 role="button"
 							 aria-haspopup="true"
 							 aria-expanded="false">
-							<img className="img-circle" src="bep.jpg" />
+							<img className="img-circle" src="/bep.jpg" />
 							<span className="account-fullname">Bep</span>
 						</a>
 

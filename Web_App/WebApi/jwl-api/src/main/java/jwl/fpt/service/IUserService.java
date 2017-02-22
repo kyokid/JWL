@@ -1,5 +1,6 @@
 package jwl.fpt.service;
 
+import jwl.fpt.model.dto.AccountDetailDto;
 import jwl.fpt.model.dto.AccountDto;
 import jwl.fpt.model.dto.ProfileDto;
 import jwl.fpt.model.dto.UserDto;
@@ -17,4 +18,6 @@ public interface IUserService {
     List<UserDto> findByUsernameLike(String q);
 
     ProfileDto findProfileByUserId(String userId);
+
+    AccountDetailDto getAccountDetail(String userId);
 }

@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletResponse;
  * Created by Entaard on 2/13/17.
  */
 public class CorsInterceptor extends HandlerInterceptorAdapter {
-    public static final String CREDENTIALS_NAME = "Access-Control-Allow-Credentials";
-    public static final String ORIGIN_NAME = "Access-Control-Allow-Origin";
-    public static final String METHODS_NAME = "Access-Control-Allow-Methods";
-    public static final String HEADERS_NAME = "Access-Control-Allow-Headers";
-    public static final String MAX_AGE_NAME = "Access-Control-Max-Age";
+    private static final String CREDENTIALS_NAME = "Access-Control-Allow-Credentials";
+    private static final String ORIGIN_NAME = "Access-Control-Allow-Origin";
+    private static final String METHODS_NAME = "Access-Control-Allow-Methods";
+    private static final String HEADERS_NAME = "Access-Control-Allow-Headers";
+    private static final String MAX_AGE_NAME = "Access-Control-Max-Age";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

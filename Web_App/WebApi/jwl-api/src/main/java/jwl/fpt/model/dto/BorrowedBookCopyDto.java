@@ -9,17 +9,17 @@ import java.sql.Date;
  */
 @Data
 public class BorrowedBookCopyDto {
-    private int id;
+    private Integer id;
     private String bookCopyRfid;
     private String accountUserId;
-    private int borrowLimitDays;
-    private int extendTimes;
-    private int extendTimesLimit;
-    private int daysPerExtend;
+    private Integer borrowLimitDays;
+    private Integer extendTimes;
+    private Integer extendTimesLimit;
+    private Integer daysPerExtend;
     private Date borrowedDate;
     private Date returnDate;
     private Date deadlineDate;
-    private int extendNumber;
+    private Integer extendNumber;
     private Integer rootId;
     private String bookCopyBookTitle;
     private String bookCopyBookPublisher;

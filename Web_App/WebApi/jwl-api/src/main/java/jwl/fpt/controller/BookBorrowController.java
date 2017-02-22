@@ -4,13 +4,8 @@ import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 import jwl.fpt.service.IBookBorrowService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +13,7 @@ import java.util.Set;
 /**
  * Created by Entaard on 1/29/17.
  */
+// TODO: Refactor APIs' name.
 @RestController
 public class BookBorrowController {
     @Autowired
@@ -84,6 +80,18 @@ public class BookBorrowController {
         responseObj.setSucceed(true);
         responseObj.setData(borrowedBookCopyDtos);
         responseObj.setMessage("Borrowed of User");
+        return responseObj;
+    }
+
+    @RequestMapping(value = "/delete/copy", method = RequestMethod.DELETE)
+    public RestServiceModel<List<BorrowedBookCopyDto>> deleteBorrowingCopy(@RequestBody BorrowedBookCopyDto borrowedBookCopyDto) {
+        // TODO: Add necessary validations.
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.deleteBorrowingCopy(borrowedBookCopyDto);
+        RestServiceModel<List<BorrowedBookCopyDto>> responseObj = new RestServiceModel<>();
+        String[] messages = {"UserId or Copy's id is invalid!", "Copy deleted!"};
+
+        RestServiceModel.checkResult(borrowedBookCopyDtos, responseObj, messages);
+
         return responseObj;
     }
 }

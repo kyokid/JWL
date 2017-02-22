@@ -3,6 +3,7 @@ package jwl.fpt.service.imp;
 import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.ProfileEntity;
 import jwl.fpt.entity.TblUserEntity;
+import jwl.fpt.model.dto.AccountDetailDto;
 import jwl.fpt.model.dto.AccountDto;
 import jwl.fpt.model.dto.ProfileDto;
 import jwl.fpt.model.dto.UserDto;
@@ -78,5 +79,13 @@ public class UserService implements IUserService {
         ProfileDto profileDTO = modelMapper.map(profileEntity, ProfileDto.class);
 
         return profileDTO;
+    }
+
+    @Override
+    public AccountDetailDto getAccountDetail(String userId) {
+        // TODO: Add necessary validations.
+        AccountEntity accountEntity = accountRepository.findByUserId(userId);
+        AccountDetailDto accountDetailDto = modelMapper.map(accountEntity, AccountDetailDto.class);
+        return accountDetailDto;
     }
 }

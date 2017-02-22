@@ -2,11 +2,11 @@ package jwl.fpt.repository;
 
 import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.BorrowedBookCopyEntity;
-import jwl.fpt.model.dto.AccountDto;
-import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -15,4 +15,9 @@ import java.util.List;
 public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEntity, Integer> {
 //    @Query("select b from BorrowedBookCopyEntity b where b.userId = ?1")
     List<BorrowedBookCopyEntity> findByAccount(AccountEntity entity);
+
+    @Transactional
+    @Modifying
+    @Query("delete from BorrowedBookCopyEntity b where b.account.userId = ?1 and b.id = ?2")
+    void deleteByUserIdAndBorrowedCopyId(String userId, Integer borrowedCopyId);
 }

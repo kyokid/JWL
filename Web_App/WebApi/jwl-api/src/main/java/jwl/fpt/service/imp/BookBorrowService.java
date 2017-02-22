@@ -2,10 +2,7 @@ package jwl.fpt.service.imp;
 
 import jwl.fpt.entity.*;
 import jwl.fpt.model.BorrowCart;
-import jwl.fpt.model.dto.AccountDto;
-import jwl.fpt.model.dto.BorrowedBookCopyDto;
-import jwl.fpt.model.dto.BorrowerDto;
-import jwl.fpt.model.dto.RfidDtoList;
+import jwl.fpt.model.dto.*;
 import jwl.fpt.repository.BookCopyRepo;
 import jwl.fpt.repository.BorrowedBookCopyRepo;
 import jwl.fpt.repository.BorrowerTicketRepo;
@@ -166,6 +163,29 @@ public class BookBorrowService implements IBookBorrowService {
         List<BorrowedBookCopyEntity> bookCopyEntities = borrowedBookCopyRepo.findByAccount(accountEntity);
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
         for (BorrowedBookCopyEntity entity: bookCopyEntities) {
+            BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
+            borrowedBookCopyDtos.add(dto);
+        }
+        return borrowedBookCopyDtos;
+    }
+
+    @Override
+    public List<BorrowedBookCopyDto> deleteBorrowingCopy(BorrowedBookCopyDto borrowedBookCopyDto) {
+        Integer borrowedBookCopyId = borrowedBookCopyDto.getId();
+        String userId = borrowedBookCopyDto.getAccountUserId();
+
+        if (borrowedBookCopyId == null || userId == null) {
+            return null;
+        }
+
+        borrowedBookCopyRepo.deleteByUserIdAndBorrowedCopyId(userId, borrowedBookCopyId);
+
+
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(userId);
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByAccount(accountEntity);
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
+        for (BorrowedBookCopyEntity entity: borrowedBookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
             borrowedBookCopyDtos.add(dto);
         }

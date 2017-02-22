@@ -6,8 +6,7 @@ export function getAllAccounts() {
 	// const request = axios.get(`${Api.ROOT_URL}${Api.USERS}`);
 	const request = axios({
 		method: 'GET',
-		url: `${Api.ROOT_URL_LOCAL}${Api.USERS}`
-		// Headers can be added here
+		url: `${Api.ROOT_URL}${Api.USERS}`
 	})
 
 	return {
@@ -16,8 +15,17 @@ export function getAllAccounts() {
 	}
 }
 
+export function getAccountDetail(id) {
+	const request = axios.get(`${Api.ROOT_URL}${Api.USERS}/${id}`)
+
+	return {
+		type: Types.FETCH_ACCOUNT,
+		payload: request
+	}
+}
+
 export function getUserByUsername(term) {
-	const request = axios.get(`${Api.ROOT_URL}${Api.USERS}?username=${term}`);
+	const request = axios.get(`${Api.ROOT_URL}${Api.USERS}?username=${term}`)
 
 	return {
 		type: Types.FETCH_ACCOUNTS,
@@ -38,6 +46,22 @@ export function submitImg() {
 
 	return {
 		type: Types.ACC_IMG_URL,
+		payload: request
+	}
+}
+
+export function deleteBorrowedCopy(userId, borrowedCopyId) {
+	const request = axios({
+		method: 'DELETE',
+		url: `${Api.ROOT_URL}${Api.DELETE_COPY}`,
+		data: {
+			"id": borrowedCopyId,
+			"accountUserId": userId
+		}
+	})
+
+	return {
+		type: Types.DELETE_ACCOUNT,
 		payload: request
 	}
 }

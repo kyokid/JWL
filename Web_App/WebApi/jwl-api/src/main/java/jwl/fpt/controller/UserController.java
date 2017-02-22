@@ -2,6 +2,7 @@ package jwl.fpt.controller;
 
 import jwl.fpt.entity.BorrowerTicketEntity;
 import jwl.fpt.model.RestServiceModel;
+import jwl.fpt.model.dto.AccountDetailDto;
 import jwl.fpt.model.dto.AccountDto;
 import jwl.fpt.model.dto.ProfileDto;
 import jwl.fpt.model.dto.UserDto;
@@ -92,6 +93,16 @@ public class UserController {
         } else {
             result.setMessage("Search Fail!");
         }
+        return result;
+    }
+
+    @RequestMapping(path = "users/{id}", method = RequestMethod.GET)
+    public RestServiceModel<AccountDetailDto> getDetail(@PathVariable("id") String userId) {
+        // TODO: Add necessary validations.
+        RestServiceModel<AccountDetailDto> result = new RestServiceModel<>();
+        AccountDetailDto accountDetailDto = userService.getAccountDetail(userId);
+        result.setData(accountDetailDto);
+        result.setSucceed(true);
         return result;
     }
 }
