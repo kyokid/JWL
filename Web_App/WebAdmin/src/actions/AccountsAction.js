@@ -49,19 +49,3 @@ export function submitImg() {
 		payload: request
 	}
 }
-
-export function deleteBorrowedCopy(userId, borrowedCopyId) {
-	const request = axios({
-		method: 'DELETE',
-		url: `${Api.ROOT_URL}${Api.DELETE_COPY}`,
-		data: {
-			"id": borrowedCopyId,
-			"accountUserId": userId
-		}
-	})
-
-	return {
-		type: Types.DELETE_ACCOUNT,
-		payload: request
-	}
-}

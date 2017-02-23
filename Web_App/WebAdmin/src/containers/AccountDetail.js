@@ -2,8 +2,8 @@ import React, { Component, PropTypes } from "react"
 import { connect } from "react-redux"
 import { Link, browserHistory } from "react-router"
 
-import { getAccountDetail, deleteBorrowedCopy } from "../actions/AccountsAction"
-import { initBorrow, checkout } from "../actions/BookBorrowAction"
+import { getAccountDetail } from "../actions/AccountsAction"
+import { initBorrow, checkout, deleteBorrowedCopy } from "../actions/BookBorrowAction"
 import { USERS } from "../constants/api"
 
 class AccountDetail extends Component {
@@ -30,15 +30,18 @@ class AccountDetail extends Component {
 			return <div>Loading...</div>
 		}
 
+		const userId = account.userId
+		const ibeaconId = 1
+
 		return (
 			<div>
 				<Link to="/">Back</Link>
-				<h4>{account.userId}</h4>
+				<h4>{userId}</h4>
 				<h5>{account.profile.fullname}</h5>
 				<br />
 				<button
 					className="btn btn-primary"
-					onClick={this.onClickStartAddBooks}>
+					onClick={() => this.onClickStartAddBooks(userId, ibeaconId)}>
 					{this.state.isAddingBook? "Stop Adding Books" : "Start Adding Books"}
 				</button>
 				<h4>Borrowing Book List</h4>
@@ -47,11 +50,14 @@ class AccountDetail extends Component {
 		)
 	}
 
-	onClickStartAddBooks() {
+	onClickStartAddBooks(userId, ibeaconId) {
 		if (!this.state.isAddingBook) {
-			this.props.initBorrow("SE61476", "123")
+			this.props.initBorrow(userId, ibeaconId)
 		} else {
-			this.props.checkout("SE61476", "123")
+			this.props.checkout(userId, ibeaconId)
+				.then(() => {
+					browserHistory.push(`/${USERS}/${userId}`)
+				})
 		}
 
 		this.setState({ isAddingBook: !this.state.isAddingBook })
