@@ -12,4 +12,5 @@ public class AccountDto {
     private int roleId;
     private boolean isInLibrary;
     private boolean isActivated;
+    private String googleToken;
 }

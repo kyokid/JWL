@@ -15,9 +15,13 @@ public interface IUserService {
 
     AccountDto findByUsernameAndPassword(String username, String password);
 
+    AccountDto findByUsername(String userId);
+
     List<UserDto> findByUsernameLike(String q);
 
     ProfileDto findProfileByUserId(String userId);
 
     AccountDetailDto getAccountDetail(String userId);
+
+    void updateGoogleToken(String googleToken, String userId);
 }

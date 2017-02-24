@@ -9,6 +9,7 @@ import jwl.fpt.model.dto.UserDto;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.service.IUserService;
+import jwl.fpt.util.NotificationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,6 +79,8 @@ public class UserController {
         ProfileDto profileDTO = userService.findProfileByUserId(searchTerm);
         System.out.println("request detection");
         if (profileDTO != null) {
+            String token = userService.findByUsername(searchTerm).getGoogleToken();
+            NotificationUtils.callNotification(profileDTO.getUserId(), token);
             //Update Database
             accountRepository.setStateOfAccount(true, searchTerm);
             BorrowerTicketEntity ticket = new BorrowerTicketEntity();
@@ -105,4 +108,13 @@ public class UserController {
         result.setSucceed(true);
         return result;
     }
+
+    @RequestMapping(path = "/users/updateToken", method = RequestMethod.GET)
+    public void updateToken(@RequestParam(value = "userId") String userId,
+                            @RequestParam(value = "googleToken") String googleToken) {
+        userService.updateGoogleToken(googleToken, userId);
+        RestServiceModel<String> result = new RestServiceModel<>();
+        result.setSucceed(true);
+    }
+
 }

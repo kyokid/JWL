@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS public.account
   REFERENCES public.user_role (id) MATCH SIMPLE
   ON UPDATE CASCADE ON DELETE NO ACTION
 );
+ALTER TABLE public.account ADD COLUMN google_token text;
 
 -- profile:
 -- Other information of a user.

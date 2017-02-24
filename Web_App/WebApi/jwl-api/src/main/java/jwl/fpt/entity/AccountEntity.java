@@ -13,6 +13,7 @@ public class AccountEntity {
     private String password;
     private Boolean isInLibrary;
     private Boolean isActivated;
+    private String googleToken;
     private UserRoleEntity userRole;
     private ProfileEntity profile;
     private Collection<BorrowedBookCopyEntity> borrowedBookCopies;
@@ -54,6 +55,17 @@ public class AccountEntity {
     public Boolean getActivated() {
         return isActivated;
     }
+
+    @Basic
+    @Column(name = "google_token")
+    public String getGoogleToken() {
+        return googleToken;
+    }
+
+    public void setGoogleToken(String googleToken) {
+        this.googleToken = googleToken;
+    }
+
 
     public void setActivated(Boolean activated) {
         isActivated = activated;

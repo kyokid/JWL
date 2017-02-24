@@ -2,6 +2,7 @@ package jwl.fpt.controller;
 
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
+import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.service.IBookBorrowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import java.util.Set;
 public class BookBorrowController {
     @Autowired
     private IBookBorrowService bookBorrowService;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @RequestMapping(value = "/init/borrow", method = RequestMethod.POST)
     public RestServiceModel<BorrowerDto> initBorrowCart(@RequestBody BorrowerDto borrowerDto) {
@@ -67,7 +70,7 @@ public class BookBorrowController {
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.checkoutCart(borrowerDto);
         RestServiceModel<List<BorrowedBookCopyDto>> responseObj = new RestServiceModel<>();
         String[] messages = {"Checkout failed!", "User checked out!"};
-
+        accountRepository.setStateOfAccount(false, borrowerDto.getUserId());
         RestServiceModel.checkResult(borrowedBookCopyDtos, responseObj, messages);
 
         return responseObj;
