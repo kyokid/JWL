@@ -21,4 +21,9 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
 
     // TODO: only list a user's borrowing copies.
     AccountEntity findByUserId(String userId);
+
+    @Transactional
+    @Modifying
+    @Query("update AccountEntity a set a.googleToken = ?1 where a.userId = ?2")
+    int updateGoogleToken(String googleToken, String userId);
 }
