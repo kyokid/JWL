@@ -4,7 +4,13 @@ import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 import jwl.fpt.service.IBookBorrowService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +24,8 @@ import java.util.Set;
 public class BookBorrowController {
     @Autowired
     private IBookBorrowService bookBorrowService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @RequestMapping(value = "/init/borrow", method = RequestMethod.POST)
     public RestServiceModel<BorrowerDto> initBorrowCart(@RequestBody BorrowerDto borrowerDto) {
@@ -57,6 +65,7 @@ public class BookBorrowController {
         String[] messages = {"Invalid user!", "Copy added!"};
 
         RestServiceModel.checkResult(result, responseObj, messages);
+        simpMessagingTemplate.convertAndSend("/socket", result);
 
         return responseObj;
     }
@@ -94,4 +103,25 @@ public class BookBorrowController {
 
         return responseObj;
     }
+
+    @RequestMapping(value = "/save/copy", method = RequestMethod.POST)
+    public RestServiceModel<RfidDtoList> saveCopyToDatabase(@RequestBody RfidDto rfidDto) {
+        // TODO: Add necessary validations.
+        BorrowedBookCopyDto result = bookBorrowService.saveCopyToDatabase(rfidDto);
+        RestServiceModel<RfidDtoList> responseObj = new RestServiceModel<>();
+        String[] messages = {"Invalid user!", "Copy saved!"};
+
+        RestServiceModel.checkResult(result, responseObj, messages);
+        simpMessagingTemplate.convertAndSend("/socket", result);
+
+        return responseObj;
+    }
+
+    @MessageMapping("/hello")
+    @SendTo("/socket")
+    public String greeting() throws Exception {
+        Thread.sleep(1000); // simulated delay
+        return "Hello Socket from server!!!";
+    }
+
 }

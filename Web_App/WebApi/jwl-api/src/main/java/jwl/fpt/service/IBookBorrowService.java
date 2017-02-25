@@ -18,4 +18,5 @@ public interface IBookBorrowService {
     List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto);
     List<BorrowedBookCopyDto> getBorrowedBookByUserId(AccountDto accountDto);
     List<BorrowedBookCopyDto> deleteBorrowingCopy(BorrowedBookCopyDto borrowedBookCopyDto);
+    BorrowedBookCopyDto saveCopyToDatabase(RfidDto rfidDto);
 }

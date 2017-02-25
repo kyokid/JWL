@@ -18,6 +18,7 @@ public class CorsInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         response.setHeader(CREDENTIALS_NAME, "true");
+        // TODO: security.
         response.setHeader(ORIGIN_NAME, "*");
         response.setHeader(METHODS_NAME, "GET, OPTIONS, POST, PUT, DELETE");
         response.setHeader(HEADERS_NAME, "Origin, X-Requested-With, Content-Type, Accept");

@@ -139,6 +139,7 @@ public class BookBorrowService implements IBookBorrowService {
     }
 
     @Override
+    @Transactional
     public List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto) {
         // TODO: Add necessary validations.
         String ibeaconId = borrowerDto.getIBeaconId();
@@ -190,6 +191,32 @@ public class BookBorrowService implements IBookBorrowService {
             borrowedBookCopyDtos.add(dto);
         }
         return borrowedBookCopyDtos;
+    }
+
+    @Override
+    @Transactional
+    public BorrowedBookCopyDto saveCopyToDatabase(RfidDto rfidDto) {
+        String ibeaconId = rfidDto.getIbeaconId();
+        BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
+        if (borrowCart == null) {
+            return null;
+        }
+
+        String userId = borrowCart.getUserId();
+        if (userId == null) {
+            return null;
+        }
+        BookCopyEntity bookCopyEntity = bookCopyRepo.getOne(rfidDto.getRfid());
+        List<BookCopyEntity> bookCopyEntities = new ArrayList<>();
+        bookCopyEntities.add(bookCopyEntity);
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = createBorrowedBookCopyEntities(bookCopyEntities, userId);
+        borrowedBookCopyEntities = borrowedBookCopyRepo.save(borrowedBookCopyEntities);
+        if (borrowedBookCopyEntities.isEmpty()) {
+            return null;
+        }
+        BorrowedBookCopyDto borrowedBookCopyDto = modelMapper.map(borrowedBookCopyEntities.get(0), BorrowedBookCopyDto.class);
+
+        return borrowedBookCopyDto;
     }
 
     private List<BorrowedBookCopyDto> saveBorrowCart(BorrowCart borrowCart) {
