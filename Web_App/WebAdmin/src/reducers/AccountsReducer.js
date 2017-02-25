@@ -1,5 +1,5 @@
 import React from 'react'
-import { FETCH_ACCOUNTS, FETCH_ACCOUNT, DELETE_ACCOUNT, CHECKOUT } from '../constants/action-type'
+import * as Types from '../constants/action-type'
 
 const INITIAL_STATE = {
 	all: [],
@@ -7,19 +7,29 @@ const INITIAL_STATE = {
 }
 
 export default function (state = INITIAL_STATE, action) {
-	let newAccount = state.account
-
 	switch (action.type) {
-		case FETCH_ACCOUNTS:
+		case Types.FETCH_ACCOUNTS:
 			return { ...state, all: action.payload.data }
-		case FETCH_ACCOUNT:
+		case Types.FETCH_ACCOUNT:
 			return { ...state, account: action.payload.data.data }
-		case DELETE_ACCOUNT:
-			newAccount.borrowedBookCopies = action.payload.data.data
-			return { ...state, account: newAccount }
-		case CHECKOUT:
-			newAccount.borrowedBookCopies = [...action.payload.data.data, ...newAccount.borrowedBookCopies]
-			return { ...state, account: newAccount }
+		case Types.DELETE_ACCOUNT:
+			return {
+				...state,
+				account: {
+					...state.account,
+					borrowedBookCopies: action.payload.data.data
+				}
+			}
+		case Types.FETCH_SAVED_COPY:
+			console.log("reducer Types.FETCH_SAVED_COPY called!")
+			console.log("reducer: " + action.payload)
+			return {
+				...state,
+				account: {
+					...state.account,
+					borrowedBookCopies: [action.payload ,...state.account.borrowedBookCopies]
+				}
+			}
 	}
 	return state
 }

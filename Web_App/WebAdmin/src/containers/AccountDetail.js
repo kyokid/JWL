@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from "react"
 import { connect } from "react-redux"
-import { Link, browserHistory } from "react-router"
+import { Link } from "react-router"
 
 import { getAccountDetail } from "../actions/AccountsAction"
-import { initBorrow, checkout, deleteBorrowedCopy } from "../actions/BookBorrowAction"
-import { USERS } from "../constants/api"
+import { initBorrow, checkout, deleteBorrowedCopy, fetchSaveBorrowedCopy } from "../actions/BookBorrowAction"
+import * as Socket from "../helpers/Socket"
 
 class AccountDetail extends Component {
 	constructor(props) {
@@ -21,6 +21,10 @@ class AccountDetail extends Component {
 
 	componentWillMount() {
 		this.props.getAccountDetail(this.props.params.id)
+	}
+
+	componentWillUnmount() {
+		this.disconnectFromChannel()
 	}
 
 	render() {
@@ -50,14 +54,33 @@ class AccountDetail extends Component {
 		)
 	}
 
+	connectToChannel() {
+		const self = this
+		this.socketClient = Socket.initSocket()
+		this.socketClient.connect({}, frame => {
+			console.log('Connected: ' + frame)
+			self.socketClient.subscribe('/socket', returnedData => {
+				console.log("Socket Called!!")
+				console.log(returnedData)
+				self.props.fetchSaveBorrowedCopy(JSON.parse(returnedData.body))
+			})
+		})
+	}
+
+	disconnectFromChannel() {
+		if (this.socketClient != null) {
+			this.socketClient.disconnect()
+		}
+		console.log("Disconnected")
+	}
+
 	onClickStartAddBooks(userId, ibeaconId) {
 		if (!this.state.isAddingBook) {
 			this.props.initBorrow(userId, ibeaconId)
+			this.connectToChannel()
 		} else {
 			this.props.checkout(userId, ibeaconId)
-				.then(() => {
-					browserHistory.push(`/${USERS}/${userId}`)
-				})
+			this.disconnectFromChannel()
 		}
 
 		this.setState({ isAddingBook: !this.state.isAddingBook })
@@ -103,9 +126,6 @@ class AccountDetail extends Component {
 
 	onClickDeleteCopy(userId, borrowedCopyId) {
 		this.props.deleteBorrowedCopy(userId, borrowedCopyId)
-			.then(() => {
-				browserHistory.push(`/${USERS}/${userId}`)
-			})
 	}
 }
 
@@ -115,5 +135,5 @@ function mapStateToProps(state) {
 
 export default connect(
 	mapStateToProps,
-	{ getAccountDetail, deleteBorrowedCopy, initBorrow, checkout })
+	{ getAccountDetail, deleteBorrowedCopy, initBorrow, checkout, fetchSaveBorrowedCopy })
 (AccountDetail)
