@@ -114,6 +114,14 @@ public class UserService implements IUserService {
         return accountDetailDto;
     }
 
+    @Override
+    public Boolean getStatus(String userId) {
+        if (userId == null) {
+            return false;
+        }
+        return accountRepository.getStatus(userId);
+    }
+
     private List<BorrowerTicketEntity> createNewBorrowerTicket(){
         return null;
     }

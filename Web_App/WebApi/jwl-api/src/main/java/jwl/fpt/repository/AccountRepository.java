@@ -30,4 +30,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     @Modifying
     @Query("update AccountEntity a set a.googleToken = ?1 where a.userId = ?2")
     int updateGoogleToken(String googleToken, String userId);
+
+    @Query("select acc.inLibrary from AccountEntity acc where acc.userId = ?1")
+    Boolean getStatus(String userId);
 }

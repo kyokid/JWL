@@ -23,5 +23,7 @@ public interface IUserService {
 
     AccountDetailDto getAccountDetail(String userId);
 
+    Boolean getStatus(String userId);
+
     void updateGoogleToken(String googleToken, String userId);
 }

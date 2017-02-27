@@ -82,7 +82,7 @@ public class UserController {
             String token = userService.findByUsername(searchTerm).getGoogleToken();
             NotificationUtils.callNotification(profileDTO.getUserId(), token);
             //Update Database
-            accountRepository.setStateOfAccount(true, searchTerm);
+            accountRepository.setStatus(true, searchTerm);
             BorrowerTicketEntity ticket = new BorrowerTicketEntity();
             ticket.setQrId(ticketId);
             ticket.setAccount(searchTerm);
@@ -107,6 +107,16 @@ public class UserController {
         result.setData(accountDetailDto);
         result.setSucceed(true);
         return result;
+    }
+
+    @RequestMapping(path = "users/{id}/status", method = RequestMethod.GET)
+    public RestServiceModel<Boolean> getStatus(@PathVariable("id") String userId) {
+        // TODO: Add necessary validations.
+        RestServiceModel<Boolean> responseObj = new RestServiceModel<>();
+        Boolean result = userService.getStatus(userId);
+        responseObj.setData(result);
+        responseObj.setSucceed(true);
+        return responseObj;
     }
 
     @RequestMapping(path = "/users/updateToken", method = RequestMethod.GET)
