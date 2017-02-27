@@ -3,6 +3,7 @@ package jwl.fpt.service.imp;
 import jwl.fpt.entity.*;
 import jwl.fpt.model.BorrowCart;
 import jwl.fpt.model.dto.*;
+import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BookCopyRepo;
 import jwl.fpt.repository.BorrowedBookCopyRepo;
 import jwl.fpt.repository.BorrowerTicketRepo;
@@ -38,6 +39,8 @@ public class BookBorrowService implements IBookBorrowService {
     private ModelMapper modelMapper;
     @Autowired
     private FindByIndexNameSessionRepository sessionRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     private List<BorrowCart> borrowCarts = new ArrayList<>();
 
@@ -150,6 +153,7 @@ public class BookBorrowService implements IBookBorrowService {
         }
 
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = saveBorrowCart(borrowCart);
+        accountRepository.setStatus(false, userId);
 
         borrowCarts.remove(borrowCart);
 

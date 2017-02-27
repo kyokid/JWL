@@ -17,7 +17,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     @Transactional
     @Modifying
     @Query("update AccountEntity a set a.inLibrary = ?1 where a.userId = ?2")
-    int setStateOfAccount(boolean state, String userId);
+    int setStatus(boolean state, String userId);
 
     // TODO: only list a user's borrowing copies (get rid of default @Where in AccountEntity)
 //    @Query("select distinct acc from AccountEntity acc " +
