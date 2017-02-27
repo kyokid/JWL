@@ -4,8 +4,6 @@ import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 import jwl.fpt.service.IBookBorrowService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,7 +63,6 @@ public class BookBorrowController {
         String[] messages = {"Invalid user!", "Copy added!"};
 
         RestServiceModel.checkResult(result, responseObj, messages);
-        simpMessagingTemplate.convertAndSend("/socket", result);
 
         return responseObj;
     }
@@ -83,8 +80,8 @@ public class BookBorrowController {
     }
 
     @RequestMapping(value = "/getBorrowedBooks", method = RequestMethod.POST)
-    public RestServiceModel<List<BorrowedBookCopyDto>> getBorrowedBookByUserId(@RequestBody AccountDto accountDto) {
-        List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.getBorrowedBookByUserId(accountDto);
+    public RestServiceModel<List<BorrowedBookCopyDto>> getBorrowingBookByUserId(@RequestBody AccountDto accountDto) {
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.getBorrowingBookByUserId(accountDto);
         RestServiceModel<List<BorrowedBookCopyDto>> responseObj = new RestServiceModel<>();
         responseObj.setSucceed(true);
         responseObj.setData(borrowedBookCopyDtos);
@@ -112,16 +109,8 @@ public class BookBorrowController {
         String[] messages = {"Invalid user!", "Copy saved!"};
 
         RestServiceModel.checkResult(result, responseObj, messages);
-        simpMessagingTemplate.convertAndSend("/socket", result);
+        simpMessagingTemplate.convertAndSend("/socket", responseObj);
 
         return responseObj;
     }
-
-    @MessageMapping("/hello")
-    @SendTo("/socket")
-    public String greeting() throws Exception {
-        Thread.sleep(1000); // simulated delay
-        return "Hello Socket from server!!!";
-    }
-
 }

@@ -16,7 +16,7 @@ public interface IBookBorrowService {
     BorrowerDto initBorrowCart(BorrowerDto borrowerDto);
     RfidDtoList addCopiesToCart(RfidDtoList rfidDtoList);
     List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto);
-    List<BorrowedBookCopyDto> getBorrowedBookByUserId(AccountDto accountDto);
+    List<BorrowedBookCopyDto> getBorrowingBookByUserId(AccountDto accountDto);
     List<BorrowedBookCopyDto> deleteBorrowingCopy(BorrowedBookCopyDto borrowedBookCopyDto);
     BorrowedBookCopyDto saveCopyToDatabase(RfidDto rfidDto);
 }

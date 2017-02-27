@@ -46,11 +46,11 @@ export function deleteBorrowedCopy(userId, borrowedCopyId) {
 	}
 }
 
-export function fetchSaveBorrowedCopy(borrowedCopy) {
+export function fetchSaveBorrowedCopy(borrowedCopyData) {
 	console.log("fetchSaveBorrowedCopy called!!!")
-	console.log("action: " + borrowedCopy)
+	console.log("action: " + borrowedCopyData)
 	return {
 		type: Types.FETCH_SAVED_COPY,
-		payload: borrowedCopy
+		payload: borrowedCopyData
 	}
 }

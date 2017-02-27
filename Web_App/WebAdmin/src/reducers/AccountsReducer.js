@@ -22,12 +22,16 @@ export default function (state = INITIAL_STATE, action) {
 			}
 		case Types.FETCH_SAVED_COPY:
 			console.log("reducer Types.FETCH_SAVED_COPY called!")
-			console.log("reducer: " + action.payload)
+			console.log("reducer: " + action.payload.data)
+			if (!action.payload.data) {
+				return state;
+			}
+
 			return {
 				...state,
 				account: {
 					...state.account,
-					borrowedBookCopies: [action.payload ,...state.account.borrowedBookCopies]
+					borrowedBookCopies: [action.payload.data ,...state.account.borrowedBookCopies]
 				}
 			}
 	}

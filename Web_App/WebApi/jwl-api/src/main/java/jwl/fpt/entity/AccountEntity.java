@@ -1,5 +1,7 @@
 package jwl.fpt.entity;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -112,6 +114,8 @@ public class AccountEntity {
     }
 
     @OneToMany(mappedBy = "account")
+    @Where(clause = "return_date is null")
+    @OrderBy("id desc")
     public Collection<BorrowedBookCopyEntity> getBorrowedBookCopies() {
         return borrowedBookCopies;
     }

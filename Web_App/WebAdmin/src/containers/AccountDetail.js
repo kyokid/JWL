@@ -7,6 +7,8 @@ import { initBorrow, checkout, deleteBorrowedCopy, fetchSaveBorrowedCopy } from 
 import * as Socket from "../helpers/Socket"
 
 class AccountDetail extends Component {
+	librarianId = 1
+
 	constructor(props) {
 		super(props)
 
@@ -15,6 +17,9 @@ class AccountDetail extends Component {
 		this.onClickStartAddBooks = this.onClickStartAddBooks.bind(this)
 
 		this.state = {
+			userId: this.props.params.id,
+			ibeaconId: this.librarianId,	// Each librarian should have a RFID Reader -> pair reader-borrowCart with his id,
+																		// but for demo purpose, we pair with ibeaconId = 1
 			isAddingBook: false
 		}
 	}
@@ -24,6 +29,7 @@ class AccountDetail extends Component {
 	}
 
 	componentWillUnmount() {
+		this.props.checkout(this.state.userId, this.state.ibeaconId)
 		this.disconnectFromChannel()
 	}
 
@@ -34,8 +40,8 @@ class AccountDetail extends Component {
 			return <div>Loading...</div>
 		}
 
-		const userId = account.userId
-		const ibeaconId = 1
+		const userId = this.state.userId
+		const ibeaconId = this.state.ibeaconId
 
 		return (
 			<div>
@@ -79,6 +85,7 @@ class AccountDetail extends Component {
 			this.props.initBorrow(userId, ibeaconId)
 			this.connectToChannel()
 		} else {
+			console.log("On Disconnect Socket: " + userId + " " + ibeaconId)
 			this.props.checkout(userId, ibeaconId)
 			this.disconnectFromChannel()
 		}
@@ -106,7 +113,7 @@ class AccountDetail extends Component {
 	}
 
 	renderBorrowedBook(borrowedBook) {
-		const userId = borrowedBook.accountUserId
+		const userId = this.state.userId
 		const borrowedCopyId = borrowedBook.id
 
 		return (

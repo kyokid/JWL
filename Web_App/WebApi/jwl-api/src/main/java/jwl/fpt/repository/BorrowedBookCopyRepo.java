@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEntity, Integer> {
 //    @Query("select b from BorrowedBookCopyEntity b where b.userId = ?1")
-    List<BorrowedBookCopyEntity> findByAccount(AccountEntity entity);
+    List<BorrowedBookCopyEntity> findByAccountAndReturnDateIsNull(AccountEntity entity);
 
     @Transactional
     @Modifying

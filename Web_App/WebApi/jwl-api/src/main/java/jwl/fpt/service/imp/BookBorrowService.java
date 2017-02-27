@@ -157,11 +157,11 @@ public class BookBorrowService implements IBookBorrowService {
     }
 
     @Override
-    public List<BorrowedBookCopyDto> getBorrowedBookByUserId(AccountDto accountDto) {
+    public List<BorrowedBookCopyDto> getBorrowingBookByUserId(AccountDto accountDto) {
         String userId = accountDto.getUserId();
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setUserId(userId);
-        List<BorrowedBookCopyEntity> bookCopyEntities = borrowedBookCopyRepo.findByAccount(accountEntity);
+        List<BorrowedBookCopyEntity> bookCopyEntities = borrowedBookCopyRepo.findByAccountAndReturnDateIsNull(accountEntity);
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
         for (BorrowedBookCopyEntity entity: bookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
@@ -181,10 +181,11 @@ public class BookBorrowService implements IBookBorrowService {
 
         borrowedBookCopyRepo.deleteByUserIdAndBorrowedCopyId(userId, borrowedBookCopyId);
 
-
+        // Return list of borrowing books.
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setUserId(userId);
-        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByAccount(accountEntity);
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities =
+                borrowedBookCopyRepo.findByAccountAndReturnDateIsNull(accountEntity);
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
         for (BorrowedBookCopyEntity entity: borrowedBookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
@@ -206,7 +207,11 @@ public class BookBorrowService implements IBookBorrowService {
         if (userId == null) {
             return null;
         }
-        BookCopyEntity bookCopyEntity = bookCopyRepo.getOne(rfidDto.getRfid());
+        BookCopyEntity bookCopyEntity = bookCopyRepo.findAvailableCopy(rfidDto.getRfid());
+        if (bookCopyEntity == null) {
+            return null;
+        }
+
         List<BookCopyEntity> bookCopyEntities = new ArrayList<>();
         bookCopyEntities.add(bookCopyEntity);
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = createBorrowedBookCopyEntities(bookCopyEntities, userId);
@@ -224,9 +229,13 @@ public class BookBorrowService implements IBookBorrowService {
         if (rfids == null || rfids.isEmpty()) {
             return new ArrayList<>();
         }
-
         rfids.remove(null);
-        List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAll(rfids);
+
+        List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAvailableCopies(rfids);
+        if (bookCopyEntities == null || bookCopyEntities.size() != rfids.size()) {
+            return null;
+        }
+
         String userId = borrowCart.getUserId();
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = createBorrowedBookCopyEntities(bookCopyEntities, userId);
         borrowedBookCopyEntities = borrowedBookCopyRepo.save(borrowedBookCopyEntities);
