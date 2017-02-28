@@ -31,10 +31,13 @@ VALUES (1, 'A', 'ground'), (2, 'B', 'ground'), (3, 'A', '1st floor'), (4, 'B', '
 
 INSERT INTO book (id, title, publisher, description, publish_year, number_of_pages, book_type_id, position_id, isbn)
 VALUES (1, 'Java', 'Zert', 'The beginning part to greatness.', '2015', '400', 2, 1, ''),
+  (1, 'XML', 'KhanhKT', 'How to survive with XML', '2017', '230', 2, 1, ''),
   (2, 'Ruby on Rails', 'Rails', 'The quickest way to web development.', '2015', '200', 1, 2, '');
 
 INSERT INTO book_copy (rfid, book_id, price)
-VALUES ('0009599367', 1, 400), ('0009951006', 1, 350), ('0010323151', 2, 100), ('0010315397', 2, 100);
+VALUES ('0009599367', 1, 400), ('0010323151', 2, 200), ('0010315397', 3, 100);
 
 INSERT INTO profile (user_id, fullname, email, address, date_of_birth, phone_no, place_of_work)
-VALUES ('SE61476', 'NGuyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn F12 Gò Vấp', '1992-04-26', '01692536559', 'FPT');
+VALUES ('SE61476', 'Nguyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn F12 Gò Vấp', '1992-04-26', '01692536559', 'FPT'),
+  ('thiendn', 'Đặng Nhật Thiên', 'thiendn@gmail.com', 'Đối diện trường', '1994-02-28', '01678785551', 'FPT'),
+  ('havh', 'Võ Hồng Hà', 'havh0108@gmail.com', '23 TCH 35 Q12', '1994-06-28', '01635782661', 'FPT');
