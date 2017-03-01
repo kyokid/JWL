@@ -182,7 +182,6 @@ public class BookBorrowService implements IBookBorrowService {
         if (result.getCode().equals("200")) {
             accountRepository.setStatus(false, userId);
             borrowCarts.remove(borrowCart);
-            deleteBorrowerTicket(userId);
         }
 
         //TODO: Fail check out, what to do?
