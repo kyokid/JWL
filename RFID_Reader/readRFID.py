@@ -1,6 +1,7 @@
 import requests
 import json
 import serial
+import os
 
 def senPostRequest(data):
     dataString = data[1:-1]
@@ -13,6 +14,9 @@ def senPostRequest(data):
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, data=json.dumps(data), headers=headers)
     print response.text
+    print('\007')
+    os.system('say {}'.format(response.json()['soundMessage']))
+    print('\007')
 
 # list cac device dang cam vao may
 # ls /dev/tty.*

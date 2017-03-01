@@ -7,19 +7,50 @@ package jwl.fpt.model;
 import lombok.Data;
 @Data
 public class RestServiceModel<T> {
-    private boolean Succeed;
-    private String Message;
-    private String Code;
-    private T Data;
+    private boolean succeed;
+    private String textMessage;     // Msg shows for borrower.
+    private String soundMessage;    // Msg reads by rfid reader.
+    private String code;
+    private T data;
 
-    public static void checkResult(Object result, RestServiceModel responseObj, String[] messages) {
-        if (result == null) {
+    public static void checkResult(Object data, RestServiceModel responseObj, String[] messages) {
+        if (data == null) {
             responseObj.setSucceed(false);
-            responseObj.setMessage(messages[0]);
+            responseObj.setTextMessage(messages[0]);
         } else {
-            responseObj.setData(result);
+            responseObj.setData(data);
             responseObj.setSucceed(true);
-            responseObj.setMessage(messages[1]);
+            responseObj.setTextMessage(messages[1]);
         }
+    }
+
+    public void setSuccessData(T data, String textMessage) {
+        this.setData(data, textMessage, "");
+        this.succeed = true;
+        this.code = "200";
+    }
+
+    public void setSuccessData(T data, String textMessage, String soundMessage) {
+        this.setData(data, textMessage, soundMessage);
+        this.succeed = true;
+        this.code = "200";
+    }
+
+    public void setFailData(T data, String textMessage) {
+        this.setData(data, textMessage, "");
+        this.succeed = false;
+        this.code = "400";
+    }
+
+    public void setFailData(T data, String textMessage, String soundMessage) {
+        this.setData(data, textMessage, soundMessage);
+        this.succeed = false;
+        this.code = "400";
+    }
+
+    private void setData(T data, String textMessage, String soundMessage) {
+        this.data = data;
+        this.textMessage = textMessage;
+        this.soundMessage = soundMessage;
     }
 }

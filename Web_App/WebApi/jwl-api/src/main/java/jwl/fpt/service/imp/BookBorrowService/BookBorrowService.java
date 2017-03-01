@@ -1,7 +1,8 @@
-package jwl.fpt.service.imp;
+package jwl.fpt.service.imp.BookBorrowService;
 
 import jwl.fpt.entity.*;
 import jwl.fpt.model.BorrowCart;
+import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BookCopyRepo;
@@ -107,40 +108,61 @@ public class BookBorrowService implements IBookBorrowService {
     }
 
     @Override
-    public BorrowerDto initBorrowCart(BorrowerDto borrowerDto) {
-        // TODO: Add necessary validations.
-        String ibeaconId = borrowerDto.getIBeaconId();
-        BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
-        if (borrowCart != null) {
-            return borrowerDto;
+    public RestServiceModel<BorrowerDto> initBorrowCart(BorrowerDto borrowerDto, boolean isLibrarian) {
+        RestServiceModel<BorrowerDto> result = new RestServiceModel<>();
+        boolean validInput = BookBorrowServiceValidator
+                .validateBorrowerDtoForInit(borrowerDto, accountRepository, isLibrarian);
+        if (!validInput) {
+            result.setFailData(null, "Initiate borrow cart failed. Please contact librarian!");
+            return result;
         }
 
-        borrowCart = new BorrowCart();
-        borrowCart.setIbeaconId(ibeaconId);
-        borrowCart.setUserId(borrowerDto.getUserId());
-        borrowCarts.add(borrowCart);
-        return borrowerDto;
+        String ibeaconId = borrowerDto.getIBeaconId();
+        BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
+        result = checkToInitBorrowCart(borrowerDto, borrowCart);
+        return result;
     }
 
     @Override
-    public RfidDtoList addCopiesToCart(RfidDtoList rfidDtoList) {
+    public RestServiceModel<RfidDtoList> addCopiesToCart(RfidDtoList rfidDtoList) {
         // TODO: Add necessary validations.
+        RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
+        boolean validInput = BookBorrowServiceValidator.validateRfidDtoList(rfidDtoList);
+        if (!validInput) {
+            result.setFailData(
+                    null,
+                    "Add books failed! Please contact librarian!",
+                    "Add books failed!");
+            return result;
+        }
+
         String ibeaconId = rfidDtoList.getIbeaconId();
         BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
-        if (borrowCart == null) {
-            return null;
-        }
-        Set<String> rfids = borrowCart.getRfids();
-        if (rfids == null || rfids.isEmpty()) {
-            borrowCart.setRfids(rfidDtoList.getRfids());
-        } else {
-            borrowCart.getRfids().addAll(rfidDtoList.getRfids());
-        }
-
-        rfidDtoList.setRfids(borrowCart.getRfids());
-        return rfidDtoList;
+        result = checkToAddCopiesToBorrowCart(rfidDtoList, borrowCart);
+        return result;
     }
 
+    @Override
+    public RestServiceModel<RfidDtoList> addCopyToCart(RfidDto rfidDto) {
+        RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
+        boolean validInput = BookBorrowServiceValidator.validateRfidDto(rfidDto);
+        if (!validInput) {
+            result.setFailData(
+                    null,
+                    "Add book failed! Please contact librarian!",
+                    "Add book failed!");
+            return result;
+        }
+
+        RfidDtoList rfidDtoList = new RfidDtoList();
+        rfidDtoList.setIbeaconId(rfidDto.getIbeaconId());
+        Set<String> rfids = new HashSet<>();
+        rfids.add(rfidDto.getRfid());
+        rfidDtoList.setRfids(rfids);
+        return addCopiesToCart(rfidDtoList);
+    }
+
+    // Changing method.
     @Override
     @Transactional
     public List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto) {
@@ -159,6 +181,63 @@ public class BookBorrowService implements IBookBorrowService {
 
         return borrowedBookCopyDtos;
     }
+
+
+//    @Override
+//    @Transactional
+//    public RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(BorrowerDto borrowerDto) {
+//        RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
+//        boolean validInput = BookBorrowServiceValidator.validateBorrowerDtoForCheckout(borrowerDto);
+//        if (!validInput) {
+//            result.setFailData(null, "Invalid userId or ibeaconId!");
+//            return result;
+//        }
+//
+//        String userId = borrowerDto.getUserId();
+//        String ibeaconId = borrowerDto.getIBeaconId();
+//
+//        BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
+//        boolean userStatus = accountRepository.getStatus(userId);
+//
+//        // why save books to cart before saving to DB?
+//        // what if checkout fail -> book saved in cart is not added to DB?
+//        // safer: save book when scanned (?) -> checkout doesn't need to save books to DB
+//        // Book scanned successfully -> save to DB
+//        // Scan saved book again -> nothing, no error
+//        // Scan another book failed -> alarm for only that book. Don't need to revert saved book
+//
+//        // user is in library
+//        // find cart
+//        // if dont have, normal checkout
+//        // if have, save cart
+//
+//
+//        // if found cart, but invalid userId ?
+//        // a1: find some way to notice librarian
+//
+//
+//        // a2: 1 borrower can only init checkout if the former borrower checked out
+//        // how to know when a user is successfully checked out?
+//
+//
+//        // a3: no cart. Scanned books are added directly to db. Rework everything!
+//
+//
+//
+//
+//
+//
+//        if (borrowCart == null || !borrowCart.getUserId().equals(userId)) {
+//            return null;
+//        }
+//
+//        List<BorrowedBookCopyDto> borrowedBookCopyDtos = saveBorrowCart(borrowCart);
+//        accountRepository.setStatus(false, userId);
+//
+//        borrowCarts.remove(borrowCart);
+//
+//        return null;
+//    }
 
     @Override
     public List<BorrowedBookCopyDto> getBorrowingBookByUserId(AccountDto accountDto) {
@@ -261,9 +340,6 @@ public class BookBorrowService implements IBookBorrowService {
         if (borrowCarts == null || borrowCarts.isEmpty()) {
             return null;
         }
-        if (ibeaconId == null || ibeaconId.isEmpty()) {
-            return null;
-        }
 
         for (BorrowCart borrowCart :
                 borrowCarts) {
@@ -353,5 +429,50 @@ public class BookBorrowService implements IBookBorrowService {
             borrowedBookCopyEntities.add(entity);
         }
         return borrowedBookCopyEntities;
+    }
+
+    private void createNewBorrowCart(BorrowerDto borrowerDto) {
+        BorrowCart borrowCart = new BorrowCart();
+        borrowCart.setIbeaconId(borrowerDto.getIBeaconId());
+        borrowCart.setUserId(borrowerDto.getUserId());
+        borrowCarts.add(borrowCart);
+    }
+
+    private RestServiceModel<BorrowerDto> checkToInitBorrowCart(BorrowerDto borrowerDto, BorrowCart borrowCart) {
+        RestServiceModel<BorrowerDto> result = new RestServiceModel<>();
+
+        if (borrowCart != null) {
+            // ibeacon already initiated its borrow cart.
+            result.setSuccessData(borrowerDto, "Please scan your books.");
+            return result;
+        }
+
+        createNewBorrowCart(borrowerDto);
+        result.setSuccessData(borrowerDto, "You can scan book now.");
+        return result;
+    }
+
+    private RestServiceModel<RfidDtoList> checkToAddCopiesToBorrowCart(RfidDtoList rfidDtoList, BorrowCart borrowCart) {
+        RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
+
+        if (borrowCart == null) {
+            result.setFailData(
+                    null,
+                    "Borrow cart not found! Please wait for other to complete checkout!");
+            return result;
+        }
+
+        Set<String> rfids = borrowCart.getRfids();
+        if (rfids == null || rfids.isEmpty()) {
+            borrowCart.setRfids(rfidDtoList.getRfids());
+        } else {
+            borrowCart.getRfids().addAll(rfidDtoList.getRfids());
+        }
+        rfidDtoList.setRfids(borrowCart.getRfids());
+        result.setSuccessData(
+                rfidDtoList,
+                "Book was added successfully!",
+                "Book added!");
+        return result;
     }
 }

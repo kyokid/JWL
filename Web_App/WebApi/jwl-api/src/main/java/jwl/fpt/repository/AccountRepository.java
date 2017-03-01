@@ -33,4 +33,16 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
 
     @Query("select acc.inLibrary from AccountEntity acc where acc.userId = ?1")
     Boolean getStatus(String userId);
+
+    // TODO: check for delete_date.
+    @Query("select acc.userId " +
+            "from AccountEntity acc " +
+            "where acc.userId = ?1 and acc.activated = true and acc.inLibrary = true")
+    String checkBorrower(String userId);
+
+    // TODO: check for delete_date.
+    @Query("select acc.userId " +
+            "from AccountEntity acc " +
+            "where acc.userId = ?1 and acc.activated = true")
+    String checkBorrowerByLibrarian(String userId);
 }

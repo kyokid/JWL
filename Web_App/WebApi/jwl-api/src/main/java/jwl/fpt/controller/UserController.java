@@ -43,12 +43,12 @@ public class UserController {
         AccountDto user = userService.findByUsernameAndPassword(username, password);
         if (user != null) {
 
-            result.setMessage("Login Successfully!");
+            result.setTextMessage("Login Successfully!");
             result.setSucceed(true);
             result.setData(user);
             result.setCode("200");
         } else {
-            result.setMessage("Login Fail cmnr!");
+            result.setTextMessage("Login Fail cmnr!");
         }
         return result;
     }
@@ -61,12 +61,12 @@ public class UserController {
         List<UserDto> listUser = userService.findByUsernameLike(searchTerm);
 
         if (!listUser.isEmpty()) {
-            result.setMessage("Search Successfully!");
+            result.setTextMessage("Search Successfully!");
 
             result.setSucceed(true);
             result.setData(listUser);
         } else {
-            result.setMessage("Deo co gi");
+            result.setTextMessage("Deo co gi");
         }
         return result;
     }
@@ -90,11 +90,11 @@ public class UserController {
             ticket.setScanDate(new Date(Calendar.getInstance().getTimeInMillis()));
             borrowerTicketRepo.save(ticket);
             //Set Response
-            result.setMessage("Search Successfully!");
+            result.setTextMessage("Search Successfully!");
             result.setSucceed(true);
             result.setData(profileDTO);
         } else {
-            result.setMessage("Search Fail!");
+            result.setTextMessage("Search Fail!");
         }
         return result;
     }

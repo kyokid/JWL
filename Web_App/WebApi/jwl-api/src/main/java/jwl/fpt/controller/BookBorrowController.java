@@ -4,15 +4,13 @@ import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 import jwl.fpt.service.IBookBorrowService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Entaard on 1/29/17.
@@ -25,46 +23,24 @@ public class BookBorrowController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @RequestMapping(value = "/librarian/init/borrow", method = RequestMethod.POST)
+    public RestServiceModel<BorrowerDto> initBorrowCartByLibrarian(@RequestBody BorrowerDto borrowerDto) {
+        return bookBorrowService.initBorrowCart(borrowerDto, true);
+    }
+
     @RequestMapping(value = "/init/borrow", method = RequestMethod.POST)
     public RestServiceModel<BorrowerDto> initBorrowCart(@RequestBody BorrowerDto borrowerDto) {
-        // TODO: Add necessary validations.
-        BorrowerDto result = bookBorrowService.initBorrowCart(borrowerDto);
-
-        RestServiceModel<BorrowerDto> responseObj = new RestServiceModel<>();
-        responseObj.setData(result);
-        responseObj.setSucceed(true);
-        responseObj.setMessage("Init Checkout");
-
-        return responseObj;
+        return bookBorrowService.initBorrowCart(borrowerDto, false);
     }
 
     @RequestMapping(value = "/add/copies", method = RequestMethod.POST)
     public RestServiceModel<RfidDtoList> addCopiesToCart(@RequestBody RfidDtoList rfidDtoList) {
-        // TODO: Add necessary validations.
-        RfidDtoList result = bookBorrowService.addCopiesToCart(rfidDtoList);
-        RestServiceModel<RfidDtoList> responseObj = new RestServiceModel<>();
-        String[] messages = {"Invalid user!", "Copies added!"};
-
-        RestServiceModel.checkResult(result, responseObj, messages);
-
-        return responseObj;
+        return bookBorrowService.addCopiesToCart(rfidDtoList);
     }
 
     @RequestMapping(value = "/add/copy", method = RequestMethod.POST)
     public RestServiceModel<RfidDtoList> addCopyToCart(@RequestBody RfidDto rfidDto) {
-        // TODO: Add necessary validations.
-        RfidDtoList rfidDtoList = new RfidDtoList();
-        rfidDtoList.setIbeaconId(rfidDto.getIbeaconId());
-        Set<String> rfids = new HashSet<>();
-        rfids.add(rfidDto.getRfid());
-        rfidDtoList.setRfids(rfids);
-        RfidDtoList result = bookBorrowService.addCopiesToCart(rfidDtoList);
-        RestServiceModel<RfidDtoList> responseObj = new RestServiceModel<>();
-        String[] messages = {"Invalid user!", "Copy added!"};
-
-        RestServiceModel.checkResult(result, responseObj, messages);
-
-        return responseObj;
+        return bookBorrowService.addCopyToCart(rfidDto);
     }
 
     @RequestMapping(value = "/checkout", method = RequestMethod.POST)
@@ -85,7 +61,7 @@ public class BookBorrowController {
         RestServiceModel<List<BorrowedBookCopyDto>> responseObj = new RestServiceModel<>();
         responseObj.setSucceed(true);
         responseObj.setData(borrowedBookCopyDtos);
-        responseObj.setMessage("Borrowed of User");
+        responseObj.setTextMessage("Borrowed of User");
         return responseObj;
     }
 

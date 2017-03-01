@@ -12,6 +12,9 @@ VALUES (1, 'admin'), (2, 'librarian'), (3, 'borrower');
 
 INSERT INTO account (user_id, password, role_id, is_in_library, is_activated)
 VALUES  ('SE61476', '123', '3', TRUE, TRUE);
+INSERT INTO account (user_id, password, role_id, is_in_library, is_activated)
+VALUES  ('thiendn', '123', '3', FALSE, TRUE),
+  ('havh', '123', '3', FALSE, TRUE);
 
 INSERT INTO borrower_ticket (qr_id, user_id, create_date)
 VALUES  ('123', 'SE61476', '2017-01-01');
@@ -31,13 +34,16 @@ VALUES (1, 'A', 'ground'), (2, 'B', 'ground'), (3, 'A', '1st floor'), (4, 'B', '
 
 INSERT INTO book (id, title, publisher, description, publish_year, number_of_pages, book_type_id, position_id, isbn)
 VALUES (1, 'Java', 'Zert', 'The beginning part to greatness.', '2015', '400', 2, 1, ''),
-  (1, 'XML', 'KhanhKT', 'How to survive with XML', '2017', '230', 2, 1, ''),
   (2, 'Ruby on Rails', 'Rails', 'The quickest way to web development.', '2015', '200', 1, 2, '');
+INSERT INTO book (id, title, publisher, description, publish_year, number_of_pages, book_type_id, position_id, isbn)
+VALUES (3, 'XML', 'KhanhKT', 'How to survive with XML', '2017', '230', 2, 1, '');
 
 INSERT INTO book_copy (rfid, book_id, price)
-VALUES ('0009599367', 1, 400), ('0010323151', 2, 200), ('0010315397', 3, 100);
+VALUES ('0009599367', 1, 400), ('0009951006', 1, 350), ('0010323151', 2, 100), ('0010315397', 2, 100);
+UPDATE book_copy SET book_id = 3 WHERE rfid = '0010315397';
 
 INSERT INTO profile (user_id, fullname, email, address, date_of_birth, phone_no, place_of_work)
-VALUES ('SE61476', 'Nguyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn F12 Gò Vấp', '1992-04-26', '01692536559', 'FPT'),
-  ('thiendn', 'Đặng Nhật Thiên', 'thiendn@gmail.com', 'Đối diện trường', '1994-02-28', '01678785551', 'FPT'),
+VALUES ('SE61476', 'Nguyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn F12 Gò Vấp', '1992-04-26', '01692536559', 'FPT');
+INSERT INTO profile (user_id, fullname, email, address, date_of_birth, phone_no, place_of_work)
+VALUES ('thiendn', 'Đặng Nhật Thiên', 'thiendn@gmail.com', 'Đối diện trường', '1994-02-28', '01678785551', 'FPT'),
   ('havh', 'Võ Hồng Hà', 'havh0108@gmail.com', '23 TCH 35 Q12', '1994-06-28', '01635782661', 'FPT');

@@ -8,6 +8,7 @@ import java.util.Collection;
 /**
  * Created by Entaard on 2/5/17.
  */
+// TODO: add delete_date to soft-delete an account.
 @Entity
 @Table(name = "account", schema = "public", catalog = "jwl_test")
 public class AccountEntity {
