@@ -45,14 +45,7 @@ public class BookBorrowController {
 
     @RequestMapping(value = "/checkout", method = RequestMethod.POST)
     public RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(@RequestBody BorrowerDto borrowerDto) {
-        // TODO: Add necessary validations.
-        List<BorrowedBookCopyDto> borrowedBookCopyDtos = bookBorrowService.checkoutCart(borrowerDto);
-        RestServiceModel<List<BorrowedBookCopyDto>> responseObj = new RestServiceModel<>();
-        String[] messages = {"Checkout failed!", "User checked out!"};
-
-        RestServiceModel.checkResult(borrowedBookCopyDtos, responseObj, messages);
-
-        return responseObj;
+        return bookBorrowService.checkoutCart(borrowerDto);
     }
 
     @RequestMapping(value = "/getBorrowedBooks", method = RequestMethod.POST)

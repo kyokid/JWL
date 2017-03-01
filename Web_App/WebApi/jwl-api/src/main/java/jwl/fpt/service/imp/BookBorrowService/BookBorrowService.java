@@ -111,7 +111,7 @@ public class BookBorrowService implements IBookBorrowService {
     public RestServiceModel<BorrowerDto> initBorrowCart(BorrowerDto borrowerDto, boolean isLibrarian) {
         RestServiceModel<BorrowerDto> result = new RestServiceModel<>();
         boolean validInput = BookBorrowServiceValidator
-                .validateBorrowerDtoForInit(borrowerDto, accountRepository, isLibrarian);
+                .validateBorrowerDto(borrowerDto, accountRepository, isLibrarian);
         if (!validInput) {
             result.setFailData(null, "Initiate borrow cart failed. Please contact librarian!");
             return result;
@@ -138,7 +138,7 @@ public class BookBorrowService implements IBookBorrowService {
 
         String ibeaconId = rfidDtoList.getIbeaconId();
         BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
-        result = checkToAddCopiesToBorrowCart(rfidDtoList, borrowCart);
+        result = checkToAddCopiesToBorrowCart(rfidDtoList, borrowCart, false);
         return result;
     }
 
@@ -162,82 +162,33 @@ public class BookBorrowService implements IBookBorrowService {
         return addCopiesToCart(rfidDtoList);
     }
 
-    // Changing method.
     @Override
     @Transactional
-    public List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto) {
-        // TODO: Add necessary validations.
+    public RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(BorrowerDto borrowerDto) {
+        RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
+        boolean validInput = BookBorrowServiceValidator
+                .validateBorrowerDto(borrowerDto, accountRepository, false);
+
         String ibeaconId = borrowerDto.getIBeaconId();
         String userId = borrowerDto.getUserId();
         BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
-        if (borrowCart == null || !borrowCart.getUserId().equals(userId)) {
-            return null;
+        if (borrowCart == null || !userId.equals(borrowCart.getUserId())) {
+            result.setFailData(null, "Check out failed! Please contact librarian!");
+            return result;
         }
 
-        List<BorrowedBookCopyDto> borrowedBookCopyDtos = saveBorrowCart(borrowCart);
-        accountRepository.setStatus(false, userId);
+        result = saveBorrowCart(borrowCart);
 
-        borrowCarts.remove(borrowCart);
+        if (result.getCode().equals("200")) {
+            accountRepository.setStatus(false, userId);
+            borrowCarts.remove(borrowCart);
+            deleteBorrowerTicket(userId);
+        }
 
-        return borrowedBookCopyDtos;
+        //TODO: Fail check out, what to do?
+
+        return result;
     }
-
-
-//    @Override
-//    @Transactional
-//    public RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(BorrowerDto borrowerDto) {
-//        RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
-//        boolean validInput = BookBorrowServiceValidator.validateBorrowerDtoForCheckout(borrowerDto);
-//        if (!validInput) {
-//            result.setFailData(null, "Invalid userId or ibeaconId!");
-//            return result;
-//        }
-//
-//        String userId = borrowerDto.getUserId();
-//        String ibeaconId = borrowerDto.getIBeaconId();
-//
-//        BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
-//        boolean userStatus = accountRepository.getStatus(userId);
-//
-//        // why save books to cart before saving to DB?
-//        // what if checkout fail -> book saved in cart is not added to DB?
-//        // safer: save book when scanned (?) -> checkout doesn't need to save books to DB
-//        // Book scanned successfully -> save to DB
-//        // Scan saved book again -> nothing, no error
-//        // Scan another book failed -> alarm for only that book. Don't need to revert saved book
-//
-//        // user is in library
-//        // find cart
-//        // if dont have, normal checkout
-//        // if have, save cart
-//
-//
-//        // if found cart, but invalid userId ?
-//        // a1: find some way to notice librarian
-//
-//
-//        // a2: 1 borrower can only init checkout if the former borrower checked out
-//        // how to know when a user is successfully checked out?
-//
-//
-//        // a3: no cart. Scanned books are added directly to db. Rework everything!
-//
-//
-//
-//
-//
-//
-//        if (borrowCart == null || !borrowCart.getUserId().equals(userId)) {
-//            return null;
-//        }
-//
-//        List<BorrowedBookCopyDto> borrowedBookCopyDtos = saveBorrowCart(borrowCart);
-//        accountRepository.setStatus(false, userId);
-//
-//        borrowCarts.remove(borrowCart);
-//
-//        return null;
-//    }
 
     @Override
     public List<BorrowedBookCopyDto> getBorrowingBookByUserId(AccountDto accountDto) {
@@ -293,7 +244,8 @@ public class BookBorrowService implements IBookBorrowService {
 
         String ibeaconId = rfidDto.getIbeaconId();
         BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
-        RestServiceModel checkFoundCart = BookBorrowServiceValidator.validateFoundBorrowCart(borrowCart);
+        RestServiceModel checkFoundCart = BookBorrowServiceValidator
+                .validateFoundBorrowCart(borrowCart, true);
         if (checkFoundCart != null) {
             return checkFoundCart;
         }
@@ -335,31 +287,38 @@ public class BookBorrowService implements IBookBorrowService {
         return result;
     }
 
-    private List<BorrowedBookCopyDto> saveBorrowCart(BorrowCart borrowCart) {
+    private RestServiceModel<List<BorrowedBookCopyDto>> saveBorrowCart(BorrowCart borrowCart) {
+        RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
         Set<String> rfids = borrowCart.getRfids();
         if (rfids == null || rfids.isEmpty()) {
-            return new ArrayList<>();
+            result.setSuccessData(null, "Checked out successfully! No book added.");
+            return result;
         }
         rfids.remove(null);
 
         List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAvailableCopies(rfids);
-        if (bookCopyEntities == null || bookCopyEntities.size() != rfids.size()) {
-            return null;
+        // the books with those rfids are not available, or invalid
+        if (bookCopyEntities == null || bookCopyEntities.isEmpty()) {
+            result.setSuccessData(null, "Checked out successfully! No book added.");
+            return result;
         }
 
         String userId = borrowCart.getUserId();
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = createBorrowedBookCopyEntities(bookCopyEntities, userId);
         borrowedBookCopyEntities = borrowedBookCopyRepo.save(borrowedBookCopyEntities);
         if (borrowedBookCopyEntities.isEmpty()) {
-            return null;
+            result.setFailData(null, "Check out failed system! Please contact admin/librarian!");
+            return result;
         }
 
-        List<BorrowedBookCopyDto> result = new ArrayList<>();
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 borrowedBookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
-            result.add(dto);
+            borrowedBookCopyDtos.add(dto);
         }
+
+        result.setSuccessData(borrowedBookCopyDtos, "Checked out with book(s) successfully!");
         return result;
     }
 
@@ -494,23 +453,14 @@ public class BookBorrowService implements IBookBorrowService {
         return result;
     }
 
-    private RestServiceModel<RfidDtoList> checkToAddCopiesToBorrowCart(RfidDtoList rfidDtoList, BorrowCart borrowCart) {
+    private RestServiceModel<RfidDtoList> checkToAddCopiesToBorrowCart(RfidDtoList rfidDtoList,
+                                                                       BorrowCart borrowCart,
+                                                                       boolean isLibrarian) {
         RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
-
-        if (borrowCart == null) {
-            result.setFailData(
-                    null,
-                    "Borrow cart not found! Please wait for other to complete checkout!");
-            return result;
-        }
-
-        String userId = borrowCart.getUserId();
-        if (userId == null || userId.isEmpty()) {
-            result.setFailData(
-                    null,
-                    "UserId not found!!!",
-                    "There is no user!");
-            return result;
+        RestServiceModel checkFoundCart = BookBorrowServiceValidator
+                .validateFoundBorrowCart(borrowCart, isLibrarian);
+        if (checkFoundCart != null) {
+            return checkFoundCart;
         }
 
         Set<String> rfids = borrowCart.getRfids();

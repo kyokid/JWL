@@ -11,10 +11,12 @@ import jwl.fpt.repository.AccountRepository;
  * Created by Entaard on 2/27/17.
  */
 class BookBorrowServiceValidator {
-    static boolean validateBorrowerDtoForInit(BorrowerDto borrowerDto,
-                                              AccountRepository accountRepository,
-                                              boolean isLibrarian) {
-        if (!checkBorrowerDto(borrowerDto)) {
+    static boolean validateBorrowerDto(BorrowerDto borrowerDto,
+                                       AccountRepository accountRepository,
+                                       boolean isLibrarian) {
+        if (borrowerDto == null
+                || borrowerDto.getIBeaconId() == null || borrowerDto.getUserId() == null
+                || borrowerDto.getIBeaconId().isEmpty() || borrowerDto.getUserId().isEmpty()) {
             return false;
         }
 
@@ -26,10 +28,6 @@ class BookBorrowServiceValidator {
         }
 
         return !(checkedUserId == null);
-    }
-
-    static boolean validateBorrowerDtoForCheckout(BorrowerDto borrowerDto) {
-        return checkBorrowerDto(borrowerDto);
     }
 
     static boolean validateRfidDtoList(RfidDtoList rfidDtoList) {
@@ -51,13 +49,15 @@ class BookBorrowServiceValidator {
         return true;
     }
 
-    static RestServiceModel validateFoundBorrowCart(BorrowCart borrowCart) {
+    static RestServiceModel validateFoundBorrowCart(BorrowCart borrowCart, boolean isLibrarian) {
         RestServiceModel result = new RestServiceModel();
+        String soundError = isLibrarian? "" : "Error! Please contact librarian!";
+        String textError = isLibrarian? "" : "Please contact librarian!";
         if (borrowCart == null) {
             result.setFailData(
                     null,
-                    "Borrow cart not found! Please contact librarian!",
-                    "Error! Please contact librarian!");
+                    "Borrow cart not found! " + textError,
+                    soundError);
             return result;
         }
 
@@ -65,20 +65,11 @@ class BookBorrowServiceValidator {
         if (userId == null || userId.isEmpty()) {
             result.setFailData(
                     null,
-                    "UserId not found! Please contact librarian!",
-                    "Error! Please contact librarian!");
+                    "UserId not found! " + textError,
+                    soundError);
             return result;
         }
 
         return null;
-    }
-
-    static private boolean checkBorrowerDto(BorrowerDto borrowerDto) {
-        if (borrowerDto == null
-                || borrowerDto.getIBeaconId() == null || borrowerDto.getUserId() == null
-                || borrowerDto.getIBeaconId().isEmpty() || borrowerDto.getUserId().isEmpty()) {
-            return false;
-        }
-        return true;
     }
 }

@@ -17,7 +17,7 @@ public interface IBookBorrowService {
     RestServiceModel<BorrowerDto> initBorrowCart(BorrowerDto borrowerDto, boolean isLibrarian);
     RestServiceModel<RfidDtoList> addCopiesToCart(RfidDtoList rfidDtoList);
     RestServiceModel<RfidDtoList> addCopyToCart(RfidDto rfidDto);
-    List<BorrowedBookCopyDto> checkoutCart(BorrowerDto borrowerDto);
+    RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(BorrowerDto borrowerDto);
 //    RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(BorrowerDto borrowerDto);
     List<BorrowedBookCopyDto> getBorrowingBookByUserId(AccountDto accountDto);
     List<BorrowedBookCopyDto> deleteBorrowingCopy(BorrowedBookCopyDto borrowedBookCopyDto);
