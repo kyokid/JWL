@@ -1,10 +1,11 @@
 package jwl.fpt.service.imp.BookBorrowService;
 
+import jwl.fpt.model.BorrowCart;
+import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.BorrowerDto;
 import jwl.fpt.model.dto.RfidDto;
 import jwl.fpt.model.dto.RfidDtoList;
 import jwl.fpt.repository.AccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by Entaard on 2/27/17.
@@ -48,6 +49,28 @@ class BookBorrowServiceValidator {
             return false;
         }
         return true;
+    }
+
+    static RestServiceModel validateFoundBorrowCart(BorrowCart borrowCart) {
+        RestServiceModel result = new RestServiceModel();
+        if (borrowCart == null) {
+            result.setFailData(
+                    null,
+                    "Borrow cart not found! Please contact librarian!",
+                    "Error! Please contact librarian!");
+            return result;
+        }
+
+        String userId = borrowCart.getUserId();
+        if (userId == null || userId.isEmpty()) {
+            result.setFailData(
+                    null,
+                    "UserId not found! Please contact librarian!",
+                    "Error! Please contact librarian!");
+            return result;
+        }
+
+        return null;
     }
 
     static private boolean checkBorrowerDto(BorrowerDto borrowerDto) {

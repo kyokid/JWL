@@ -26,4 +26,7 @@ public interface BookCopyRepo extends JpaRepository<BookCopyEntity, String> {
             "from BorrowedBookCopyEntity b2 " +
             "where b2.returnDate is null)")
     BookCopyEntity findAvailableCopy(String rfid);
+
+    @Query("select copy.rfid from BookCopyEntity copy where copy.rfid = ?1")
+    String checkRfid(String rfid);
 }

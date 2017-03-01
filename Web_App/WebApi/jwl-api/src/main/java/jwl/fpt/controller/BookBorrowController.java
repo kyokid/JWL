@@ -78,13 +78,8 @@ public class BookBorrowController {
     }
 
     @RequestMapping(value = "/save/copy", method = RequestMethod.POST)
-    public RestServiceModel<RfidDtoList> saveCopyToDatabase(@RequestBody RfidDto rfidDto) {
-        // TODO: Add necessary validations.
-        BorrowedBookCopyDto result = bookBorrowService.saveCopyToDatabase(rfidDto);
-        RestServiceModel<RfidDtoList> responseObj = new RestServiceModel<>();
-        String[] messages = {"Invalid user!", "Copy saved!"};
-
-        RestServiceModel.checkResult(result, responseObj, messages);
+    public RestServiceModel<BorrowedBookCopyDto> saveCopyToDatabase(@RequestBody RfidDto rfidDto) {
+        RestServiceModel<BorrowedBookCopyDto> responseObj = bookBorrowService.saveCopyToDatabase(rfidDto);
         simpMessagingTemplate.convertAndSend("/socket", responseObj);
 
         return responseObj;

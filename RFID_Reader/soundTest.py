@@ -9,3 +9,4 @@
 
 import subprocess
 subprocess.call(["afplay", "Lac-Troi.mp3"])
+# subprocess.call(["killall", "afplay"])

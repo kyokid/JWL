@@ -4,7 +4,7 @@ import * as Types from '../constants/action-type'
 
 export function initBorrow(userId, ibeaconId) {
 	const request = axios.post(
-		`${Api.ROOT_URL}/${Api.INIT_BORROW}`,
+		`${Api.ROOT_URL}/${Api.INIT_BORROW_BY_LIBRARIAN}`,
 		{
 			userId: userId,
 			ibeaconId: ibeaconId

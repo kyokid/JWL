@@ -21,5 +21,5 @@ public interface IBookBorrowService {
 //    RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(BorrowerDto borrowerDto);
     List<BorrowedBookCopyDto> getBorrowingBookByUserId(AccountDto accountDto);
     List<BorrowedBookCopyDto> deleteBorrowingCopy(BorrowedBookCopyDto borrowedBookCopyDto);
-    BorrowedBookCopyDto saveCopyToDatabase(RfidDto rfidDto);
+    RestServiceModel<BorrowedBookCopyDto> saveCopyToDatabase(RfidDto rfidDto);
 }
