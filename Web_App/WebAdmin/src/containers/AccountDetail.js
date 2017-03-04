@@ -3,7 +3,7 @@ import { connect } from "react-redux"
 import { Link } from "react-router"
 
 import { getAccountDetail } from "../actions/AccountsAction"
-import { initBorrow, checkout, deleteBorrowedCopy, fetchSaveBorrowedCopy } from "../actions/BookBorrowAction"
+import { initBorrow, checkout, deleteBorrowedCopy, fetchCopyFromCart, cancelAddingCopies } from "../actions/BookBorrowAction"
 import * as Socket from "../helpers/Socket"
 
 class AccountDetail extends Component {
@@ -15,12 +15,14 @@ class AccountDetail extends Component {
 		this.renderBorrowedBooks = this.renderBorrowedBooks.bind(this)
 		this.onClickDeleteCopy = this.onClickDeleteCopy.bind(this)
 		this.onClickStartAddBooks = this.onClickStartAddBooks.bind(this)
+		this.onClickCancel = this.onClickCancel.bind(this)
 
 		this.state = {
 			userId: this.props.params.id,
 			ibeaconId: this.librarianId,	// Each librarian should have a RFID Reader -> pair reader-borrowCart with his id,
 																		// but for demo purpose, we pair with ibeaconId = 1
-			isAddingBook: false
+			isAddingBook: false,
+			beforeAdd: {}
 		}
 	}
 
@@ -54,10 +56,20 @@ class AccountDetail extends Component {
 					onClick={() => this.onClickStartAddBooks(userId, ibeaconId)}>
 					{this.state.isAddingBook? "Stop Adding Books" : "Start Adding Books"}
 				</button>
+				<button
+					className={`btn btn-default ${this.state.isAddingBook ? '' : 'hidden'}`}
+					onClick={() => this.onClickCancel()}>
+					Cancel</button>
 				<h4>Borrowing Book List</h4>
 				{this.renderBorrowedBooks(account.borrowedBookCopies)}
 			</div>
 		)
+	}
+
+	onClickCancel() {
+		this.disconnectFromChannel()
+		this.props.cancelAddingCopies(this.state.userId, this.state.ibeaconId, this.state.beforeAdd)
+		this.setState({ isAddingBook: !this.state.isAddingBook })
 	}
 
 	connectToChannel() {
@@ -68,7 +80,7 @@ class AccountDetail extends Component {
 			self.socketClient.subscribe('/socket', returnedData => {
 				console.log("Socket Called!!")
 				console.log(returnedData)
-				self.props.fetchSaveBorrowedCopy(JSON.parse(returnedData.body))
+				self.props.fetchCopyFromCart(JSON.parse(returnedData.body))
 			})
 		})
 	}
@@ -82,6 +94,7 @@ class AccountDetail extends Component {
 
 	onClickStartAddBooks(userId, ibeaconId) {
 		if (!this.state.isAddingBook) {
+			this.setState({ beforeAdd: this.props.account })
 			this.props.initBorrow(userId, ibeaconId)
 			this.connectToChannel()
 		} else {
@@ -114,7 +127,7 @@ class AccountDetail extends Component {
 
 	renderBorrowedBook(borrowedBook) {
 		const userId = this.state.userId
-		const borrowedCopyId = borrowedBook.id
+		const borrowedCopyId = borrowedBook.bookCopyRfid
 
 		return (
 			<tr key={borrowedCopyId}>
@@ -123,7 +136,7 @@ class AccountDetail extends Component {
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
 				<td>
-					<a onClick={() => this.onClickDeleteCopy(userId, borrowedCopyId)}>
+					<a onClick={() => this.onClickDeleteCopy(userId, borrowedBook.id)}>
 						<span className="glyphicon glyphicon-remove" aria-hidden="true" />
 					</a>
 				</td>
@@ -142,5 +155,5 @@ function mapStateToProps(state) {
 
 export default connect(
 	mapStateToProps,
-	{ getAccountDetail, deleteBorrowedCopy, initBorrow, checkout, fetchSaveBorrowedCopy })
+	{ getAccountDetail, deleteBorrowedCopy, initBorrow, checkout, fetchCopyFromCart, cancelAddingCopies })
 (AccountDetail)

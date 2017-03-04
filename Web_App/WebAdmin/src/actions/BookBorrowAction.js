@@ -46,11 +46,26 @@ export function deleteBorrowedCopy(userId, borrowedCopyId) {
 	}
 }
 
-export function fetchSaveBorrowedCopy(borrowedCopyData) {
+export function fetchCopyFromCart(borrowedCopyData) {
 	console.log("fetchSaveBorrowedCopy called!!!")
 	console.log("action: " + borrowedCopyData)
 	return {
-		type: Types.FETCH_SAVED_COPY,
+		type: Types.FETCH_ADDED_COPY,
 		payload: borrowedCopyData
+	}
+}
+
+export function cancelAddingCopies(userId, ibeaconId, stateBeforeAdd) {
+	const request = axios.post(
+		`${Api.ROOT_URL}/${Api.CANCEL_ADDING_COPIES}`,
+		{
+			userId: userId,
+			ibeaconId: ibeaconId
+		}
+	)
+
+	return {
+		type: Types.CANCEL_ADDING_COPY,
+		payload: stateBeforeAdd
 	}
 }

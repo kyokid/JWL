@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Entaard on 1/29/17.
@@ -22,11 +23,6 @@ public class BookBorrowController {
     private IBookBorrowService bookBorrowService;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
-
-    @RequestMapping(value = "/librarian/init/borrow", method = RequestMethod.POST)
-    public RestServiceModel<BorrowerDto> initBorrowCartByLibrarian(@RequestBody BorrowerDto borrowerDto) {
-        return bookBorrowService.initBorrowCart(borrowerDto, true);
-    }
 
     @RequestMapping(value = "/init/borrow", method = RequestMethod.POST)
     public RestServiceModel<BorrowerDto> initBorrowCart(@RequestBody BorrowerDto borrowerDto) {
@@ -45,7 +41,30 @@ public class BookBorrowController {
 
     @RequestMapping(value = "/checkout", method = RequestMethod.POST)
     public RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(@RequestBody BorrowerDto borrowerDto) {
-        return bookBorrowService.checkoutCart(borrowerDto);
+        return bookBorrowService.checkoutCart(borrowerDto, false);
+    }
+
+    @RequestMapping(value = "/librarian/init/borrow", method = RequestMethod.POST)
+    public RestServiceModel<BorrowerDto> initBorrowCartByLibrarian(@RequestBody BorrowerDto borrowerDto) {
+        return bookBorrowService.initBorrowCart(borrowerDto, true);
+    }
+
+    @RequestMapping(value = "/librarian/add/copy", method = RequestMethod.POST)
+    public RestServiceModel<BorrowedBookCopyDto> addCopyToCartByLibrarian(@RequestBody RfidDto rfidDto) {
+        RestServiceModel<BorrowedBookCopyDto> responseObj = bookBorrowService.addCopyToCartByLibrarian(rfidDto);
+        simpMessagingTemplate.convertAndSend("/socket", responseObj);
+
+        return responseObj;
+    }
+
+    @RequestMapping(value = "/librarian/checkout", method = RequestMethod.POST)
+    public RestServiceModel<List<BorrowedBookCopyDto>> checkoutCartByLirarian(@RequestBody BorrowerDto borrowerDto) {
+        return bookBorrowService.checkoutCart(borrowerDto, true);
+    }
+
+    @RequestMapping(value = "/librarian/cancel", method = RequestMethod.POST)
+    public RestServiceModel<Set<String>> CancelAddingBooks(@RequestBody BorrowerDto borrowerDto) {
+        return bookBorrowService.cancelAddingCopies(borrowerDto);
     }
 
     @RequestMapping(value = "/getBorrowedBooks", method = RequestMethod.POST)
@@ -66,14 +85,6 @@ public class BookBorrowController {
         String[] messages = {"UserId or Copy's id is invalid!", "Copy deleted!"};
 
         RestServiceModel.checkResult(borrowedBookCopyDtos, responseObj, messages);
-
-        return responseObj;
-    }
-
-    @RequestMapping(value = "/save/copy", method = RequestMethod.POST)
-    public RestServiceModel<BorrowedBookCopyDto> saveCopyToDatabase(@RequestBody RfidDto rfidDto) {
-        RestServiceModel<BorrowedBookCopyDto> responseObj = bookBorrowService.saveCopyToDatabase(rfidDto);
-        simpMessagingTemplate.convertAndSend("/socket", responseObj);
 
         return responseObj;
     }

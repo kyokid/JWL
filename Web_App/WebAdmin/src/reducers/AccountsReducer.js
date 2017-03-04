@@ -20,11 +20,11 @@ export default function (state = INITIAL_STATE, action) {
 					borrowedBookCopies: action.payload.data.data
 				}
 			}
-		case Types.FETCH_SAVED_COPY:
-			console.log("reducer Types.FETCH_SAVED_COPY called!")
+		case Types.FETCH_ADDED_COPY:
+			console.log("reducer Types.FETCH_ADDED_COPY called!")
 			console.log("reducer: " + action.payload.data)
 			if (!action.payload.data) {
-				return state;
+				return state
 			}
 
 			return {
@@ -34,6 +34,12 @@ export default function (state = INITIAL_STATE, action) {
 					borrowedBookCopies: [action.payload.data ,...state.account.borrowedBookCopies]
 				}
 			}
+		case Types.CANCEL_ADDING_COPY:
+			if (!action.payload) {
+				return state
+			}
+
+			return { ...state, account: action.payload }
 	}
 	return state
 }
