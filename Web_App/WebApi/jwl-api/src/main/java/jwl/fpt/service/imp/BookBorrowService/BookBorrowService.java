@@ -288,7 +288,7 @@ public class BookBorrowService implements IBookBorrowService {
             result.setFailData(
                     null,
                     "The book copy " + rfid + " had already been added.",
-                    "Book's just added!");
+                    "Book has just been added!");
             return result;
         }
 
