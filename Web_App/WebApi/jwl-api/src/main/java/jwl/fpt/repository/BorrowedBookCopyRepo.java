@@ -18,6 +18,9 @@ public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEnti
 
     @Transactional
     @Modifying
-    @Query("delete from BorrowedBookCopyEntity b where b.account.userId = ?1 and b.id = ?2")
-    void deleteByUserIdAndBorrowedCopyId(String userId, Integer borrowedCopyId);
+    @Query("delete from BorrowedBookCopyEntity b " +
+            "where b.account.userId = ?1 " +
+            "and b.bookCopy.rfid = ?2 " +
+            "and b.returnDate is null")
+    void deleteByUserIdAndBorrowedCopyRfid(String userId, String borrowedCopyId);
 }

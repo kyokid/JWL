@@ -33,14 +33,19 @@ INSERT INTO book_position (id, shelf, floor)
 VALUES (1, 'A', 'ground'), (2, 'B', 'ground'), (3, 'A', '1st floor'), (4, 'B', '1st floor');
 
 INSERT INTO book (id, title, publisher, description, publish_year, number_of_pages, book_type_id, position_id, isbn)
-VALUES (1, 'Java', 'Zert', 'The beginning part to greatness.', '2015', '400', 2, 1, ''),
-  (2, 'Ruby on Rails', 'Rails', 'The quickest way to web development.', '2015', '200', 1, 2, '');
+VALUES (1, 'Java', 'Zert', 'The beginning part to greatness.', '2015', '400', 2, 1, 'JV1'),
+  (2, 'Ruby on Rails', 'Rails', 'The quickest way to web development.', '2015', '200', 1, 2, 'RoR2');
 INSERT INTO book (id, title, publisher, description, publish_year, number_of_pages, book_type_id, position_id, isbn)
-VALUES (3, 'XML', 'KhanhKT', 'How to survive with XML', '2017', '230', 2, 1, '');
+VALUES (3, 'XML', 'KhanhKT', 'How to survive with XML', '2017', '230', 2, 1, 'XML3');
+INSERT INTO book (id, title, publisher, description, publish_year, number_of_pages, book_type_id, position_id, isbn)
+VALUES (4, 'Clean Architecture', 'Clean Code Publisher', 'A must have to build a clean project.', '2017', '400', 1, 4, 'CA4'),
+  (5, 'Business English', 'Business Co.', 'English for your business.', '2016', '800', 2, 3, 'BE4');
 
 INSERT INTO book_copy (rfid, book_id, price)
 VALUES ('0009599367', 1, 400), ('0009951006', 1, 350), ('0010323151', 2, 100), ('0010315397', 2, 100);
 UPDATE book_copy SET book_id = 3 WHERE rfid = '0010315397';
+INSERT INTO book_copy (rfid, book_id, price)
+VALUES ('0001182226', 4, 800), ('0001190428', 5, 750), ('0001122520', 4, 800);
 
 INSERT INTO profile (user_id, fullname, email, address, date_of_birth, phone_no, place_of_work)
 VALUES ('SE61476', 'Nguyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn F12 Gò Vấp', '1992-04-26', '01692536559', 'FPT');

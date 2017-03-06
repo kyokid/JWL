@@ -127,16 +127,18 @@ class AccountDetail extends Component {
 
 	renderBorrowedBook(borrowedBook) {
 		const userId = this.state.userId
-		const borrowedCopyId = borrowedBook.bookCopyRfid
+		const borrowedCopyRfid = borrowedBook.bookCopyRfid
 
 		return (
-			<tr key={borrowedCopyId}>
+			<tr key={borrowedCopyRfid}>
 				<td>{borrowedBook.bookCopyRfid}</td>
 				<td>{borrowedBook.bookCopyBookTitle}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
 				<td>
-					<a onClick={() => this.onClickDeleteCopy(userId, borrowedBook.id)}>
+					<a
+						className={`${this.state.isAddingBook ? "disable" : ""}`}
+						onClick={() => this.onClickDeleteCopy(userId, borrowedCopyRfid)}>
 						<span className="glyphicon glyphicon-remove" aria-hidden="true" />
 					</a>
 				</td>
@@ -144,8 +146,8 @@ class AccountDetail extends Component {
 		)
 	}
 
-	onClickDeleteCopy(userId, borrowedCopyId) {
-		this.props.deleteBorrowedCopy(userId, borrowedCopyId)
+	onClickDeleteCopy(userId, borrowedCopyRfid) {
+		this.props.deleteBorrowedCopy(userId, borrowedCopyRfid)
 	}
 }
 

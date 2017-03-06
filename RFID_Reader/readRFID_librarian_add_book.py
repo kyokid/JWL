@@ -6,7 +6,7 @@ import os
 def senPostRequest(data):
     dataString = data[1:-1]
     print str(dataString)
-    url = 'http://localhost:8080/save/copy'
+    url = 'https://jwl-api-v0.herokuapp.com/librarian/add/copy'
     data = {
         "ibeaconId" : "1",
         "rfid" : dataString

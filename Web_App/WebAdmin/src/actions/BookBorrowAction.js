@@ -30,12 +30,12 @@ export function checkout(userId, ibeaconId) {
 	}
 }
 
-export function deleteBorrowedCopy(userId, borrowedCopyId) {
+export function deleteBorrowedCopy(userId, borrowedCopyRfid) {
 	const request = axios({
 		method: 'DELETE',
 		url: `${Api.ROOT_URL}${Api.DELETE_COPY}`,
 		data: {
-			"id": borrowedCopyId,
+			"bookCopyRfid": borrowedCopyRfid,
 			"accountUserId": userId
 		}
 	})

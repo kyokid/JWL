@@ -22,6 +22,12 @@ textarea {
   margin-bottom: 10px;
 }
 
+a.disable {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.5;
+}
+
 /**
  * Typography
  */

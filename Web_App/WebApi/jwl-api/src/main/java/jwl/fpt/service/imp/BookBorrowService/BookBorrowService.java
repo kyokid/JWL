@@ -238,14 +238,14 @@ public class BookBorrowService implements IBookBorrowService {
 
     @Override
     public List<BorrowedBookCopyDto> deleteBorrowingCopy(BorrowedBookCopyDto borrowedBookCopyDto) {
-        Integer borrowedBookCopyId = borrowedBookCopyDto.getId();
+        String borrowedBookCopyRfid = borrowedBookCopyDto.getBookCopyRfid();
         String userId = borrowedBookCopyDto.getAccountUserId();
 
-        if (borrowedBookCopyId == null || userId == null) {
+        if (borrowedBookCopyRfid == null || userId == null || borrowedBookCopyRfid.isEmpty()) {
             return null;
         }
 
-        borrowedBookCopyRepo.deleteByUserIdAndBorrowedCopyId(userId, borrowedBookCopyId);
+        borrowedBookCopyRepo.deleteByUserIdAndBorrowedCopyRfid(userId, borrowedBookCopyRfid);
 
         // Return list of borrowing books.
         AccountEntity accountEntity = new AccountEntity();
