@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { browserHistory } from "react-router"
 import { getAllAccounts } from '../actions/AccountsAction'
 
 class AccountList extends Component {
@@ -34,7 +35,7 @@ class AccountList extends Component {
 	renderAccount(account, index) {
 		const userId = account.userId
 		return (
-			<tr key={userId}>
+			<tr key={userId} onClick={() => browserHistory.push(`users/${userId}`)}>
 				<td>{index}</td>
 				<td>{userId}</td>
 				<td>{account.profileFullname}</td>
