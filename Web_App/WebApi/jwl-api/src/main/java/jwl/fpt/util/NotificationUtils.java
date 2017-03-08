@@ -27,6 +27,7 @@ import java.util.List;
 public class NotificationUtils {
     @Autowired
     IUserService userService;
+//    public static void cakjdf(String userId, List<>book)
     public static void callNotification(String userId, String googleToken){
 
         String url = "https://fcm.googleapis.com/fcm/send";
@@ -38,7 +39,7 @@ public class NotificationUtils {
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Authorization", "key=" + Constant.APP_TOKEN);
         JSONObject body = new JSONObject();
-        body.put("body", "Welcome" + userId) ;
+        body.put("body", "Welcome" + userId);
         JSONObject entity = new JSONObject();
         entity.put("to", googleToken);
         entity.put("notification", body);

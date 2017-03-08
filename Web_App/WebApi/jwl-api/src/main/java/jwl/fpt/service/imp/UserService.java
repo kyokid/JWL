@@ -13,6 +13,7 @@ import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.repository.UserRepository;
 import jwl.fpt.service.IUserService;
 import jwl.fpt.util.EncryptUtils;
+import jwl.fpt.util.NotificationUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -146,8 +147,22 @@ public class UserService implements IUserService {
 
     @Override
     public Boolean checkin(String key, String userId) {
+        // TODO: Thiendn: thao luan lai van de luu vao ticket.
         String keyInDB = accountRepository.getCheckinKey(userId);
-        return keyInDB.equals(key);
+        boolean result = keyInDB.equals(key);
+        if (result){
+            String token = findByUsername(userId).getGoogleToken();
+            NotificationUtils.callNotification(userId, token);
+            //Update Database
+//            accountRepository.setStatus(true, userId);
+//            BorrowerTicketEntity ticket = new BorrowerTicketEntity();
+//            ticket.setQrId(ticketId);
+//            ticket.setAccount(searchTerm);
+//            ticket.setCreateDate(createDate);
+//            ticket.setScanDate(new Date(Calendar.getInstance().getTimeInMillis()));
+//            borrowerTicketRepo.save(ticket);
+        }
+        return result;
     }
 
     @Override
