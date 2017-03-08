@@ -153,7 +153,10 @@ public class UserController {
 
         //so sanh key hien tai voi key client send.
         boolean result = finalKey.equals(privateKey);
-
+        if (result) {
+            String token = userService.findByUsername(userId).getGoogleToken();
+            NotificationUtils.callNotification(userId, token);
+        }
         responseObj.setSucceed(true);
         responseObj.setData(result);
         return responseObj;

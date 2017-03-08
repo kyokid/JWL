@@ -129,7 +129,6 @@ public class UserService implements IUserService {
     @Override
     public void updateGoogleToken(String googleToken, String userId) {
         accountRepository.updateGoogleToken(googleToken, userId);
-
     }
 
 //    @Override
