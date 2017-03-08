@@ -13,4 +13,5 @@ public class AccountDto {
     private boolean isInLibrary;
     private boolean isActivated;
     private String googleToken;
+    private String checkinKey;
 }

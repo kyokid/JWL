@@ -10,6 +10,7 @@ import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.service.IUserService;
 import jwl.fpt.util.NotificationUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -114,4 +115,31 @@ public class UserController {
         result.setSucceed(true);
     }
 
+    @RequestMapping(path = "/users/{id}/requestKey", method = RequestMethod.GET)
+    public RestServiceModel<String> requestKey(@PathVariable("id") String userId){
+        RestServiceModel<String> responseObj = new RestServiceModel<>();
+        String keyResult = userService.requestKey(userId);
+        //set json result:
+        //date: Calendar.getInstance().getTimeInMillis() - type sql.date
+        //key
+        JSONObject jsonObject = new JSONObject();
+        Date now = new Date(Calendar.getInstance().getTimeInMillis());
+        jsonObject.put("key", keyResult);
+        jsonObject.put("date", now);
+        //set response
+        responseObj.setData(jsonObject.toString());
+        responseObj.setSucceed(true);
+        System.out.println("json result: " + jsonObject);
+        return responseObj;
+    }
+
+    @RequestMapping(path = "/users/{id}/checkin", method = RequestMethod.GET)
+    public RestServiceModel<Boolean> checkin(@PathVariable("id") String userId,
+            @RequestParam("key")String privateKey){
+        RestServiceModel<Boolean> responseObj = new RestServiceModel<>();
+        boolean result = userService.checkin(privateKey, userId);
+        responseObj.setSucceed(true);
+        responseObj.setData(result);
+        return responseObj;
+    }
 }

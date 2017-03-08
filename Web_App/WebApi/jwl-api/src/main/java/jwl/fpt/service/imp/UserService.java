@@ -12,11 +12,14 @@ import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.repository.UserRepository;
 import jwl.fpt.service.IUserService;
+import jwl.fpt.util.EncryptUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -35,6 +38,8 @@ public class UserService implements IUserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    Calendar calendar;
 
     @Override
     public RestServiceModel<List<UserDto>> getAllUser() {
@@ -124,6 +129,25 @@ public class UserService implements IUserService {
     public void updateGoogleToken(String googleToken, String userId) {
         accountRepository.updateGoogleToken(googleToken, userId);
 
+    }
+
+    @Override
+    public String requestKey(String userId) {
+        // TODO: Thiendn
+        Date now = new Date(Calendar.getInstance().getTimeInMillis());
+        System.out.println("Now: " + now);
+        String beforeEncrypt = userId + now.toString();
+        System.out.println("Before encrypt: " + beforeEncrypt);
+        String finalKey = EncryptUtils.generateHash(beforeEncrypt);
+        System.out.println("After encrypt: " + finalKey);
+        accountRepository.updateCheckinKey(finalKey, userId);
+        return finalKey;
+    }
+
+    @Override
+    public Boolean checkin(String key, String userId) {
+        String keyInDB = accountRepository.getCheckinKey(userId);
+        return keyInDB.equals(key);
     }
 
     @Override

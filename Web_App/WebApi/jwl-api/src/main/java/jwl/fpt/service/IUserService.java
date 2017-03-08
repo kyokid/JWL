@@ -26,5 +26,10 @@ public interface IUserService {
 
     Boolean getStatus(String userId);
 
+    // TODO: Thiendn - update return type
     void updateGoogleToken(String googleToken, String userId);
+
+    String requestKey(String userId);
+
+    Boolean checkin(String key, String userId);
 }
