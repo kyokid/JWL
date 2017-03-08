@@ -29,7 +29,7 @@ public interface IUserService {
     // TODO: Thiendn - update return type
     void updateGoogleToken(String googleToken, String userId);
 
-    String requestKey(String userId);
+//    String requestKey(String userId);
 
-    Boolean checkin(String key, String userId);
+//    Boolean checkin(String key, String userId);
 }

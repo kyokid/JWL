@@ -132,38 +132,38 @@ public class UserService implements IUserService {
 
     }
 
-    @Override
-    public String requestKey(String userId) {
-        // TODO: Thiendn
-        Date now = new Date(Calendar.getInstance().getTimeInMillis());
-        System.out.println("Now: " + now);
-        String beforeEncrypt = userId + now.toString();
-        System.out.println("Before encrypt: " + beforeEncrypt);
-        String finalKey = EncryptUtils.generateHash(beforeEncrypt);
-        System.out.println("After encrypt: " + finalKey);
-        accountRepository.updateCheckinKey(finalKey, userId);
-        return finalKey;
-    }
+//    @Override
+//    public String requestKey(String userId) {
+//        // TODO: Thiendn
+//        Date now = new Date(Calendar.getInstance().getTimeInMillis());
+//        System.out.println("Now: " + now);
+//        String beforeEncrypt = userId + now.toString();
+//        System.out.println("Before encrypt: " + beforeEncrypt);
+//        String finalKey = EncryptUtils.generateHash(beforeEncrypt);
+//        System.out.println("After encrypt: " + finalKey);
+////        accountRepository.updateCheckinKey(finalKey, userId);
+//        return finalKey;
+//    }
 
-    @Override
-    public Boolean checkin(String key, String userId) {
-        // TODO: Thiendn: thao luan lai van de luu vao ticket.
-        String keyInDB = accountRepository.getCheckinKey(userId);
-        boolean result = keyInDB.equals(key);
-        if (result){
-            String token = findByUsername(userId).getGoogleToken();
-            NotificationUtils.callNotification(userId, token);
-            //Update Database
-//            accountRepository.setStatus(true, userId);
-//            BorrowerTicketEntity ticket = new BorrowerTicketEntity();
-//            ticket.setQrId(ticketId);
-//            ticket.setAccount(searchTerm);
-//            ticket.setCreateDate(createDate);
-//            ticket.setScanDate(new Date(Calendar.getInstance().getTimeInMillis()));
-//            borrowerTicketRepo.save(ticket);
-        }
-        return result;
-    }
+//    @Override
+//    public Boolean checkin(String key, String userId) {
+//        // TODO: Thiendn: thao luan lai van de luu vao ticket.
+//        String keyInDB = accountRepository.getCheckinKey(userId);
+//        boolean result = keyInDB.equals(key);
+//        if (result){
+//            String token = findByUsername(userId).getGoogleToken();
+//            NotificationUtils.callNotification(userId, token);
+//            //Update Database
+////            accountRepository.setStatus(true, userId);
+////            BorrowerTicketEntity ticket = new BorrowerTicketEntity();
+////            ticket.setQrId(ticketId);
+////            ticket.setAccount(searchTerm);
+////            ticket.setCreateDate(createDate);
+////            ticket.setScanDate(new Date(Calendar.getInstance().getTimeInMillis()));
+////            borrowerTicketRepo.save(ticket);
+//        }
+//        return result;
+//    }
 
     @Override
     public AccountDetailDto getAccountDetail(String userId) {

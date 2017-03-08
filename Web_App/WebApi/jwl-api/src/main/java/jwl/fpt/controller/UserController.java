@@ -9,6 +9,7 @@ import jwl.fpt.model.dto.UserDto;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.service.IUserService;
+import jwl.fpt.util.EncryptUtils;
 import jwl.fpt.util.NotificationUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,13 +119,20 @@ public class UserController {
     @RequestMapping(path = "/users/{id}/requestKey", method = RequestMethod.GET)
     public RestServiceModel<String> requestKey(@PathVariable("id") String userId){
         RestServiceModel<String> responseObj = new RestServiceModel<>();
-        String keyResult = userService.requestKey(userId);
+//        String keyResult = userService.requestKey(userId);
+
+        //Generate key
+        Date now = new Date(Calendar.getInstance().getTimeInMillis());
+        System.out.println("Now: " + now);
+        String beforeEncrypt = userId + now.toString();
+        System.out.println("Before encrypt: " + beforeEncrypt);
+        String finalKey = EncryptUtils.generateHash(beforeEncrypt);
+        System.out.println("After encrypt: " + finalKey);
         //set json result:
         //date: Calendar.getInstance().getTimeInMillis() - type sql.date
         //key
         JSONObject jsonObject = new JSONObject();
-        Date now = new Date(Calendar.getInstance().getTimeInMillis());
-        jsonObject.put("key", keyResult);
+        jsonObject.put("key", finalKey);
         jsonObject.put("date", now);
         //set response
         responseObj.setData(jsonObject.toString());
@@ -137,7 +145,15 @@ public class UserController {
     public RestServiceModel<Boolean> checkin(@PathVariable("id") String userId,
             @RequestParam("key")String privateKey){
         RestServiceModel<Boolean> responseObj = new RestServiceModel<>();
-        boolean result = userService.checkin(privateKey, userId);
+
+        //Generate key from userid
+        Date now = new Date(Calendar.getInstance().getTimeInMillis());
+        String beforeEncrypt = userId + now.toString();
+        String finalKey = EncryptUtils.generateHash(beforeEncrypt);
+
+        //so sanh key hien tai voi key client send.
+        boolean result = finalKey.equals(privateKey);
+
         responseObj.setSucceed(true);
         responseObj.setData(result);
         return responseObj;
