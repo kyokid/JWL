@@ -25,7 +25,7 @@ export function getAccountDetail(id) {
 }
 
 export function getUserByUsername(term) {
-	const request = axios.get(`${Api.ROOT_URL}${Api.USERS}?username=${term}`)
+	const request = axios.get(`${Api.ROOT_URL}${Api.USERS}/search?term=${term}`)
 
 	return {
 		type: Types.FETCH_ACCOUNTS,

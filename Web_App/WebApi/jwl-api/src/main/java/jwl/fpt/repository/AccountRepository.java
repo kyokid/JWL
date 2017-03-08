@@ -12,7 +12,8 @@ import java.util.List;
  * Created by Entaard on 2/7/17.
  */
 public interface AccountRepository extends JpaRepository<AccountEntity, String> {
-    List<AccountEntity> findAll();
+    @Query("select users from AccountEntity users where users.deleteDate is null")
+    List<AccountEntity> findAllUsers();
 
     @Transactional
     @Modifying
@@ -25,6 +26,9 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
 //            "where c1.returnDate is null " +
 //            "and acc.userId = ?1")
     AccountEntity findByUserId(String userId);
+
+    @Query("select users from AccountEntity users where lower(users.userId) like lower(?1) and users.deleteDate is null")
+    List<AccountEntity> findByUserIdLike(String term);
 
     @Transactional
     @Modifying

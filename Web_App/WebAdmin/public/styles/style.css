@@ -49,7 +49,7 @@ h2 {
   margin-bottom: 30px;
   text-align: center;
   font-weight: normal;
-  color: darkblue;
+  /*color: darkblue;*/
 }
 
 p {
@@ -121,6 +121,13 @@ p {
 
 .table-user-container table .glyphicon {
   padding-right: 5px;
+}
+
+.table-user-container .table-users tbody tr {
+  cursor: pointer;
+}
+.table-user-container .table-users tbody tr:hover td {
+  color: #1d5d90;
 }
 
 /**

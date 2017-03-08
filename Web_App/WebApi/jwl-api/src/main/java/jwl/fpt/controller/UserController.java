@@ -30,7 +30,7 @@ public class UserController {
     private BorrowerTicketRepo borrowerTicketRepo;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public List<UserDto> getAllUser() {
+    public RestServiceModel<List<UserDto>> getAllUser() {
         return userService.getAllUser();
     }
 
@@ -53,22 +53,9 @@ public class UserController {
         return result;
     }
 
-
-
     @RequestMapping(path = "/users/search", method = RequestMethod.GET)
     public RestServiceModel<List<UserDto>> search(@RequestParam(value = "term") String searchTerm) {
-        RestServiceModel<List<UserDto>> result = new RestServiceModel<>();
-        List<UserDto> listUser = userService.findByUsernameLike(searchTerm);
-
-        if (!listUser.isEmpty()) {
-            result.setTextMessage("Search Successfully!");
-
-            result.setSucceed(true);
-            result.setData(listUser);
-        } else {
-            result.setTextMessage("Deo co gi");
-        }
-        return result;
+        return userService.findByUserIdLike(searchTerm);
     }
 
     @RequestMapping(path = "users/profile", method = RequestMethod.GET)

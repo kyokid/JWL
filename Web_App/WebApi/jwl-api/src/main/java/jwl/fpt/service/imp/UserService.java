@@ -3,7 +3,7 @@ package jwl.fpt.service.imp;
 import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.BorrowerTicketEntity;
 import jwl.fpt.entity.ProfileEntity;
-import jwl.fpt.entity.TblUserEntity;
+import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.AccountDetailDto;
 import jwl.fpt.model.dto.AccountDto;
 import jwl.fpt.model.dto.ProfileDto;
@@ -37,17 +37,27 @@ public class UserService implements IUserService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<UserDto> getAllUser() {
-        List<AccountEntity> users = accountRepository.findAll();
-        List<UserDto> results = new ArrayList<>();
-
-        for (AccountEntity user:
-                users) {
-            UserDto dto = modelMapper.map(user, UserDto.class);
-            results.add(dto);
+    public RestServiceModel<List<UserDto>> getAllUser() {
+        RestServiceModel<List<UserDto>> result = new RestServiceModel<>();
+        List<AccountEntity> accountEntities = accountRepository.findAllUsers();
+        if (accountEntities == null || accountEntities.isEmpty()) {
+            result.setSuccessData(
+                    null,
+                    "There is no user in the system...yet.Please add some.");
+            return result;
         }
 
-        return results;
+        List<UserDto> userDtos = new ArrayList<>();
+
+        for (AccountEntity accountEntity :
+                accountEntities) {
+            UserDto dto = modelMapper.map(accountEntity, UserDto.class);
+            userDtos.add(dto);
+        }
+
+        result.setSuccessData(userDtos, "Found " + userDtos.size() + " user(s).");
+
+        return result;
     }
 
     @Override
@@ -78,17 +88,27 @@ public class UserService implements IUserService {
 
 
     @Override
-    public List<UserDto> findByUsernameLike(String q) {
-        List<TblUserEntity> entities = userRepository.findByUsernameLike('%' +q + '%');
-        List<UserDto> results = new ArrayList<>();
-
-        for (TblUserEntity entity :
-                entities) {
-            UserDto dto = modelMapper.map(entity, UserDto.class);
-            results.add(dto);
+    public RestServiceModel<List<UserDto>> findByUserIdLike(String searchTerm) {
+        RestServiceModel<List<UserDto>> result = new RestServiceModel<>();
+        List<AccountEntity> accountEntities = accountRepository.findByUserIdLike('%' + searchTerm + '%');
+        if (accountEntities == null || accountEntities.isEmpty()) {
+            result.setSuccessData(
+                    null,
+                    "We could not find any accounts with userID like '" + searchTerm + "'");
+            return result;
         }
 
-        return results;
+        List<UserDto> userDtos = new ArrayList<>();
+
+        for (AccountEntity accountEntity :
+                accountEntities) {
+            UserDto dto = modelMapper.map(accountEntity, UserDto.class);
+            userDtos.add(dto);
+        }
+
+        result.setSuccessData(userDtos, "Found " + userDtos.size() + " user(s).");
+
+        return result;
     }
 
     @Override

@@ -3,13 +3,18 @@ import * as Types from '../constants/action-type'
 
 const INITIAL_STATE = {
 	all: [],
-	account: null
+	account: null,
+	message: ""
 }
 
 export default function (state = INITIAL_STATE, action) {
 	switch (action.type) {
 		case Types.FETCH_ACCOUNTS:
-			return { ...state, all: action.payload.data }
+			return {
+				...state,
+				all: action.payload.data.data,
+				message: action.payload.data.textMessage
+			}
 		case Types.FETCH_ACCOUNT:
 			return { ...state, account: action.payload.data.data }
 		case Types.DELETE_ACCOUNT:

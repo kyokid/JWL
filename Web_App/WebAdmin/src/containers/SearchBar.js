@@ -16,11 +16,10 @@ class SearchBar extends Component {
 		return (
 			<form className="input-group" onSubmit={this.onFormSubmit}>
 				<input
-					placeholder="put username here..."
+					placeholder="put userID here..."
 					className="form-control"
 					value={this.state.term}
-					onChange={this.onInputChange}
-				/>
+					onChange={this.onInputChange} />
 				<span className="input-group-btn">
 					<button className="btn secondary-btn" type="submit">Search</button>
 				</span>
@@ -31,14 +30,22 @@ class SearchBar extends Component {
 	onFormSubmit(event) {
 		event.preventDefault()
 
-		this.setState({term: ''})
+		let searchTerm = this.state.term.trim()
 
-		const searchTerm = this.state.term
-		if (searchTerm.trim() == "") {
+		if (searchTerm == "") {
+			this.setState({term: ''})
 			this.props.getAllAccounts()
-			return;
+			return
 		}
+
+		if (searchTerm.length > 15) {
+			searchTerm = searchTerm.slice(0, 15)
+			searchTerm += "..."
+		}
+
 		this.props.getUserByUsername(searchTerm)
+
+		this.setState({term: ''})
 	}
 
 	onInputChange(event) {

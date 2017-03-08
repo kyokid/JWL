@@ -14,12 +14,18 @@ class AccountList extends Component {
 	}
 
 	render() {
+		if (!this.props.accounts) {
+			return (
+				<h2>{this.props.message}</h2>
+			)
+		}
+
 		return (
-			<table className="table table-striped">
+			<table className="table table-striped table-users">
 				<thead>
 					<tr>
 						<th>No.</th>
-						<th>Username</th>
+						<th>UserID</th>
 						<th>Full name</th>
 						<th>Email</th>
 						<th>Tools</th>
@@ -49,7 +55,10 @@ class AccountList extends Component {
 }
 
 function mapStateToProps(state) {
-	return { accounts: state.accounts.all }
+	return {
+		accounts: state.accounts.all,
+		message: state.accounts.message
+	}
 }
 
 function mapDispatchToProps(dispatch) {

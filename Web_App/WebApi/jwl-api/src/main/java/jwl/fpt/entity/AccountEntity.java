@@ -3,6 +3,7 @@ package jwl.fpt.entity;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.Collection;
 
 /**
@@ -17,6 +18,7 @@ public class AccountEntity {
     private Boolean isInLibrary;
     private Boolean isActivated;
     private String googleToken;
+    private Date deleteDate;
     private UserRoleEntity userRole;
     private ProfileEntity profile;
     private Collection<BorrowedBookCopyEntity> borrowedBookCopies;
@@ -59,6 +61,10 @@ public class AccountEntity {
         return isActivated;
     }
 
+    public void setActivated(Boolean activated) {
+        isActivated = activated;
+    }
+
     @Basic
     @Column(name = "google_token")
     public String getGoogleToken() {
@@ -69,9 +75,14 @@ public class AccountEntity {
         this.googleToken = googleToken;
     }
 
+    @Basic
+    @Column(name = "delete_date")
+    public Date getDeleteDate() {
+        return deleteDate;
+    }
 
-    public void setActivated(Boolean activated) {
-        isActivated = activated;
+    public void setDeleteDate(Date deleteDate) {
+        this.deleteDate = deleteDate;
     }
 
     @Override
