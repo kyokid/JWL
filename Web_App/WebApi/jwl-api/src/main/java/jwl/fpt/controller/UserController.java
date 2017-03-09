@@ -150,12 +150,14 @@ public class UserController {
         Date now = new Date(Calendar.getInstance().getTimeInMillis());
         String beforeEncrypt = userId + now.toString();
         String finalKey = EncryptUtils.generateHash(beforeEncrypt);
-
+        System.out.println("Key send from client: " + privateKey);
+        System.out.println("Key generate from server: " + finalKey);
         //so sanh key hien tai voi key client send.
         boolean result = finalKey.equals(privateKey);
         if (result) {
             String token = userService.findByUsername(userId).getGoogleToken();
             NotificationUtils.callNotification(userId, token);
+            accountRepository.setStatus(true, userId);
         }
         responseObj.setSucceed(true);
         responseObj.setData(result);
