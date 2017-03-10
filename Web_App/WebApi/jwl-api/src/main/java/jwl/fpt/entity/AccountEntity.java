@@ -24,15 +24,6 @@ public class AccountEntity {
     private Collection<BorrowedBookCopyEntity> borrowedBookCopies;
     private Collection<BorrowerTicketEntity> borrowerTickets;
     private Collection<WishBookEntity> wishBooks;
-    private String checkinKey;
-
-    public String getCheckinKey() {
-        return checkinKey;
-    }
-
-    public void setCheckinKey(String checkinKey) {
-        this.checkinKey = checkinKey;
-    }
 
     @Id
     @Column(name = "user_id")

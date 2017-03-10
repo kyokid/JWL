@@ -51,7 +51,6 @@ CREATE TABLE IF NOT EXISTS public.account
 );
 ALTER TABLE public.account ADD COLUMN google_token text;
 ALTER TABLE public.account ADD COLUMN delete_date DATE;
--- ALTER TABLE public.account ADD COLUMN checkin_key text;
 
 -- profile:
 -- Other information of a user.
