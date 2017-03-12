@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import {Field, reduxForm} from 'redux-form'
+import {Field, Fields, reduxForm} from 'redux-form'
 
-import { submitImg } from '../actions/AccountsAction'
-import { loadUserInputImg } from '../helpers/ImgPicker'
-import { renderField } from '../helpers/FieldRenderer'
+import { renderCommonField, renderUserRoleRadioGroup } from '../helpers/FieldRenderer'
 import { validate } from  '../helpers/FieldValidator'
 import ReactDatePicker from '../helpers/ReactDatePicker'
+import ImgField from '../helpers/ImgFieldRenderer'
 
 class AccountNew extends Component {
 	constructor(props) {
@@ -14,11 +13,6 @@ class AccountNew extends Component {
 		this.state = {
 			imgUrl: ''
 		}
-	}
-
-	componentDidMount() {
-		// Load JS.
-		loadUserInputImg()
 	}
 
 	render() {
@@ -74,62 +68,62 @@ class AccountNew extends Component {
 
 		return (
 			<form onSubmit={handleSubmit(this.onFormSubmit.bind(this))}>
-				<div className="img-input-container form-group">
-					<p>Your image:</p>
-					<div className="img-placeholder">
-						<img id="uploadImg" src="#" alt="Your image" />
-						<input id="inputImg" type="file" name="file" accept="image/*" />
-						<label htmlFor="inputImg">Upload your profile image.</label>
-						<input type="hidden" name="imgUrl" value={this.props.imgUrl} />
-					</div>
-				</div>
-
+				<Field id="inputImg"
+							 name="imgUrl"
+							 formName="accountNewForm"
+							 label="User Image"
+							 component={ImgField} />
 				<Field id="userId"
 							 name="userId"
 							 label="User ID"
 							 type="text"
-							 component={renderField}/>
+							 component={renderCommonField} />
 				<Field id="fullName"
 							 name="fullName"
 							 label="Full Name"
 							 type="text"
-							 component={renderField}/>
+							 component={renderCommonField} />
 				<Field id="password"
 							 name="password"
 							 label="Password"
 							 type="password"
-							 component={renderField}/>
+							 component={renderCommonField} />
+				<Field id="confirmPassword"
+							 name="confirmPassword"
+							 label="Confirm Password"
+							 type="password"
+							 component={renderCommonField} />
 				<Field id="email"
 							 name="email"
 							 label="Email"
 							 type="text"
-							 component={renderField}/>
+							 component={renderCommonField} />
 				<Field id="address"
 							 name="address"
 							 label="Address"
 							 type="text"
-							 component={renderField}/>
+							 component={renderCommonField} />
 				<Field id="birthDate"
 							 className="date"
 							 name="birthDate"
 							 label="Date of Birth"
 							 type="text"
-							 component={ReactDatePicker}/>
+							 component={ReactDatePicker} />
 				<Field id="phoneNo"
 							 name="phoneNo"
 							 label="Phone Number"
 							 type="text"
-							 component={renderField}/>
+							 component={renderCommonField} />
 				<Field id="workPlace"
 							 name="workPlace"
 							 label="Place of Work"
 							 type="text"
-							 component={renderField}/>
-				<Field id="userRole"
-							 name="userRole"
-							 label="User Role"
-							 type="text"
-							 component={renderField}/>
+							 component={renderCommonField} />
+				<Fields id="userRole"
+							 	names={["userRole"]}
+							 	labels={["Admin", "Librarian", "Borrower"]}
+							 	values={["admin", "librarian", "borrower"]}
+							 	component={renderUserRoleRadioGroup} />
 
 				<button type="reset" className="btn btn-default" data-dismiss="modal">Close</button>
 				<button type="submit" className="btn btn-primary">Submit</button>
@@ -147,4 +141,4 @@ export default reduxForm({
 	form: 'accountNewForm',
 	destroyOnUnmount: false,
 	validate
-}, null, { submitImg })(AccountNew)
+})(AccountNew)

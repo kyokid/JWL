@@ -7,7 +7,7 @@ export default class ReactDatePicker extends Component {
 		super(props)
 
 		this.state = {
-			startDate: moment()
+			startDate: ''
 		}
 	}
 
@@ -18,18 +18,19 @@ export default class ReactDatePicker extends Component {
 	}
 
 	render() {
-		const {input} = this.props
+		const { input, id, label, meta: { touched, error } } = this.props
 
 		return (
-			<div className="form-group">
+			<div className={`form-group ${touched && error ? 'has-error' : ''}`}>
+				<label htmlFor={id}>{label}</label>
+				<br />
 				<DatePicker {...input}
 										className="form-control"
 										dateFormat="DD/MM/YYYY"
+										placeholderText="DD/MM/YYYY"
 										selected={this.state.startDate}
 										onChange={this.handleChange.bind(this)} readOnly />
-				<div className="input-group-addon">
-					<span className="glyphicon glyphicon-th" />
-				</div>
+				{touched && error && <span className="help-block">{error}</span>}
 			</div>
 		)
 	}

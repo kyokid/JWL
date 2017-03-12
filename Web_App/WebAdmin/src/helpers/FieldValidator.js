@@ -2,10 +2,13 @@ import { EMAIL_REGEX, PHONE_NO_REGEX } from '../constants/regex'
 
 export const validate = (values) => {
 	const errors = {}
+	if (!values.imgUrl || values.imgUrl.trim() == '') {
+		errors.imgUrl = 'User profile image is required.'
+	}
 	if (!values.userId) {
 		errors.userId = 'User ID is required.'
-	} else if (values.userId.length < 6 || values.userId.length > 100) {
-		errors.userId = 'User ID’s length must be 6-100 characters.'
+	} else if (values.userId.length < 6 || values.userId.length > 15) {
+		errors.userId = 'User ID’s length must be 6-15 characters.'
 	}
 
 	if (!values.fullName) {
@@ -18,6 +21,8 @@ export const validate = (values) => {
 		errors.password = 'Password is required.'
 	} else if (values.password.length < 6 || values.password.length > 50) {
 		errors.password = 'Password’s length must be 6-50 characters.'
+	} else if (values.password != values.confirmPassword) {
+		errors.confirmPassword = 'Confirm Password must match Password.'
 	}
 
 	if (!values.email) {
@@ -42,6 +47,14 @@ export const validate = (values) => {
 		errors.workPlace = 'Place of Work is required.'
 	} else if (values.workPlace.length > 100) {
 		errors.workPlace = 'Place of Work must not be longer than 100 characters.'
+	}
+
+	if (!values.birthDate) {
+		errors.birthDate = 'Date of Birth is required.'
+	}
+
+	if (!values.userRole) {
+		errors.userRole = 'User Role is required.'
 	}
 
 	return errors

@@ -166,7 +166,8 @@ p {
   z-index: -1;
 }
 
-#inputImg + label {
+#inputImg + label,
+#inputImg + label + .downloading {
   position: absolute;
   left: 0;
   top: 0;
@@ -177,11 +178,34 @@ p {
   padding-top: 80px;
   text-align: center;
   color: gray;
-  opacity: 0;
   cursor: pointer;
+  opacity: 0;
 }
 
 #inputImg + label:hover {
   background-color: black;
   opacity: 0.6;
+}
+
+#inputImg + label + .downloading {
+  z-index: 1  ;
+  background-color: black;
+  opacity: 0.6;
+}
+
+.form-control[readonly] {
+  background-color: white;
+}
+
+.radio-group > label.role-group {
+  margin-right: 50px;
+}
+
+.radio-group > label.role-radio {
+  margin-right: 30px;
+  font-weight: normal;
+}
+
+.radio-group > label.role-radio > input {
+  margin-left: 10px;
 }

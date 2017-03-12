@@ -33,10 +33,9 @@ export function getUserByUsername(term) {
 	}
 }
 
-export function submitImg() {
-	const fileInput = document.getElementById("inputImg")
+export function submitImg(imgFile) {
 	const formData = new FormData()
-	formData.append("img", fileInput.files[0])
+	formData.append("img", imgFile)
 
 	const request = axios({
 		method: 'POST',
