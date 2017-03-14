@@ -11,7 +11,6 @@ import java.sql.Date;
  */
 @Data
 public class UserDto {
-    private String imgUrl;
     private String userId;
     private String password;
     private String confirmPassword;
@@ -22,6 +21,7 @@ public class UserDto {
     private String userRoleRole;
     // profile
     private String profileFullname;
+    private String profileImgUrl;
     private String profileEmail;
     private String profileAddress;
     private Date profileDateOfBirth;

@@ -9,7 +9,6 @@ import jwl.fpt.repository.RoleRepository;
 
 import static jwl.fpt.util.Constant.UserAttributes.*;
 
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ class UserServiceValidator {
 
         Map<String, Object> mapAttrs = new HashMap<>();
         mapAttrs.put(USERID, userDto.getUserId());
-        mapAttrs.put(IMG_URL, userDto.getImgUrl());
+        mapAttrs.put(IMG_URL, userDto.getProfileImgUrl());
         mapAttrs.put(PASSWORD, userDto.getPassword());
         mapAttrs.put(CONFIRM_PASSWORD, userDto.getConfirmPassword());
         mapAttrs.put(USER_ROLE, userDto.getUserRoleId());

@@ -72,7 +72,7 @@ class AccountNew extends Component {
 		return (
 			<form onSubmit={handleSubmit(this.onFormSubmit)}>
 				<Field id="inputImg"
-							 name="imgUrl"
+							 name="profileImgUrl"
 							 formName="accountNewForm"
 							 label="User Image"
 							 component={ImgField} />

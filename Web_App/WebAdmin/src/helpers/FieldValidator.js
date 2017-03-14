@@ -2,8 +2,8 @@ import { EMAIL_REGEX, PHONE_NO_REGEX } from '../constants/regex'
 
 export const validate = (values) => {
 	const errors = {}
-	if (!values.imgUrl || values.imgUrl.trim() == '') {
-		errors.imgUrl = 'User profile image is required.'
+	if (!values.profileImgUrl || values.profileImgUrl.trim() == '') {
+		errors.profileImgUrl = 'User profile image is required.'
 	}
 	if (!values.userId) {
 		errors.userId = 'User ID is required.'

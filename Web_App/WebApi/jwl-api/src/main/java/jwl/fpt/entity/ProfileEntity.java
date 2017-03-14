@@ -16,6 +16,7 @@ public class ProfileEntity {
     private Date dateOfBirth;
     private String phoneNo;
     private String placeOfWork;
+    private String imgUrl;
     private AccountEntity account;
 
     @Id
@@ -86,6 +87,16 @@ public class ProfileEntity {
 
     public void setPlaceOfWork(String placeOfWork) {
         this.placeOfWork = placeOfWork;
+    }
+
+    @Basic
+    @Column(name = "img_url")
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     @Override
