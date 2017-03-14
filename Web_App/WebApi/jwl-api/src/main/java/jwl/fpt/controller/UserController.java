@@ -2,10 +2,7 @@ package jwl.fpt.controller;
 
 import jwl.fpt.entity.BorrowerTicketEntity;
 import jwl.fpt.model.RestServiceModel;
-import jwl.fpt.model.dto.AccountDetailDto;
-import jwl.fpt.model.dto.AccountDto;
-import jwl.fpt.model.dto.ProfileDto;
-import jwl.fpt.model.dto.UserDto;
+import jwl.fpt.model.dto.*;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.service.IUserService;
@@ -34,6 +31,11 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public RestServiceModel<List<UserDto>> getAllUser() {
         return userService.getAllUser();
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
+    public RestServiceModel<UserDto> createUser(@RequestBody UserDto userDto) {
+        return userService.createUser(userDto);
     }
 
     @RequestMapping(path = "users/login", method = RequestMethod.POST)

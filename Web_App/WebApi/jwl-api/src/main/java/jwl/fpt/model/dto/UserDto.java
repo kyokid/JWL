@@ -11,12 +11,16 @@ import java.sql.Date;
  */
 @Data
 public class UserDto {
+    private String imgUrl;
     private String userId;
     private String password;
+    private String confirmPassword;
     private boolean isInLibrary;
     private boolean isActivated;
+    // role
+    private Integer userRoleId;
     private String userRoleRole;
-    //    private ProfileDto profile;
+    // profile
     private String profileFullname;
     private String profileEmail;
     private String profileAddress;

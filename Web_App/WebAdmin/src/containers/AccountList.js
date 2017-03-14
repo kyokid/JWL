@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import _ from 'lodash'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { browserHistory } from "react-router"
@@ -20,32 +21,34 @@ class AccountList extends Component {
 			)
 		}
 
+		let accounts = _.sortBy(this.props.accounts, ['userId'])
+
 		return (
 			<table className="table table-striped table-users">
 				<thead>
 					<tr>
-						<th>No.</th>
 						<th>UserID</th>
 						<th>Full name</th>
 						<th>Email</th>
+						<th>Is in Library</th>
 						<th>Tools</th>
 					</tr>
 				</thead>
 				<tbody>
-					{this.props.accounts.map((account, index) => this.renderAccount(account, index))}
+					{accounts.map((account, index) => this.renderAccount(account, index))}
 				</tbody>
 			</table>
 		)
 	}
 
-	renderAccount(account, index) {
+	renderAccount(account) {
 		const userId = account.userId
 		return (
 			<tr key={userId} onClick={() => browserHistory.push(`users/${userId}`)}>
-				<td>{index}</td>
 				<td>{userId}</td>
 				<td>{account.profileFullname}</td>
 				<td>{account.profileEmail}</td>
+				<td>{account.inLibrary? "True" : "False"}</td>
 				<td>
 					<a href="#"><span className="glyphicon glyphicon-remove" aria-hidden="true" /></a>
 				</td>

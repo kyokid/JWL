@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS public.profile
   REFERENCES public.account (user_id) MATCH SIMPLE
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
-
+ALTER TABLE public.profile ADD COLUMN img_url TEXT;
 
 CREATE UNIQUE INDEX IF NOT EXISTS user_role_role_uindex
   ON public.user_role

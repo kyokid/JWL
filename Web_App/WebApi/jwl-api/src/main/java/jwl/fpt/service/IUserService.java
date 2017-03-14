@@ -14,6 +14,8 @@ import java.util.List;
 public interface IUserService {
     RestServiceModel<List<UserDto>> getAllUser();
 
+    RestServiceModel<UserDto> createUser(UserDto newUserDto);
+
     RestServiceModel<List<UserDto>> findByUserIdLike(String term);
 
     AccountDto findByUsernameAndPassword(String username, String password);

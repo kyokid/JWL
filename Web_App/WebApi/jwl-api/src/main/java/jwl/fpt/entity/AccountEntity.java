@@ -119,7 +119,7 @@ public class AccountEntity {
         this.userRole = userRoleByRoleId;
     }
 
-    public void setUserRole(Integer roleId) {
+    public void setUserRoleByRoleId(Integer roleId) {
         UserRoleEntity userRoleEntity = new UserRoleEntity();
         userRoleEntity.setId(roleId);
         this.userRole = userRoleEntity;
@@ -145,7 +145,7 @@ public class AccountEntity {
         this.borrowerTickets = borrowerTicketsByUserId;
     }
 
-    @OneToOne(mappedBy = "account")
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     public ProfileEntity getProfile() {
         return profile;
     }

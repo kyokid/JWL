@@ -1,5 +1,6 @@
 export const FETCH_ACCOUNTS = "FETCH_ACCOUNTS"
 export const FETCH_ACCOUNT = "FETCH_ACCOUNT"
+export const CREATE_ACCOUNT = "CREATE_ACCOUNT"
 export const DELETE_ACCOUNT = "DELETE_ACCOUNT"
 export const ACC_IMG_URL = "ACC_IMG_URL"
 export const INIT_BORROW = "INIT_BORROW"

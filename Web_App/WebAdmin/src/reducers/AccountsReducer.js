@@ -19,6 +19,22 @@ export default function (state = INITIAL_STATE, action) {
 		case Types.FETCH_ACCOUNT:
 			return { ...state, account: action.payload.data.data }
 
+		case Types.CREATE_ACCOUNT:
+			if (!action.payload.data) {
+				return state
+			}
+			if (!action.payload.data.data) {
+				return {
+					...state,
+					message: action.payload.data.textMessage
+				}
+			}
+			return {
+				...state,
+				all: [action.payload.data.data, ...state.all],
+				message: action.payload.data.textMessage
+			}
+
 		case Types.DELETE_ACCOUNT:
 			return {
 				...state,
@@ -34,7 +50,6 @@ export default function (state = INITIAL_STATE, action) {
 			if (!action.payload.data) {
 				return state
 			}
-
 			return {
 				...state,
 				account: {
@@ -47,7 +62,6 @@ export default function (state = INITIAL_STATE, action) {
 			if (!action.payload) {
 				return state
 			}
-
 			return { ...state, account: action.payload }
 	}
 	return state

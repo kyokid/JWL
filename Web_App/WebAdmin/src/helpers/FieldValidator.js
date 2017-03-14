@@ -11,10 +11,10 @@ export const validate = (values) => {
 		errors.userId = 'User ID’s length must be 6-15 characters.'
 	}
 
-	if (!values.fullName) {
-		errors.fullName = 'Full name is required.'
-	} else if (values.fullName.length > 100) {
-		errors.fullName = 'Full name must not be longer than 100 characters.'
+	if (!values.profileFullname) {
+		errors.profileFullname = 'Full name is required.'
+	} else if (values.profileFullname.length > 100) {
+		errors.profileFullname = 'Full name must not be longer than 100 characters.'
 	}
 
 	if (!values.password) {
@@ -25,36 +25,36 @@ export const validate = (values) => {
 		errors.confirmPassword = 'Confirm Password must match Password.'
 	}
 
-	if (!values.email) {
-		errors.email = 'Email Address is required.'
-	} else if (!EMAIL_REGEX.test(values.email)) {
-		errors.email = 'Invalid Email Address format. Example of a valid one: test@mail.com.'
+	if (!values.profileEmail) {
+		errors.profileEmail = 'Email Address is required.'
+	} else if (!EMAIL_REGEX.test(values.profileEmail)) {
+		errors.profileEmail = 'Invalid Email Address format. Example of a valid one: test@mail.com.'
 	}
 
-	if (!values.phoneNo) {
-		errors.phoneNo = 'Phone Number is required.'
-	} else if (!PHONE_NO_REGEX.test(values.phoneNo)) {
-		errors.phoneNo = 'Invalid Phone Number format. Example o a valid one: +841692536224 or 01692536224.'
+	if (!values.profilePhoneNo) {
+		errors.profilePhoneNo = 'Phone Number is required.'
+	} else if (!PHONE_NO_REGEX.test(values.profilePhoneNo)) {
+		errors.profilePhoneNo = 'Invalid Phone Number format. Example o a valid one: +841692536224 or 01692536224.'
 	}
 
-	if (!values.address) {
-		errors.address = 'Address is required.'
-	} else if (values.address.length > 250) {
-		errors.address = 'Address must not be longer than 250 characters.'
+	if (!values.profileAddress) {
+		errors.profileAddress = 'Address is required.'
+	} else if (values.profileAddress.length > 250) {
+		errors.profileAddress = 'Address must not be longer than 250 characters.'
 	}
 
-	if (!values.workPlace) {
-		errors.workPlace = 'Place of Work is required.'
-	} else if (values.workPlace.length > 100) {
-		errors.workPlace = 'Place of Work must not be longer than 100 characters.'
+	if (!values.profilePlaceOfWork) {
+		errors.profilePlaceOfWork = 'Place of Work is required.'
+	} else if (values.profilePlaceOfWork.length > 100) {
+		errors.profilePlaceOfWork = 'Place of Work must not be longer than 100 characters.'
 	}
 
-	if (!values.birthDate) {
-		errors.birthDate = 'Date of Birth is required.'
+	if (!values.profileDateOfBirth) {
+		errors.profileDateOfBirth = 'Date of Birth is required.'
 	}
 
-	if (!values.userRole) {
-		errors.userRole = 'User Role is required.'
+	if (!values.userRoleId) {
+		errors.userRoleId = 'User Role is required.'
 	}
 
 	return errors

@@ -1,24 +1,20 @@
-package jwl.fpt.service.imp;
+package jwl.fpt.service.imp.UserService;
 
 import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.BorrowerTicketEntity;
 import jwl.fpt.entity.ProfileEntity;
 import jwl.fpt.model.RestServiceModel;
-import jwl.fpt.model.dto.AccountDetailDto;
-import jwl.fpt.model.dto.AccountDto;
-import jwl.fpt.model.dto.ProfileDto;
-import jwl.fpt.model.dto.UserDto;
+import jwl.fpt.model.dto.*;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BorrowerTicketRepo;
+import jwl.fpt.repository.RoleRepository;
 import jwl.fpt.repository.UserRepository;
 import jwl.fpt.service.IUserService;
-import jwl.fpt.util.EncryptUtils;
-import jwl.fpt.util.NotificationUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -33,6 +29,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private BorrowerTicketRepo borrowerTicketRepo;
@@ -63,6 +62,31 @@ public class UserService implements IUserService {
 
         result.setSuccessData(userDtos, "Found " + userDtos.size() + " user(s).");
 
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public RestServiceModel<UserDto> createUser(UserDto userDto) {
+        RestServiceModel<UserDto> result = UserServiceValidator
+                .validateNewUser(userDto, accountRepository, roleRepository);
+        if (result != null) {
+            return result;
+        }
+        result = new RestServiceModel<>();
+
+        AccountEntity accountEntity = modelMapper.map(userDto, AccountEntity.class);
+        accountEntity.setActivated(true);
+        accountEntity.setInLibrary(false);
+        accountEntity.getProfile().setUserId(userDto.getUserId());
+        accountEntity = accountRepository.save(accountEntity);
+        if (accountEntity == null) {
+            result.setFailData(null, "DB error!!!");
+            return result;
+        }
+
+        userDto = modelMapper.map(accountEntity, UserDto.class);
+        result.setSuccessData(userDto, "saved!");
         return result;
     }
 

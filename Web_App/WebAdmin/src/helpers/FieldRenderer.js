@@ -15,7 +15,7 @@ export function renderCommonField({ input, id, label, type, meta: { touched, err
 }
 
 export function renderUserRoleRadioGroup(fields) {
-	const { id, labels, values, userRole: { input, meta: { touched, error } } } = fields
+	const { id, labels, values, userRoleId: { input, meta: { touched, error } } } = fields
 	return (
 		<div className={`form-group radio-group ${touched && error ? 'has-error' : ''}`} id={id}>
 			<label className="role-group" htmlFor={id}>User Role:</label>

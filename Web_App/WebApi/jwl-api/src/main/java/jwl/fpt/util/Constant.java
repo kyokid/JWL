@@ -4,14 +4,27 @@ package jwl.fpt.util;
  * Created by Entaard on 1/29/17.
  */
 public class Constant {
-    static public String SESSION_BORROWER = "BORROWER";
-    static public String SESSION_PENDING_COPIES = "PENDING_COPIES";
+    public static String SESSION_BORROWER = "BORROWER";
+    public static String SESSION_PENDING_COPIES = "PENDING_COPIES";
 
-    static public int SESSION_INIT_TIMEOUT = 40;
-    static public int SESSION_TRANSACT_TIMEOUT = 40;
+    public static int SESSION_INIT_TIMEOUT = 40;
+    public static int SESSION_TRANSACT_TIMEOUT = 40;
 
     //google token for notification
-    static public String APP_TOKEN = "AAAAaNSpPQs:APA91bGlEsmuobSo775eGREdsUDisU1Pio3u8T8YPHrSfVSjJXHMOh_F7n5418hfKISaPbVF3bVnwSABAQukv81g5DgU0uMMmcaC_XHyU43J7FasSdBEyltHND2rRAxwJEXygjiZEKMH";
-    static public String CLIENT_TOKEN = "d_0cUQJavvU:APA91bGi83tS-ptRYoaRXdhhEmOdFp0ZQuSRmQq5XUyfs8OXkSgz9_LBe3Rv1e0zqHlaa4TbFufy2x9vRJgRXCPZ80eeZ5PxZljfkdp0SwChsgaCKs9aQDlfLsthspd054-RkthS7LQB";
+    public static final String APP_TOKEN = "AAAAaNSpPQs:APA91bGlEsmuobSo775eGREdsUDisU1Pio3u8T8YPHrSfVSjJXHMOh_F7n5418hfKISaPbVF3bVnwSABAQukv81g5DgU0uMMmcaC_XHyU43J7FasSdBEyltHND2rRAxwJEXygjiZEKMH";
+    public static final String CLIENT_TOKEN = "d_0cUQJavvU:APA91bGi83tS-ptRYoaRXdhhEmOdFp0ZQuSRmQq5XUyfs8OXkSgz9_LBe3Rv1e0zqHlaa4TbFufy2x9vRJgRXCPZ80eeZ5PxZljfkdp0SwChsgaCKs9aQDlfLsthspd054-RkthS7LQB";
 
+    public static final class UserAttributes {
+        public static final String USERID = "userId";
+        public static final String IMG_URL = "img Url";
+        public static final String PASSWORD = "password";
+        public static final String CONFIRM_PASSWORD = "confirm password";
+        public static final String USER_ROLE = "userRole";
+        public static final String FULLNAME = "fullname";
+        public static final String EMAIL = "email";
+        public static final String ADDRESS = "address";
+        public static final String BIRTHDATE = "date of birth";
+        public static final String PHONE = "phone No";
+        public static final String WORK = "place of work";
+    }
 }

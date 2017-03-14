@@ -26,10 +26,14 @@ export default class ReactDatePicker extends Component {
 				<br />
 				<DatePicker {...input}
 										className="form-control"
-										dateFormat="DD/MM/YYYY"
-										placeholderText="DD/MM/YYYY"
+										dateFormat="YYYY-MM-DD"
+										placeholderText="YYYY-MM-DD"
+										showMonthDropdown
+										showYearDropdown
+										dropdownMode="select"
 										selected={this.state.startDate}
-										onChange={this.handleChange.bind(this)} readOnly />
+										onChange={this.handleChange.bind(this)}
+										readOnly />
 				{touched && error && <span className="help-block">{error}</span>}
 			</div>
 		)

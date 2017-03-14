@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import {Field, Fields, reduxForm} from 'redux-form'
 
 import { renderCommonField, renderUserRoleRadioGroup } from '../helpers/FieldRenderer'
@@ -6,13 +7,13 @@ import { validate } from  '../helpers/FieldValidator'
 import ReactDatePicker from '../helpers/ReactDatePicker'
 import ImgField from '../helpers/ImgFieldRenderer'
 
+import { createAccount } from '../actions/AccountsAction'
+
 class AccountNew extends Component {
 	constructor(props) {
 		super(props)
 
-		this.state = {
-			imgUrl: ''
-		}
+		this.onFormSubmit = this.onFormSubmit.bind(this)
 	}
 
 	render() {
@@ -39,6 +40,8 @@ class AccountNew extends Component {
 		return (
 			<div className="modal fade"
 					 id="accountNewModal"
+					 data-backdrop="static"
+					 data-keyboard="false"
 					 tabIndex="-1"
 					 role="dialog"
 					 aria-labelledby="accountNewModalLabel"
@@ -64,10 +67,10 @@ class AccountNew extends Component {
 	}
 
 	renderForm() {
-		const {handleSubmit} = this.props
+		const { handleSubmit, reset } = this.props
 
 		return (
-			<form onSubmit={handleSubmit(this.onFormSubmit.bind(this))}>
+			<form onSubmit={handleSubmit(this.onFormSubmit)}>
 				<Field id="inputImg"
 							 name="imgUrl"
 							 formName="accountNewForm"
@@ -79,7 +82,7 @@ class AccountNew extends Component {
 							 type="text"
 							 component={renderCommonField} />
 				<Field id="fullName"
-							 name="fullName"
+							 name="profileFullname"
 							 label="Full Name"
 							 type="text"
 							 component={renderCommonField} />
@@ -94,38 +97,38 @@ class AccountNew extends Component {
 							 type="password"
 							 component={renderCommonField} />
 				<Field id="email"
-							 name="email"
+							 name="profileEmail"
 							 label="Email"
 							 type="text"
 							 component={renderCommonField} />
 				<Field id="address"
-							 name="address"
+							 name="profileAddress"
 							 label="Address"
 							 type="text"
 							 component={renderCommonField} />
 				<Field id="birthDate"
 							 className="date"
-							 name="birthDate"
+							 name="profileDateOfBirth"
 							 label="Date of Birth"
 							 type="text"
 							 component={ReactDatePicker} />
 				<Field id="phoneNo"
-							 name="phoneNo"
+							 name="profilePhoneNo"
 							 label="Phone Number"
 							 type="text"
 							 component={renderCommonField} />
 				<Field id="workPlace"
-							 name="workPlace"
+							 name="profilePlaceOfWork"
 							 label="Place of Work"
 							 type="text"
 							 component={renderCommonField} />
 				<Fields id="userRole"
-							 	names={["userRole"]}
+							 	names={["userRoleId"]}
 							 	labels={["Admin", "Librarian", "Borrower"]}
-							 	values={["admin", "librarian", "borrower"]}
+							 	values={["1", "2", "3"]}
 							 	component={renderUserRoleRadioGroup} />
 
-				<button type="reset" className="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="reset" className="btn btn-default" data-dismiss="modal" onClick={reset}>Close</button>
 				<button type="submit" className="btn btn-primary">Submit</button>
 			</form>
 		)
@@ -133,12 +136,15 @@ class AccountNew extends Component {
 
 	onFormSubmit(props) {
 		console.log(props)
-
+		this.props.createAccount(props)
 	}
 }
 
-export default reduxForm({
+let accountNewForm = reduxForm({
 	form: 'accountNewForm',
-	destroyOnUnmount: false,
+	destroyOnUnmount: true,
 	validate
 })(AccountNew)
+
+export default connect(null, { createAccount })(accountNewForm)
+

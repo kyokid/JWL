@@ -48,3 +48,16 @@ export function submitImg(imgFile) {
 		payload: request
 	}
 }
+
+export function createAccount(newAccData) {
+	const request = axios({
+		method: 'POST',
+		url: `${Api.ROOT_URL}${Api.USERS}`,
+		data: newAccData
+	})
+
+	return {
+		type: Types.CREATE_ACCOUNT,
+		payload: request
+	}
+}
