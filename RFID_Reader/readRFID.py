@@ -15,10 +15,8 @@ def senPostRequest(data):
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, data=json.dumps(data), headers=headers)
     print response.text
-    if response.json()['code'] == "200":
-        print('\007')
-    elif response.json()['soundMessage'] != "":
-        os.system('say {}'.format(response.json()['soundMessage']))
+    if response.json()['code'] == "200" or response.json()['code'] == "400" and response.json()['soundMessage'] != "":
+        subprocess.call(["afplay", response.json()['soundMessage']])
     else:
         subprocess.call(["afplay", "alarm.mp3"])
 

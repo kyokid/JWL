@@ -11,6 +11,7 @@ import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.util.Constant;
 import jwl.fpt.util.Helper;
+import jwl.fpt.util.Constant.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.session.FindByIndexNameSessionRepository;
@@ -132,7 +133,7 @@ public class BookBorrowService implements IBookBorrowService {
             result.setFailData(
                     null,
                     "Add books failed! Please contact librarian!",
-                    "Add books failed!");
+                    SoundMessages.ERROR);
             return result;
         }
 
@@ -150,7 +151,7 @@ public class BookBorrowService implements IBookBorrowService {
             result.setFailData(
                     null,
                     "Add book failed! Please contact librarian!",
-                    "Add book failed!");
+                    SoundMessages.ERROR);
             return result;
         }
 
@@ -292,9 +293,9 @@ public class BookBorrowService implements IBookBorrowService {
             return result;
         }
 
-        BookCopyEntity bookCopyEntity = bookCopyRepo.findAvailableCopy(rfidDto.getRfid());
+        BookCopyEntity bookCopyEntity = bookCopyRepo.findAvailableCopy(rfid);
         if (bookCopyEntity == null) {
-            rfid = bookCopyRepo.checkRfid(rfidDto.getRfid());
+            rfid = bookCopyRepo.checkRfid(rfid);
 
             if (rfid != null) {
                 result.setFailData(
@@ -503,13 +504,46 @@ public class BookBorrowService implements IBookBorrowService {
             return checkFoundCart;
         }
 
-        Set<String> rfids = addCopiesToBorrowCart(rfidDtoList.getRfids(), borrowCart);
+        Set<String> inputRfids = rfidDtoList.getRfids();
+        // Case only one book is added => check to response correct sound message.
+        if (inputRfids != null && inputRfids.size() == 1) {
+            String rfid = inputRfids.iterator().next();
+
+            Set<String> cartRfids = borrowCart.getRfids();
+            if (cartRfids != null && cartRfids.contains(rfid)) {
+                result.setFailData(
+                        null,
+                        "The book copy " + rfid + " had already been added.",
+                        SoundMessages.ALREADY);
+                return result;
+            }
+
+            BookCopyEntity bookCopyEntity = bookCopyRepo.findAvailableCopy(rfid);
+            if (bookCopyEntity == null) {
+                rfid = bookCopyRepo.checkRfid(rfid);
+
+                if (rfid != null) {
+                    result.setFailData(
+                            null,
+                            "The book copy " + rfid + " had already been borrowed.",
+                            SoundMessages.ALREADY);
+                } else {
+                    result.setFailData(
+                            null,
+                            "Invalid book copy rfid!",
+                            SoundMessages.ERROR);
+                }
+                return result;
+            }
+        }
+
+        Set<String> rfids = addCopiesToBorrowCart(inputRfids, borrowCart);
         rfidDtoList.setRfids(rfids);
 
         result.setSuccessData(
                 rfidDtoList,
                 "Book was added successfully!",
-                "Book added!");
+                SoundMessages.OK);
         return result;
     }
 

@@ -31,6 +31,7 @@ class AccountList extends Component {
 						<th>Full name</th>
 						<th>Email</th>
 						<th>Is in Library</th>
+						<th>Is Activated</th>
 						<th>Tools</th>
 					</tr>
 				</thead>
@@ -49,6 +50,7 @@ class AccountList extends Component {
 				<td>{account.profileFullname}</td>
 				<td>{account.profileEmail}</td>
 				<td>{account.inLibrary? "True" : "False"}</td>
+				<td>{account.activated? "True" : "False"}</td>
 				<td>
 					<a href="#"><span className="glyphicon glyphicon-remove" aria-hidden="true" /></a>
 				</td>

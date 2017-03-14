@@ -27,4 +27,10 @@ public class Constant {
         public static final String PHONE = "phone No";
         public static final String WORK = "place of work";
     }
+
+    public static final class SoundMessages {
+        public static final String OK = "beep.mp3";
+        public static final String ALREADY = "beepbeep.mp3";
+        public static final String ERROR = "alarm.mp3";
+    }
 }

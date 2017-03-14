@@ -6,6 +6,7 @@ import jwl.fpt.model.dto.BorrowerDto;
 import jwl.fpt.model.dto.RfidDto;
 import jwl.fpt.model.dto.RfidDtoList;
 import jwl.fpt.repository.AccountRepository;
+import jwl.fpt.util.Constant.*;
 
 /**
  * Created by Entaard on 2/27/17.
@@ -51,8 +52,8 @@ class BookBorrowServiceValidator {
 
     static RestServiceModel validateFoundBorrowCart(BorrowCart borrowCart, boolean isLibrarian) {
         RestServiceModel result = new RestServiceModel();
-        String soundError = isLibrarian? "" : "Error! Please contact librarian!";
-        String textError = isLibrarian? "" : "Please contact librarian!";
+        String soundError = isLibrarian ? "" : SoundMessages.ERROR;
+        String textError = isLibrarian ? "" : "Please contact librarian!";
         if (borrowCart == null) {
             result.setFailData(
                     null,
