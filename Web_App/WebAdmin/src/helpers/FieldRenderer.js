@@ -1,23 +1,22 @@
 import React from 'react'
 
-export function renderCommonField({ input, id, label, type, meta: { touched, error } }) {
+export function renderCommonField({ input, id, className, label, type, helpBlock, meta: { touched, error } }) {
 	return (
-		<div className={`form-group ${touched && error ? 'has-error' : ''}`}>
+		<div className={`form-group ${className ? className : ''} ${touched && error ? 'has-error' : ''}`}>
 			{ label && <label htmlFor={id}>{label}</label> }
 			<input {...input}
 						 id={id}
 						 className="form-control"
-						 placeholder={label}
 						 type={type} />
-			{touched && error && <span className="help-block">{error}</span>}
+			{touched && error ? <span className="help-block">{error}</span> : <p className="help-block">{helpBlock}</p>}
 		</div>
 	)
 }
 
 export function renderUserRoleRadioGroup(fields) {
-	const { id, labels, values, userRoleId: { input, meta: { touched, error } } } = fields
+	const { id, className, labels, values, helpBlock, userRoleId: { input, meta: { touched, error } } } = fields
 	return (
-		<div className={`form-group radio-group ${touched && error ? 'has-error' : ''}`} id={id}>
+		<div className={`form-group radio-group ${className ? className : ''} ${touched && error ? 'has-error' : ''}`} id={id}>
 			<label className="role-group" htmlFor={id}>User Role:</label>
 			{values.map((value, index) => {
 				return (
@@ -29,7 +28,7 @@ export function renderUserRoleRadioGroup(fields) {
 						</label>
 					)
 			})}
-			{touched && error && <span className="help-block">{error}</span>}
+			{touched && error ? <span className="help-block">{error}</span> : <p className="help-block">{helpBlock}</p>}
 		</div>
 	)
 }

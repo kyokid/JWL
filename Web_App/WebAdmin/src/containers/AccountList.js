@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { browserHistory } from "react-router"
+import { browserHistory, Link } from "react-router"
 import { getAllAccounts } from '../actions/AccountsAction'
 
 class AccountList extends Component {
@@ -17,28 +17,36 @@ class AccountList extends Component {
 	render() {
 		if (!this.props.accounts) {
 			return (
-				<h2>{this.props.message}</h2>
+				<div>
+
+					<h2>{this.props.message}</h2>
+				</div>
 			)
 		}
 
 		let accounts = _.sortBy(this.props.accounts, ['userId'])
 
 		return (
-			<table className="table table-striped table-users">
-				<thead>
-					<tr>
-						<th>UserID</th>
-						<th>Full name</th>
-						<th>Email</th>
-						<th>Is in Library</th>
-						<th>Is Activated</th>
-						<th>Tools</th>
-					</tr>
-				</thead>
-				<tbody>
-					{accounts.map((account, index) => this.renderAccount(account, index))}
-				</tbody>
-			</table>
+			<div>
+				<Link className="account-new-btn" to="new/user">
+					<span className="glyphicon glyphicon-plus" />
+				</Link>
+				<table className="table table-striped table-users">
+					<thead>
+						<tr>
+							<th>UserID</th>
+							<th>Full name</th>
+							<th>Email</th>
+							<th>Is in Library</th>
+							<th>Is Activated</th>
+							<th>Tools</th>
+						</tr>
+					</thead>
+					<tbody>
+						{accounts.map((account, index) => this.renderAccount(account, index))}
+					</tbody>
+				</table>
+			</div>
 		)
 	}
 

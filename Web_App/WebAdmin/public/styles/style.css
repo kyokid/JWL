@@ -131,21 +131,47 @@ p {
 }
 
 /**
- * AccountNew button and modal
+ * AccountNew button and form page
  */
-.account-new {
-  margin-top: 20px;
+p.help-block {
+  font-size: 90%;
 }
 
-.account-new .account-new-btn {
+input[type="text"],
+input[type="password"]{
+  font-size: 16px;
+  height: 40px;
+}
+
+.react-datepicker {
+  font-size: 1.3rem !important;
+}
+
+.react-datepicker__current-month {
+  font-size: 1.5rem !important;
+}
+
+.react-datepicker__header {
+  padding-top: 6px !important;
+}
+
+.react-datepicker__navigation {
+  top: 13px !important;
+}
+
+.react-datepicker__day-name, .react-datepicker__day {
+  margin: 0.5rem !important;
+}
+
+.account-new-btn {
   font-size: 20px;
   margin-left: 5px;
 }
 
 .img-placeholder {
   overflow: hidden;
-  height: 200px;
-  width: 200px;
+  height: 300px;
+  width: 300px;
   position: relative;
   border: 1px solid cadetblue;
   border-radius: 4px;
@@ -153,8 +179,8 @@ p {
 
 #uploadImg {
   display: none;
-  height: 200px;
-  width: 200px;
+  height: 300px;
+  width: 300px;
 }
 
 #inputImg {
@@ -171,11 +197,11 @@ p {
   position: absolute;
   left: 0;
   top: 0;
-  height: 200px;
-  width: 200px;
+  height: 300px;
+  width: 300px;
   border: 1px solid cadetblue;
   border-radius: 4px;
-  padding-top: 80px;
+  padding-top: 120px;
   text-align: center;
   color: gray;
   cursor: pointer;
@@ -208,4 +234,18 @@ p {
 
 .radio-group > label.role-radio > input {
   margin-left: 10px;
+}
+
+.cancel-btn {
+  text-align: right;
+}
+
+.submit-btn .btn,
+.cancel-btn .btn {
+  height: 35px;
+  width: 100px;
+}
+
+.panel-title {
+  font-size: 20px;
 }

@@ -7,7 +7,6 @@ export default function () {
 	return (
 		<div className="container table-user-container">
 			<SearchBar />
-			<AccountNew />
 			<AccountList />
 		</div>
 	)
