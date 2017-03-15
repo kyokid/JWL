@@ -55,7 +55,7 @@ export function fetchCopyFromCart(borrowedCopyData) {
 	}
 }
 
-export function cancelAddingCopies(userId, ibeaconId, stateBeforeAdd) {
+export function cancelAddingCopies(userId, ibeaconId, stateBeforeAdd = null) {
 	const request = axios.post(
 		`${Api.ROOT_URL}/${Api.CANCEL_ADDING_COPIES}`,
 		{

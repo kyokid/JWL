@@ -16,6 +16,9 @@ class AccountDetail extends Component {
 		this.onClickDeleteCopy = this.onClickDeleteCopy.bind(this)
 		this.onClickStartAddBooks = this.onClickStartAddBooks.bind(this)
 		this.onClickCancel = this.onClickCancel.bind(this)
+		this.beforeUnload = this.beforeUnload.bind(this)
+		this.onUnload = this.onUnload.bind(this)
+		// this.onPageHide = this.onPageHide.bind(this)
 
 		this.state = {
 			userId: this.props.params.id,
@@ -28,11 +31,29 @@ class AccountDetail extends Component {
 
 	componentWillMount() {
 		this.props.getAccountDetail(this.props.params.id)
+		// init close openning socket
+		this.disconnectFromChannel()
+		// no need to delete pending cart -> server handle this.
+		// this.props.cancelAddingCopies(this.state.userId, this.state.ibeaconId)
+
+		this.props.router.setRouteLeaveHook(this.props.route, () => {
+			if (this.state.isAddingBook) {
+				return 'You have unsaved information, are you sure you want to leave this page?'
+			}
+		})
+
+		window.addEventListener("beforeunload", this.beforeUnload)
+		window.addEventListener("unload", this.onUnload)
 	}
 
 	componentWillUnmount() {
-		this.props.checkout(this.state.userId, this.state.ibeaconId)
-		this.disconnectFromChannel()
+		if (this.state.isAddingBook) {
+			this.onUnload()
+
+			// window.removeEventListener("beforeunload", this.beforeUnload)
+			// window.removeEventListener("unload", this.onUnload)
+		}
+
 	}
 
 	render() {
@@ -66,10 +87,41 @@ class AccountDetail extends Component {
 		)
 	}
 
+	beforeUnload(event) {
+		if (this.state.isAddingBook) {
+			console.log("beforeUnload")
+			event.returnValue = "beforeUnload"
+		}
+	}
+
+	onUnload(event) {
+		if (this.state.isAddingBook) {
+			console.log("onUnload")
+			this.disconnectFromChannel()
+			// this.props.cancelAddingCopies(this.state.userId, this.state.ibeaconId, this.state.beforeAdd)
+			// should not checkout when librarian unload
+			this.props.checkout(this.state.userId, this.state.ibeaconId)
+			event.returnValue = "unload"
+		}
+	}
+
+	// onPageHide() {
+	// 	console.log("pagehide")
+	// 	this.disconnectFromChannel()
+	// 	this.props.checkout(this.state.userId, this.state.ibeaconId)
+	// }
+
 	onClickCancel() {
 		this.disconnectFromChannel()
 		this.props.cancelAddingCopies(this.state.userId, this.state.ibeaconId, this.state.beforeAdd)
-		this.setState({ isAddingBook: !this.state.isAddingBook })
+		this.setState({ isAddingBook: false })
+
+		// window.removeEventListener("beforeunload", this.beforeUnload)
+		// if ("onpagehide" in window) {
+		// 	window.removeEventListener("pagehide", this.onPageHide, false)
+		// } else {
+		// window.removeEventListener("unload", this.onUnload)
+		// }
 	}
 
 	connectToChannel() {
@@ -93,6 +145,7 @@ class AccountDetail extends Component {
 	}
 
 	onClickStartAddBooks(userId, ibeaconId) {
+		// const addingStatusBeforeClick = this.state.isAddingBook
 		if (!this.state.isAddingBook) {
 			this.setState({ beforeAdd: this.props.account })
 			this.props.initBorrow(userId, ibeaconId)
@@ -104,6 +157,15 @@ class AccountDetail extends Component {
 		}
 
 		this.setState({ isAddingBook: !this.state.isAddingBook })
+
+		// if (!addingStatusBeforeClick) {
+			// window.addEventListener("beforeunload", this.beforeUnload)
+			// if ("onpagehide" in window) {
+			// 	window.addEventListener("pagehide", this.onPageHide)
+			// } else {
+			// window.addEventListener("unload", this.onUnload)
+			// }
+		// }
 	}
 
 	renderBorrowedBooks(borrowedBookCopies) {

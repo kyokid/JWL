@@ -215,7 +215,6 @@ public class BookBorrowService implements IBookBorrowService {
             return result;
         }
 
-
         accountRepository.setStatus(false, userId);
         result.setSuccessData(borrowCart.getRfids(), "Cancel successfully!");
         borrowCarts.remove(borrowCart);
