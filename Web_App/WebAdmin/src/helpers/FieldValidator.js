@@ -2,7 +2,7 @@ import { EMAIL_REGEX, PHONE_NO_REGEX } from '../constants/regex'
 
 export const validate = (values) => {
 	const errors = {}
-	if (!values.profileImgUrl || values.profileImgUrl.trim() == '') {
+	if (!values.profileImgUrl || typeof(values.profileImgUrl) != 'string' || values.profileImgUrl.trim() == '') {
 		errors.profileImgUrl = 'User profile image is required.'
 	}
 	if (!values.userId) {
