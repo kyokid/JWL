@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS public.profile
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 ALTER TABLE public.profile ADD COLUMN img_url TEXT;
+ALTER TABLE public.profile ADD COLUMN gender TEXT;
 
 CREATE UNIQUE INDEX IF NOT EXISTS user_role_role_uindex
   ON public.user_role
@@ -140,6 +141,8 @@ CREATE TABLE IF NOT EXISTS public.book
   REFERENCES public.book_type (id) MATCH SIMPLE
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+ALTER TABLE public.book ADD COLUMN thumbnail TEXT;
+ALTER TABLE public.book ADD COLUMN price INTEGER;
 
 -- book_category:
 -- Relation table of book and category.
@@ -207,6 +210,7 @@ CREATE TABLE IF NOT EXISTS public.book_copy
   REFERENCES public.book (id) MATCH SIMPLE
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+ALTER TABLE public.book_copy DROP COLUMN price;
 
 -- borrowed_book_copy:
 -- A copy that is being borrowed.
