@@ -2,7 +2,7 @@ import { EMAIL_REGEX, PHONE_NO_REGEX } from '../constants/regex'
 
 export const validate = (values) => {
 	const errors = {}
-	if (!values.profileImgUrl || values.profileImgUrl.trim() == '') {
+	if (!values.profileImgUrl || typeof(values.profileImgUrl) != 'string' || values.profileImgUrl.trim() == '') {
 		errors.profileImgUrl = 'User profile image is required.'
 	}
 	if (!values.userId) {
@@ -28,13 +28,13 @@ export const validate = (values) => {
 	if (!values.profileEmail) {
 		errors.profileEmail = 'Email Address is required.'
 	} else if (!EMAIL_REGEX.test(values.profileEmail)) {
-		errors.profileEmail = 'Invalid Email Address format. Example of a valid one: test@mail.com.'
+		errors.profileEmail = 'Invalid Email Address format. Example of a valid one: new.user@mail.com.'
 	}
 
 	if (!values.profilePhoneNo) {
 		errors.profilePhoneNo = 'Phone Number is required.'
 	} else if (!PHONE_NO_REGEX.test(values.profilePhoneNo)) {
-		errors.profilePhoneNo = 'Invalid Phone Number format. Example o a valid one: +841692536224 or 01692536224.'
+		errors.profilePhoneNo = 'Invalid Phone Number format. Example of a valid one: +841692536224 or 01692536224.'
 	}
 
 	if (!values.profileAddress) {

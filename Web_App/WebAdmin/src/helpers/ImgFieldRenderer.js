@@ -16,29 +16,28 @@ class ImgFieldRenderer extends Component {
 	}
 
 	render() {
-		const { input, id, label, formName, meta: { touched, error } } = this.props
+		const { input, id, className, label, formName, meta: { touched, error } } = this.props
 
 		return (
-			<div className={`img-input-container form-group ${touched && error ? 'has-error' : ''}`}>
-				<label htmlFor={id}>{label}: {input.value}</label>
+			<div className={`img-input-container form-group ${className ? className : ''} ${touched && error ? 'has-error' : ''}`}>
+				<label htmlFor={id}>{label}: </label>
 				<div className="img-placeholder">
 					<img id="uploadImg"
 							 src={this.state.imgSrc}
 							 alt="Your profile image."
 							 style={{ display: this.state.imgSrc != '#' ? "block" : "none" }}	/>
-					<input {...input}
-								 id={id}
+					<input id={id}
 								 type="file"
 								 accept="image/*"
-								 onChange={(e) => input.onChange(this.onUserInputImg(e, formName, input.name))}
-								 value={this.props.imgUrl} />
+								 onChange={(e) => input.onChange(this.onUserInputImg(e, formName, input.name))} />
 					<label htmlFor={id}>
 						{this.state.uploading ? "" : "Upload your profile image."}
 					</label>
-					<div className="downloading"
+					<label htmlFor={id} className="downloading"
 							 style={{ display: this.state.uploading ? "block" : "none" }}>
 						Uploading...
-					</div>
+					</label>
+					<input {...input} type="hidden" />
 				</div>
 				{touched && error && <span className="help-block">{error}</span>}
 			</div>
