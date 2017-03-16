@@ -9,5 +9,4 @@ import lombok.Data;
 public class BookCopyDto {
     private String rfid;
     private int bookId;
-    private int price;
 }

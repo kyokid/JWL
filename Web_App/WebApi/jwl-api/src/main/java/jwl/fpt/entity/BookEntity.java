@@ -17,6 +17,8 @@ public class BookEntity {
     private Integer numberOfPages;
     private Integer numberOfCopies;
     private String isbn;
+    private int price;
+    private String thumbnail;
     private BookTypeEntity bookType;
     private BookPositionEntity bookPosition;
     private Collection<BookAuthorEntity> bookAuthors;
@@ -94,6 +96,26 @@ public class BookEntity {
 
     public void setNumberOfCopies(Integer numberOfCopies) {
         this.numberOfCopies = numberOfCopies;
+    }
+
+    @Basic
+    @Column(name = "thumbnail")
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    @Basic
+    @Column(name = "price")
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     @Basic
