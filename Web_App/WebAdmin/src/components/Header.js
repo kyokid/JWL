@@ -4,7 +4,7 @@ export default function () {
 	return (
 		<header className="navbar navbar-fixed-top navbar-inverse">
 			<div className="container">
-				<a id="logo" href="#">JWL</a>
+				<a id="logo" href="#">Just Walk Out Library</a>
 				<nav>
 					<ul className="nav navbar-nav navbar-left">
 						<li className="active"><a href="#">Manage Accounts</a></li>

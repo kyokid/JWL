@@ -13,6 +13,7 @@ class AccountDetail extends Component {
 		super(props)
 
 		this.renderBorrowedBooks = this.renderBorrowedBooks.bind(this)
+		this.renderBorrowedBookPanel = this.renderBorrowedBookPanel.bind(this)
 		this.onClickDeleteCopy = this.onClickDeleteCopy.bind(this)
 		this.onClickStartAddBooks = this.onClickStartAddBooks.bind(this)
 		this.onClickCancel = this.onClickCancel.bind(this)
@@ -65,24 +66,54 @@ class AccountDetail extends Component {
 
 		const userId = this.state.userId
 		const ibeaconId = this.state.ibeaconId
-
 		return (
-			<div>
-				<Link to="/">Back</Link>
-				<h4>{userId}</h4>
-				<h5>{account.profile.fullname}</h5>
-				<br />
+			<div className="account-detail">
+				<Link to="/" className="back">Back</Link>
+				<div className="panel panel-primary" style={{ width: "100%" }}>
+					<div className="panel-heading">
+						<h3 className="panel-title">Detail of User {userId}.</h3>
+					</div>
+					<div className="panel-body">
+						<div className="col-md-6 col-sm-6">
+							<h4>User ID: {userId}</h4>
+							<p>Full name: {account.profile.fullname}</p>
+							<p>Phone Number: {account.profile.phoneNo}</p>
+							<p>Email: {account.profile.email}</p>
+							<p>Address: {account.profile.address}</p>
+							<p>Place of Work: {account.profile.placeOfWork}</p>
+							<p>Date of Birth: {account.profile.dateOfBirth}</p>
+						</div>
+						<div className="col-md-6 col-sm-6">
+							<img className="user-img" src={account.profile.imgUrl} alt="User Image" />
+						</div>
+
+
+
+
+
+
+
+
+						<br />
+					</div>
+				</div>
+
+
+
 				<button
 					className="btn btn-primary"
 					onClick={() => this.onClickStartAddBooks(userId, ibeaconId)}>
 					{this.state.isAddingBook? "Stop Adding Books" : "Start Adding Books"}
 				</button>
 				<button
-					className={`btn btn-default ${this.state.isAddingBook ? '' : 'hidden'}`}
-					onClick={() => this.onClickCancel()}>
-					Cancel</button>
-				<h4>Borrowing Book List</h4>
-				{this.renderBorrowedBooks(account.borrowedBookCopies)}
+					className={`cancel-add-book-btn btn btn-default ${this.state.isAddingBook ? '' : 'hidden'}`}
+					onClick={() => this.onClickCancel()}
+					style={{ marginLeft: "10px" }}>
+					Cancel
+				</button>
+
+				{this.renderBorrowedBookPanel(userId, account.borrowedBookCopies)}
+
 			</div>
 		)
 	}
@@ -168,12 +199,32 @@ class AccountDetail extends Component {
 		// }
 	}
 
+	renderBorrowedBookPanel(userId, borrowedBookCopies) {
+		if (!borrowedBookCopies || borrowedBookCopies.length == 0) {
+			return (
+				<div style={{ marginTop: "50px" }}>
+					<h3>User {userId} is not borrowing any books.</h3>
+				</div>
+			)
+		}
+		return (
+			<div className="panel panel-default" style={{ width: "100%" }}>
+				<div className="panel-heading">
+					<h3 className="panel-title">Borrowing Books of user {userId}</h3>
+				</div>
+				<div className="panel-body">
+					{this.renderBorrowedBooks(borrowedBookCopies)}
+				</div>
+			</div>
+		)
+	}
+
 	renderBorrowedBooks(borrowedBookCopies) {
 		return (
 			<table className="table table-striped">
 				<thead>
 					<tr>
-						<th>RFID</th>
+						<th>No.</th>
 						<th>Title</th>
 						<th>Borrowed Date</th>
 						<th>Dealine Date</th>
@@ -181,19 +232,19 @@ class AccountDetail extends Component {
 					</tr>
 				</thead>
 				<tbody>
-					{borrowedBookCopies.map(e => this.renderBorrowedBook(e))}
+					{borrowedBookCopies.map((borrowedBook, index) => this.renderBorrowedBook(borrowedBook, index))}
 				</tbody>
 			</table>
 		)
 	}
 
-	renderBorrowedBook(borrowedBook) {
+	renderBorrowedBook(borrowedBook, index) {
 		const userId = this.state.userId
 		const borrowedCopyRfid = borrowedBook.bookCopyRfid
 
 		return (
 			<tr key={borrowedCopyRfid}>
-				<td>{borrowedBook.bookCopyRfid}</td>
+				<td>{index + 1}</td>
 				<td>{borrowedBook.bookCopyBookTitle}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>

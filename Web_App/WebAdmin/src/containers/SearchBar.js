@@ -14,15 +14,18 @@ class SearchBar extends Component {
 
 	render() {
 		return (
-			<form className="input-group" onSubmit={this.onFormSubmit}>
-				<input
-					placeholder="put userID here..."
-					className="form-control"
-					value={this.state.term}
-					onChange={this.onInputChange} />
-				<span className="input-group-btn">
+			<form className="form-inline search-box" onSubmit={this.onFormSubmit}>
+				<div className="form-group pull-right" style={{ width: "100%" }}>
+					<input
+						className="form-control"
+						value={this.state.term}
+						onChange={this.onInputChange} />
+
 					<button className="btn secondary-btn" type="submit">Search</button>
-				</span>
+
+					<p className="help-block" style={{ marginLeft: "10px" }}>Enter user ID.</p>
+				</div>
+
 			</form>
 		)
 	}

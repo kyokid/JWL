@@ -34,6 +34,7 @@ class AccountList extends Component {
 				<table className="table table-striped table-users">
 					<thead>
 						<tr>
+							<th>No.</th>
 							<th>UserID</th>
 							<th>Full name</th>
 							<th>Email</th>
@@ -50,10 +51,11 @@ class AccountList extends Component {
 		)
 	}
 
-	renderAccount(account) {
+	renderAccount(account, index) {
 		const userId = account.userId
 		return (
 			<tr key={userId} onClick={() => browserHistory.push(`users/${userId}`)}>
+				<td>{index + 1}</td>
 				<td>{userId}</td>
 				<td>{account.profileFullname}</td>
 				<td>{account.profileEmail}</td>

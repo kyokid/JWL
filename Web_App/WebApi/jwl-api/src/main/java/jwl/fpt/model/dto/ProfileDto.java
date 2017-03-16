@@ -17,4 +17,5 @@ public class ProfileDto {
     private Date dateOfBirth;
     private String phoneNo;
     private String placeOfWork;
+    private String imgUrl;
 }

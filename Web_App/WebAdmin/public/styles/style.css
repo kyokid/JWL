@@ -66,10 +66,10 @@ p {
   margin-right: 10px;
   font-size: 1.7em;
   color: #fff;
-  text-transform: uppercase;
   letter-spacing: -1px;
   padding-top: 9px;
   font-weight: bold;
+  text-decoration: none;
 }
 
 #logo:hover {
@@ -113,10 +113,29 @@ p {
 }
 
 /**
+ * Search
+ */
+.search-box {
+  width: 30%;
+  position: absolute;
+  right: 15px;
+  top: -10px;
+}
+
+.search-box .form-group input.form-control {
+  width: 70%;
+}
+
+/**
  * Table User
  */
 .table-user-container {
   margin-top: 30px;
+  position: relative;
+}
+
+.table-users {
+  margin-top: 25px;
 }
 
 .table-user-container table .glyphicon {
@@ -247,5 +266,21 @@ input[type="password"]{
 }
 
 .panel-title {
+  font-size: 20px;
+}
+
+/**
+ * Account detail
+ */
+.account-detail .panel {
+  margin-top: 30px;
+}
+
+.account-detail .user-img {
+  height: 250px;
+  width: 250px;
+}
+
+.account-detail .back {
   font-size: 20px;
 }
