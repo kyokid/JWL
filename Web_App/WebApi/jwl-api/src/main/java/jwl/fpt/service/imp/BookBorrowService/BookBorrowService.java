@@ -328,6 +328,67 @@ public class BookBorrowService implements IBookBorrowService {
         return result;
     }
 
+    @Override
+    public RestServiceModel<Boolean> renewBorrowedBookCopy(String rfid) {
+        RestServiceModel<Boolean> result = new RestServiceModel<>();
+
+        if (rfid == null) {
+            result.setFailData(null, "Sách bạn yêu cầu không có");
+            return result;
+        }
+        BorrowedBookCopyEntity currentBook = borrowedBookCopyRepo.findByBookCopy_RfidAndReturnDateIsNull(rfid);
+        int currentExtentNumber = currentBook.getExtendNumber();
+        if (currentExtentNumber == 3) {
+            result.setFailData(null, "Bạn thể không thể gia hạn sách do vượt quá số lần cho phép, vui lòng trả lại sách cho thư viện");
+            return result;
+        }
+        //trả sách
+        int resultUpdate = borrowedBookCopyRepo.updateReturnDate(new Date(Calendar.getInstance().getTimeInMillis()), rfid);
+        if (resultUpdate != 0) {
+            //get information sách mới trả
+
+            String userId = currentBook.getAccount().getUserId();
+            int rootId;
+            if (currentExtentNumber == 0) {
+                rootId = currentBook.getId();
+            } else {
+                rootId = currentBook.getRootId();
+            }
+
+
+
+            BookCopyEntity bookCopyEntity = currentBook.getBookCopy();
+            BookTypeEntity bookTypeEntity = bookCopyEntity.getBook().getBookType();
+
+
+
+
+            // insert borrowedbookcopy mới
+            List<BorrowedBookCopyEntity> borrowedBookCopyEntities = new ArrayList<>();
+            BorrowedBookCopyEntity entity = new BorrowedBookCopyEntity();
+            entity.setAccount(userId);
+            entity.setBookCopy(bookCopyEntity);
+            entity.setBorrowedDate(new Date(Calendar.getInstance().getTimeInMillis()));
+            Date deadline = Helper.GetDateAfter(entity.getBorrowedDate(), bookTypeEntity.getBorrowLimitDays());
+            entity.setDeadlineDate(deadline);
+            entity.setExtendNumber(currentExtentNumber + 1);
+            entity.setRootId(rootId);
+            borrowedBookCopyEntities.add(entity);
+            //save to db
+            borrowedBookCopyEntities = borrowedBookCopyRepo.save(borrowedBookCopyEntities);
+
+            List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
+            for (BorrowedBookCopyEntity borrowedBookCopyEntity :
+                    borrowedBookCopyEntities) {
+                BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+                borrowedBookCopyDtos.add(dto);
+            }
+            result.setSuccessData(true, "Bạn đã gia hạn thành công");
+        }
+
+        return result;
+    }
+
     private RestServiceModel<List<BorrowedBookCopyDto>> saveBorrowCart(BorrowCart borrowCart) {
         RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
         Set<String> rfids = borrowCart.getRfids();

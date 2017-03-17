@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,4 +24,11 @@ public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEnti
             "and b.bookCopy.rfid = ?2 " +
             "and b.returnDate is null")
     void deleteByUserIdAndBorrowedCopyRfid(String userId, String borrowedCopyId);
+
+    BorrowedBookCopyEntity findByBookCopy_RfidAndReturnDateIsNull(String rfid);
+
+    @org.springframework.transaction.annotation.Transactional
+    @Modifying
+    @Query("update BorrowedBookCopyEntity b set b.returnDate = ?1 where b.bookCopy.rfid = ?2")
+    int updateReturnDate(Date currentDate, String rfid);
 }
