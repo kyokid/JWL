@@ -11,7 +11,7 @@ Just Walk Out Library
 * [ ] Notification when deadline remaining [3] days
 
 
-**ReTaard**
+**Tuan Anh**
 * [ ] Validate Add new account
 * [ ] Delete account 
 * [ ] Edit account
