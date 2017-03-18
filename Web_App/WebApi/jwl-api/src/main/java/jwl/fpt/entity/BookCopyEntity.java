@@ -10,7 +10,6 @@ import java.util.Collection;
 @Table(name = "book_copy", schema = "public", catalog = "jwl_test")
 public class BookCopyEntity {
     private String rfid;
-    private Integer price;
     private BookEntity book;
     private Collection<BorrowedBookCopyEntity> borrowedBookCopies;
 
@@ -24,15 +23,7 @@ public class BookCopyEntity {
         this.rfid = rfid;
     }
 
-    @Basic
-    @Column(name = "price")
-    public Integer getPrice() {
-        return price;
-    }
 
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -42,7 +33,6 @@ public class BookCopyEntity {
         BookCopyEntity that = (BookCopyEntity) o;
 
         if (rfid != null ? !rfid.equals(that.rfid) : that.rfid != null) return false;
-        if (price != null ? !price.equals(that.price) : that.price != null) return false;
 
         return true;
     }
@@ -50,7 +40,7 @@ public class BookCopyEntity {
     @Override
     public int hashCode() {
         int result = rfid != null ? rfid.hashCode() : 0;
-        result = 31 * result + (price != null ? price.hashCode() : 0);
+        result = 31 * result;
         return result;
     }
 

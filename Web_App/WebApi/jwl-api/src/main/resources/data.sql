@@ -52,3 +52,35 @@ VALUES ('SE61476', 'Nguyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn 
 INSERT INTO profile (user_id, fullname, email, address, date_of_birth, phone_no, place_of_work)
 VALUES ('thiendn', 'Đặng Nhật Thiên', 'thiendn@gmail.com', 'Đối diện trường', '1994-02-28', '01678785551', 'FPT'),
   ('havh', 'Võ Hồng Hà', 'havh0108@gmail.com', '23 TCH 35 Q12', '1994-06-28', '01635782661', 'FPT');
+
+
+UPDATE book
+SET price = CASE id
+            WHEN 1 THEN 10
+            WHEN 2 THEN 20
+            WHEN 3 THEN 30
+            WHEN 4 THEN 40
+            WHEN 5 THEN 50
+            END
+WHERE id IN (1, 2, 3, 4, 5);
+
+UPDATE book
+SET thumbnail = CASE id
+                WHEN 1 THEN 'http://se.uploads.ru/VijQo.jpg'
+                WHEN 2 THEN 'http://sg.uploads.ru/s7AIO.png'
+                WHEN 3 THEN 'http://sh.uploads.ru/C9Hyf.jpg'
+                WHEN 4 THEN 'http://s0.uploads.ru/JoEBI.jpg'
+                WHEN 5 THEN 'http://s1.uploads.ru/gB4mi.jpg'
+                END
+WHERE id IN (1, 2, 3, 4, 5);
+
+UPDATE profile
+SET gender = CASE user_id
+             WHEN 'SE61476' THEN 'male'
+             WHEN 'thiendn' THEN 'female'
+             WHEN 'havh' THEN 'male'
+             END
+WHERE user_id IN ('SE61476', 'thiendn', 'havh');
+
+
+

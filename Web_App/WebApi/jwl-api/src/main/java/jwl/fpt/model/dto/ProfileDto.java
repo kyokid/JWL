@@ -18,4 +18,5 @@ public class ProfileDto {
     private String phoneNo;
     private String placeOfWork;
     private String imgUrl;
+    private String gender;
 }
