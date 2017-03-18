@@ -7,6 +7,7 @@ import lombok.Data;
  */
 @Data
 public class RfidDto {
+    private String librarianId;
     private String ibeaconId;
     private String rfid;
 }

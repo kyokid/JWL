@@ -7,11 +7,10 @@ import jwl.fpt.model.dto.*;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BookCopyRepo;
 import jwl.fpt.repository.BorrowedBookCopyRepo;
-import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.util.Constant;
+import jwl.fpt.util.Constant.SoundMessages;
 import jwl.fpt.util.Helper;
-import jwl.fpt.util.Constant.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.session.FindByIndexNameSessionRepository;
@@ -31,8 +30,6 @@ import java.util.*;
 public class BookBorrowService implements IBookBorrowService {
     private final String principalName = FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
 
-    @Autowired
-    private BorrowerTicketRepo borrowerTicketRepo;
     @Autowired
     private BorrowedBookCopyRepo borrowedBookCopyRepo;
     @Autowired
@@ -318,7 +315,7 @@ public class BookBorrowService implements IBookBorrowService {
         bookCopyEntities.add(bookCopyEntity);
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities =
                 createBorrowedBookCopyEntities(bookCopyEntities, borrowCart.getUserId());
-        BorrowedBookCopyDto borrowedBookCopyDto = modelMapper
+            BorrowedBookCopyDto borrowedBookCopyDto = modelMapper
                 .map(borrowedBookCopyEntities.get(0), BorrowedBookCopyDto.class);
         result.setSuccessData(
                 borrowedBookCopyDto,
@@ -426,15 +423,6 @@ public class BookBorrowService implements IBookBorrowService {
         transactionalSession.setAttribute(Constant.SESSION_BORROWER, userId);
         transactionalSession.setAttribute(Constant.SESSION_PENDING_COPIES, rfidDtoList);
         transactionalSession.setMaxInactiveInterval(Constant.SESSION_TRANSACT_TIMEOUT);
-    }
-
-    // TODO: Will be used later.
-    private void deleteBorrowerTicket(String userId) {
-        AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userId);
-        BorrowerTicketEntity borrowerTicketEntity = borrowerTicketRepo
-                .findByAccountAndDeleteDateIsNull(accountEntity);
-        borrowerTicketEntity.setDeleteDate(new Date(Calendar.getInstance().getTimeInMillis()));
     }
 
     private List<BorrowedBookCopyEntity> createBorrowedBookCopyEntities(List<BookCopyEntity> bookCopyEntities,

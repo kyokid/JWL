@@ -48,6 +48,18 @@ public class RestServiceModel<T> {
         this.code = "400";
     }
 
+    public void setWaitForConfirmData(T data, String textMessage) {
+        this.setData(data, textMessage, "");
+        this.succeed = false;
+        this.code = "405";
+    }
+
+    public void setWaitForConfirmData(T data, String textMessage, String soundMessage) {
+        this.setData(data, textMessage, soundMessage);
+        this.succeed = false;
+        this.code = "405";
+    }
+
     private void setData(T data, String textMessage, String soundMessage) {
         this.data = data;
         this.textMessage = textMessage;
