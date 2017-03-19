@@ -33,6 +33,6 @@ public class BookController {
 
     @RequestMapping(value = "/books/{id}/borrowing_copies", method = RequestMethod.GET)
     public RestServiceModel<List<BorrowedBookCopyDto>> getBorrowingCopies(@PathVariable("id") Integer bookId) {
-        return null;
+        return bookService.getBorrowingCopies(bookId);
     }
 }

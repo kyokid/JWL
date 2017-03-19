@@ -1,9 +1,11 @@
 package jwl.fpt.service.imp;
 
 import jwl.fpt.entity.BookEntity;
+import jwl.fpt.entity.BorrowedBookCopyEntity;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.BookDetailDto;
 import jwl.fpt.model.dto.BookDto;
+import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.repository.BookRepo;
 import jwl.fpt.repository.BorrowedBookCopyRepo;
 import jwl.fpt.service.IBookService;
@@ -63,6 +65,31 @@ public class BookService implements IBookService {
 
         BookDetailDto bookDetailDto = modelMapper.map(bookEntity, BookDetailDto.class);
         result.setSuccessData(bookDetailDto, "Here is the detail of the book " + bookId);
+
+        return result;
+    }
+
+    @Override
+    public RestServiceModel<List<BorrowedBookCopyDto>> getBorrowingCopies(Integer bookId) {
+        RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
+        if (bookId == null) {
+            result.setFailData(null, "Invalid book ID");
+            return result;
+        }
+
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findBorrowingCopiesOfBook(bookId);
+        if (borrowedBookCopyEntities == null || borrowedBookCopyEntities.isEmpty()) {
+            result.setSuccessData(null, "Not found any borrowing copies.");
+            return result;
+        }
+
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity :
+                borrowedBookCopyEntities) {
+            BorrowedBookCopyDto borrowedBookCopyDto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+            borrowedBookCopyDtos.add(borrowedBookCopyDto);
+        }
+        result.setSuccessData(borrowedBookCopyDtos, "Found " + borrowedBookCopyDtos.size() + " borrowing copy(s).");
 
         return result;
     }

@@ -40,4 +40,9 @@ public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEnti
     @Modifying
     @Query("update BorrowedBookCopyEntity b set b.returnDate = ?1 where b.bookCopy.rfid = ?2")
     int updateReturnDate(Date currentDate, String rfid);
+
+    @Query("select copies " +
+            "from BorrowedBookCopyEntity copies " +
+            "where copies.bookCopy.book.id = ?1 and copies.returnDate is null")
+    List<BorrowedBookCopyEntity> findBorrowingCopiesOfBook(Integer bookId);
 }
