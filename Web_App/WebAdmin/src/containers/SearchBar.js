@@ -15,7 +15,7 @@ class SearchBar extends Component {
 	render() {
 		return (
 			<form className="form-inline search-box" onSubmit={this.onFormSubmit}>
-				<div className="form-group pull-right" style={{ width: "100%" }}>
+				<div className="form-group pull-right" style={{ textAlign: "left" }}>
 					<input
 						className="form-control"
 						value={this.state.term}

@@ -35,7 +35,7 @@ public class BookReturnService implements IBookReturnService {
     // 1. Check current cart of the librarian.
     // 2. If no cart found, init a cart and add the book to that cart.
     // 3. If found a cart check user ID:
-    ////// a. If userIdOfReturnedBook == userIdInCart, add the book to the cart.
+    ////// a. If userIdOfReturnedBook == userIdInCart, check rfid in return cart, add the book to the cart if not exists.
     ////// b. If userIdOfReturnedBook != userIdInCart, return that book and sth that triggers web's confirmation
     @Override
     public RestServiceModel<BorrowedBookCopyDto> addReturnCopyToCart(RfidDto rfidDto) {
@@ -79,6 +79,13 @@ public class BookReturnService implements IBookReturnService {
                 rfids.add(rfid);
                 returnCart.setRfids(rfids);
             } else {
+                if (rfids.contains(rfid)) {
+                    result.setFailData(
+                            null,
+                            "Book " + rfid + " scanned before!",
+                            "Book added before.");
+                    return result;
+                }
                 rfids.add(rfid);
             }
             result.setSuccessData(borrowedBookCopyDto, "Added returned copy successfully!");
@@ -166,7 +173,7 @@ public class BookReturnService implements IBookReturnService {
         }
         borrowedBookCopyRepo.save(borrowedBookCopyEntities);
 
-        result.setSuccessData(borrowedBookCopyDtos, "Return book(s) successfully!");
+        result.setSuccessData(borrowedBookCopyDtos, "Returned book(s) successfully!");
         return result;
     }
 }

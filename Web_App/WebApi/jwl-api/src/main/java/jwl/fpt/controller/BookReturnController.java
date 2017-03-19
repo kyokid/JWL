@@ -5,6 +5,7 @@ import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.RfidDto;
 import jwl.fpt.service.IBookReturnService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,20 +16,31 @@ import java.util.List;
 @RestController
 public class BookReturnController {
     @Autowired
-    IBookReturnService bookReturnService;
+    private IBookReturnService bookReturnService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @RequestMapping(value = "librarian/add/return", method = RequestMethod.POST)
     public RestServiceModel<BorrowedBookCopyDto> addReturnCopyToCart(@RequestBody RfidDto rfidDto) {
-        return bookReturnService.addReturnCopyToCart(rfidDto);
+        RestServiceModel<BorrowedBookCopyDto> responseObj = bookReturnService.addReturnCopyToCart(rfidDto);
+        simpMessagingTemplate.convertAndSend("/socket/return/books", responseObj);
+
+        return responseObj;
     }
 
     @RequestMapping(value = "librarian/{librarianId}/commit/return", method = RequestMethod.GET)
     public RestServiceModel<List<BorrowedBookCopyDto>> commitReturnCopies(@PathVariable("librarianId") String librarianId) {
-        return bookReturnService.returnCopies(librarianId);
+        RestServiceModel<List<BorrowedBookCopyDto>> responseObj = bookReturnService.returnCopies(librarianId);
+        simpMessagingTemplate.convertAndSend("/socket/return/books", responseObj);
+
+        return responseObj;
     }
 
     @RequestMapping(value = "librarian/{librarianId}/cancel/return", method = RequestMethod.GET)
     public RestServiceModel cancelreturnCopies(@PathVariable("librarianId") String librarianId) {
-        return bookReturnService.cancelReturnCopies(librarianId);
+        RestServiceModel responseObj = bookReturnService.cancelReturnCopies(librarianId);
+        simpMessagingTemplate.convertAndSend("/socket/return/books", responseObj);
+
+        return responseObj;
     }
 }

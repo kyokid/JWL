@@ -116,10 +116,11 @@ p {
  * Search
  */
 .search-box {
-  width: 30%;
+  width: 50%;
   position: absolute;
   right: 15px;
   top: -10px;
+  text-align: right;
 }
 
 .search-box .form-group input.form-control {

@@ -49,7 +49,7 @@ public class BookBorrowController {
     @RequestMapping(value = "/librarian/add/copy", method = RequestMethod.POST)
     public RestServiceModel<BorrowedBookCopyDto> addCopyToCartByLibrarian(@RequestBody RfidDto rfidDto) {
         RestServiceModel<BorrowedBookCopyDto> responseObj = bookBorrowService.addCopyToCartByLibrarian(rfidDto);
-        simpMessagingTemplate.convertAndSend("/socket", responseObj);
+        simpMessagingTemplate.convertAndSend("/socket/add/books", responseObj);
 
         return responseObj;
     }

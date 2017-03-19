@@ -10,3 +10,6 @@ export const CANCEL_ADDING_COPIES = "librarian/cancel"
 
 // uploads.im api
 export const IMG_UPLOAD = "http://uploads.im/api?upload&resize_width=200"
+
+export const COMMIT_RETURN_COPIES_PATH = "/commit/return"
+export const CANCEL_RETURN_COPIES_PATH = "/cancel/return"

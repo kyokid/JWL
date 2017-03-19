@@ -14,7 +14,8 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/socket");
+        config.enableSimpleBroker("/socket/add/books");
+        config.enableSimpleBroker("/socket/return/books");
     }
 
     @Override
