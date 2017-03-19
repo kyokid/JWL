@@ -93,4 +93,19 @@ public class BookService implements IBookService {
 
         return result;
     }
+
+    @Override
+    public RestServiceModel<List<BookDto>> searchBooks(String searchTerm) {
+        RestServiceModel<List<BookDto>> result = new RestServiceModel<>();
+        List<BookEntity> bookEntities;
+        bookEntities = bookRepo.searchBooks(searchTerm);
+        List<BookDto> bookDtos = new ArrayList<>();
+        for (BookEntity bookEntity: bookEntities){
+            BookDto bookDto = modelMapper.map(bookEntity, BookDto.class);
+            bookDtos.add(bookDto);
+        }
+        result.setSuccessData(bookDtos, "Found " + bookDtos.size() + " book(s).");
+
+        return result;
+    }
 }
