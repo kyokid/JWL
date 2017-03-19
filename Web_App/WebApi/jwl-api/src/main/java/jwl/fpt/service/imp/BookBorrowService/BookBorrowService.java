@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.sql.Date;
 import java.util.*;
 
+
 /**
  * Created by Entaard on 1/29/17.
  */
@@ -335,7 +336,10 @@ public class BookBorrowService implements IBookBorrowService {
         }
         BorrowedBookCopyEntity currentBook = borrowedBookCopyRepo.findByBookCopy_RfidAndReturnDateIsNull(rfid);
         int currentExtentNumber = currentBook.getExtendNumber();
-        if (currentExtentNumber == 3) {
+        BookCopyEntity bookCopyEntity = currentBook.getBookCopy();
+        BookTypeEntity bookTypeEntity = bookCopyEntity.getBook().getBookType();
+        int maxExtend = bookTypeEntity.getExtendTimesLimit();
+        if (currentExtentNumber == maxExtend) {
             result.setFailData(null, "Bạn thể không thể gia hạn sách do vượt quá số lần cho phép, vui lòng trả lại sách cho thư viện");
             return result;
         }
@@ -351,14 +355,6 @@ public class BookBorrowService implements IBookBorrowService {
             } else {
                 rootId = currentBook.getRootId();
             }
-
-
-
-            BookCopyEntity bookCopyEntity = currentBook.getBookCopy();
-            BookTypeEntity bookTypeEntity = bookCopyEntity.getBook().getBookType();
-
-
-
 
             // insert borrowedbookcopy mới
             List<BorrowedBookCopyEntity> borrowedBookCopyEntities = new ArrayList<>();

@@ -17,7 +17,7 @@ public class BookEntity {
     private Integer numberOfPages;
     private Integer numberOfCopies;
     private String isbn;
-    private int price;
+    private Integer price;
     private String thumbnail;
     private BookTypeEntity bookType;
     private BookPositionEntity bookPosition;
@@ -110,11 +110,11 @@ public class BookEntity {
 
     @Basic
     @Column(name = "price")
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
