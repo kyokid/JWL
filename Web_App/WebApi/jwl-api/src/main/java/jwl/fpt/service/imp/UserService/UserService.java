@@ -4,7 +4,10 @@ import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.BorrowerTicketEntity;
 import jwl.fpt.entity.ProfileEntity;
 import jwl.fpt.model.RestServiceModel;
-import jwl.fpt.model.dto.*;
+import jwl.fpt.model.dto.AccountDetailDto;
+import jwl.fpt.model.dto.AccountDto;
+import jwl.fpt.model.dto.ProfileDto;
+import jwl.fpt.model.dto.UserDto;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.repository.RoleRepository;
@@ -32,9 +35,6 @@ public class UserService implements IUserService {
 
     @Autowired
     private RoleRepository roleRepository;
-
-    @Autowired
-    private BorrowerTicketRepo borrowerTicketRepo;
 
     @Autowired
     private ModelMapper modelMapper;

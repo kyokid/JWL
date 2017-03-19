@@ -23,6 +23,9 @@ UPDATE borrower_ticket SET delete_date = NULL WHERE qr_id = '123';
 INSERT INTO author (id, name, description)
 VALUES (1, 'Bert Bates', ''), (2, 'Kathy Sierra', ''), (3, 'Michael Hartl', '');
 
+INSERT INTO book_author (id, author_id, book_id)
+VALUES (1, 1, 1), (2, 2, 3), (3, 3, 2), (4, 2, 4), (5, 1, 5), (6, 3, 5);
+
 INSERT INTO category (id, name, description)
 VALUES (1, 'math', ''), (2, 'literature', ''), (3, 'physics', ''), (4, 'biography', ''), (5, 'IT', '');
 
