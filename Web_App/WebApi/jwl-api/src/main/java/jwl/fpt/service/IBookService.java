@@ -1,6 +1,7 @@
 package jwl.fpt.service;
 
 import jwl.fpt.model.RestServiceModel;
+import jwl.fpt.model.dto.BookDetailDto;
 import jwl.fpt.model.dto.BookDto;
 
 import java.util.List;
@@ -10,4 +11,6 @@ import java.util.List;
  */
 public interface IBookService {
     RestServiceModel<List<BookDto>> getAllBooks();
+
+    RestServiceModel<BookDetailDto> getBookDetail(Integer bookId);
 }

@@ -12,7 +12,7 @@ public class BookDto {
     private Integer id;
     private String title;
     private String publisher;
-    private List<String> authorNames;
+    private List<BookAuthorDto> bookAuthors;
     private Integer publishYear;
     private Integer numberOfCopies;
     private String isbn;

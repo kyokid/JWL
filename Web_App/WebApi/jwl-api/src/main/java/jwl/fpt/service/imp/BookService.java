@@ -1,10 +1,11 @@
 package jwl.fpt.service.imp;
 
-import jwl.fpt.entity.BookAuthorEntity;
 import jwl.fpt.entity.BookEntity;
 import jwl.fpt.model.RestServiceModel;
+import jwl.fpt.model.dto.BookDetailDto;
 import jwl.fpt.model.dto.BookDto;
 import jwl.fpt.repository.BookRepo;
+import jwl.fpt.repository.BorrowedBookCopyRepo;
 import jwl.fpt.service.IBookService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import java.util.List;
 public class BookService implements IBookService {
     @Autowired
     private BookRepo bookRepo;
+    @Autowired
+    private BorrowedBookCopyRepo borrowedBookCopyRepo;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -37,20 +40,29 @@ public class BookService implements IBookService {
         for (BookEntity bookEntity :
                 bookEntities) {
             BookDto bookDto = modelMapper.map(bookEntity, BookDto.class);
-
-            if (bookEntity.getBookAuthors() != null) {
-                List<String> authorNames = new ArrayList<>();
-                for (BookAuthorEntity bookAuthorEntity :
-                        bookEntity.getBookAuthors()) {
-                    String authorName = bookAuthorEntity.getAuthor().getName();
-                    authorNames.add(authorName);
-                }
-                bookDto.setAuthorNames(authorNames);
-            }
-
             bookDtos.add(bookDto);
         }
         result.setSuccessData(bookDtos, "Found " + bookDtos.size() + " book(s).");
+
+        return result;
+    }
+
+    @Override
+    public RestServiceModel<BookDetailDto> getBookDetail(Integer bookId) {
+        RestServiceModel<BookDetailDto> result = new RestServiceModel<>();
+        if (bookId == null) {
+            result.setFailData(null, "Invalid book ID");
+            return result;
+        }
+
+        BookEntity bookEntity = bookRepo.findById(bookId);
+        if (bookEntity == null) {
+            result.setFailData(null, "There is no book with ID " + bookId);
+            return result;
+        }
+
+        BookDetailDto bookDetailDto = modelMapper.map(bookEntity, BookDetailDto.class);
+        result.setSuccessData(bookDetailDto, "Here is the detail of the book " + bookId);
 
         return result;
     }

@@ -33,6 +33,7 @@ public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEnti
             "from BorrowedBookCopyEntity copies " +
             "where copies.bookCopy.rfid in ?1 and copies.returnDate is null")
     List<BorrowedBookCopyEntity> findByRfids(Set<String> rfids);
+
     BorrowedBookCopyEntity findByBookCopy_RfidAndReturnDateIsNull(String rfid);
 
     @Transactional
