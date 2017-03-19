@@ -11,7 +11,13 @@ import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.util.Constant;
 import jwl.fpt.util.Constant.SoundMessages;
 import jwl.fpt.util.Helper;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
@@ -22,6 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.Date;
 import java.util.*;
+
+import static jwl.fpt.util.Constant.DAY_OF_DEADLINE;
+import static jwl.fpt.util.Constant.DAY_REMAIN_DEADLINE;
 
 
 /**
@@ -74,7 +83,7 @@ public class BookBorrowService implements IBookBorrowService {
             if (currentRfidDtoList != null) {
                 rfidDtoList.getRfids().addAll(currentRfidDtoList.getRfids());
                 currentSession.setAttribute(Constant.SESSION_PENDING_COPIES, rfidDtoList);
-                return  rfidDtoList;
+                return rfidDtoList;
             }
         }
 
@@ -165,7 +174,7 @@ public class BookBorrowService implements IBookBorrowService {
     @Transactional
     public RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(BorrowerDto borrowerDto, boolean isLibrarian) {
         RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
-        String msg = isLibrarian? "" : "Please contact librarian!";
+        String msg = isLibrarian ? "" : "Please contact librarian!";
 
         boolean validInput = BookBorrowServiceValidator
                 .validateBorrowerDto(borrowerDto, accountRepository, isLibrarian);
@@ -227,7 +236,7 @@ public class BookBorrowService implements IBookBorrowService {
         accountEntity.setUserId(userId);
         List<BorrowedBookCopyEntity> bookCopyEntities = borrowedBookCopyRepo.findByAccountAndReturnDateIsNull(accountEntity);
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
-        for (BorrowedBookCopyEntity entity: bookCopyEntities) {
+        for (BorrowedBookCopyEntity entity : bookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
             borrowedBookCopyDtos.add(dto);
         }
@@ -251,7 +260,7 @@ public class BookBorrowService implements IBookBorrowService {
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities =
                 borrowedBookCopyRepo.findByAccountAndReturnDateIsNull(accountEntity);
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
-        for (BorrowedBookCopyEntity entity: borrowedBookCopyEntities) {
+        for (BorrowedBookCopyEntity entity : borrowedBookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
             borrowedBookCopyDtos.add(dto);
         }
@@ -316,7 +325,7 @@ public class BookBorrowService implements IBookBorrowService {
         bookCopyEntities.add(bookCopyEntity);
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities =
                 createBorrowedBookCopyEntities(bookCopyEntities, borrowCart.getUserId());
-            BorrowedBookCopyDto borrowedBookCopyDto = modelMapper
+        BorrowedBookCopyDto borrowedBookCopyDto = modelMapper
                 .map(borrowedBookCopyEntities.get(0), BorrowedBookCopyDto.class);
         result.setSuccessData(
                 borrowedBookCopyDto,
@@ -340,7 +349,7 @@ public class BookBorrowService implements IBookBorrowService {
         BookTypeEntity bookTypeEntity = bookCopyEntity.getBook().getBookType();
         int maxExtend = bookTypeEntity.getExtendTimesLimit();
         if (currentExtentNumber == maxExtend) {
-            result.setFailData(null, "Bạn thể không thể gia hạn sách do vượt quá số lần cho phép, vui lòng trả lại sách cho thư viện");
+            result.setFailData(null, "Bạn không thể gia hạn sách do vượt quá số lần cho phép, vui lòng trả lại sách cho thư viện");
             return result;
         }
         //trả sách
@@ -486,7 +495,7 @@ public class BookBorrowService implements IBookBorrowService {
                                                                         String userId) {
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = new ArrayList<>();
 
-        for (BookCopyEntity bookCopyEntity:
+        for (BookCopyEntity bookCopyEntity :
                 bookCopyEntities) {
             BookEntity bookEntity = bookCopyEntity.getBook();
             BookTypeEntity bookTypeEntity = bookEntity.getBookType();
@@ -601,5 +610,42 @@ public class BookBorrowService implements IBookBorrowService {
             rfids = borrowCart.getRfids();
         }
         return rfids;
+    }
+
+    public void checkBorrowingBookCopyDeadline() {
+        Logger logger = LoggerFactory.getLogger(getClass());
+
+        logger.info("The check deadline has begun...");
+        int count = 0;
+        DateTime currentDateTime = new DateTime();
+        DateTime deadlineDateTime;
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByReturnDateIsNull();
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity :
+                borrowedBookCopyEntities) {
+            deadlineDateTime = new DateTime(borrowedBookCopyEntity.getDeadlineDate());
+            Duration duration = new Duration(currentDateTime, deadlineDateTime);
+            logger.info("Duration is {}", duration.getStandardDays());
+
+            // deadline - current = 3 thì push notiviện
+            // Todo: push notification 2 times
+            if (duration.getStandardDays() == DAY_REMAIN_DEADLINE) {
+                logger.info("còn 3 ngày nữa là đến deadline sách: {} ", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
+                count++;
+            } else if (duration.getStandardDays() == DAY_OF_DEADLINE) {
+                logger.info("sách {} đã hết hạn, vui lòng trả lại thư ", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
+            }
+        }
+        if (count == 0) {
+            logger.info("không có sách nào phải noti");
+        } else {
+            logger.info("Có {} cuốn sách chuẩn bị tới deadline", count);
+        }
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            logger.error("Error while executing sample job", e);
+        } finally {
+            logger.info("Sample job has finished...");
+        }
     }
 }
