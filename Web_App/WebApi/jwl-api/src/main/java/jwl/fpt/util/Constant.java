@@ -9,6 +9,8 @@ public class Constant {
 
     public static int SESSION_INIT_TIMEOUT = 40;
     public static int SESSION_TRANSACT_TIMEOUT = 40;
+    public static int DAY_REMAIN_DEADLINE = 3;
+    public static int DAY_OF_DEADLINE = 0;
 
     //google token for notification
     public static final String APP_TOKEN = "AAAAaNSpPQs:APA91bGlEsmuobSo775eGREdsUDisU1Pio3u8T8YPHrSfVSjJXHMOh_F7n5418hfKISaPbVF3bVnwSABAQukv81g5DgU0uMMmcaC_XHyU43J7FasSdBEyltHND2rRAxwJEXygjiZEKMH";

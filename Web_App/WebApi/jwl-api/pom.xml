@@ -92,6 +92,28 @@
 			<version>4.3.5.RELEASE</version>
 		</dependency>
 
+		<!--quart for multithread-->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz-jobs</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+		<!-- spring context support -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<!-- Joda time is a utility to manage data/time in java-->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>

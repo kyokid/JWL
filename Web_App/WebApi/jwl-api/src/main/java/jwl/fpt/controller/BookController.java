@@ -6,10 +6,7 @@ import jwl.fpt.model.dto.BookDto;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.service.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,5 +31,10 @@ public class BookController {
     @RequestMapping(value = "/books/{id}/borrowing_copies", method = RequestMethod.GET)
     public RestServiceModel<List<BorrowedBookCopyDto>> getBorrowingCopies(@PathVariable("id") Integer bookId) {
         return bookService.getBorrowingCopies(bookId);
+    }
+
+    @RequestMapping(value = "/books/search", method = RequestMethod.GET)
+    public RestServiceModel<List<BookDto>> searchBooks(@RequestParam("search_term")String searchTerm){
+        return bookService.searchBooks(searchTerm);
     }
 }
