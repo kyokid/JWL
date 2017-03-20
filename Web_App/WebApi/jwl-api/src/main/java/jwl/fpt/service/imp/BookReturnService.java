@@ -23,8 +23,6 @@ import java.util.*;
 @Service
 public class BookReturnService implements IBookReturnService {
     @Autowired
-    private BookCopyRepo bookCopyRepo;
-    @Autowired
     private BorrowedBookCopyRepo borrowedBookCopyRepo;
     @Autowired
     private ModelMapper modelMapper;

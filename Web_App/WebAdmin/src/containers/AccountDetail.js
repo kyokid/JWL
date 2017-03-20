@@ -184,6 +184,7 @@ class AccountDetail extends Component {
 				<thead>
 					<tr>
 						<th>No.</th>
+						<th>RFID</th>
 						<th>Title</th>
 						<th>Borrowed Date</th>
 						<th>Dealine Date</th>
@@ -204,6 +205,7 @@ class AccountDetail extends Component {
 		return (
 			<tr key={borrowedCopyRfid}>
 				<td>{index + 1}</td>
+				<td>{borrowedCopyRfid}</td>
 				<td>{borrowedBook.bookCopyBookTitle}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>

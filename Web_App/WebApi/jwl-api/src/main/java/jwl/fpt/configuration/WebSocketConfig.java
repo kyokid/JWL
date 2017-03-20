@@ -14,8 +14,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/socket/add/books");
-        config.enableSimpleBroker("/socket/return/books");
+        config.enableSimpleBroker("/socket/add/books", "/socket/return/books");
     }
 
     @Override
@@ -23,7 +22,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
         // TODO: security.
         stompEndpointRegistry.addEndpoint("/gs-guide-websocket")
                 .setAllowedOrigins("*")
-                .withSockJS();
-
+                .withSockJS()
+                .setDisconnectDelay(3 * 1000);
     }
 }
