@@ -2,17 +2,16 @@ import React from 'react'
 import * as Types from '../constants/action-type'
 
 const INITIAL_STATE = {
-	userId: "",
+	returningBooks: [],
 	returnedBooks: [],
 	returnedBookOfAnotherUser: {},
-	responseMsg: "",
-	responseCode: ""
+	responseMsg: '',
+	responseCode: ''
 }
 
 export default function (state = INITIAL_STATE, action) {
 	switch (action.type) {
 		case Types.FETCH_ADDED_RETURN_COPY:
-			debugger
 			console.log("reducer Types.FETCH_ADDED_RETURN_COPY called!")
 			console.log("reducer: " + action.payload.data)
 			if (!action.payload.data) {
@@ -31,8 +30,8 @@ export default function (state = INITIAL_STATE, action) {
 				}
 			}
 			return {
-				userId: action.payload.data.accountUserId,
-				returnedBooks: [action.payload.data ,...state.returnedBooks],
+				...state,
+				returningBooks: [action.payload.data, ...state.returningBooks],
 				responseMsg: action.payload.textMessage,
 				responseCode: action.payload.code
 			}
@@ -47,6 +46,7 @@ export default function (state = INITIAL_STATE, action) {
 			}
 			return {
 				...state,
+				returningBooks: [],
 				returnedBooks: action.payload.data,
 				responseMsg: action.payload.textMessage,
 				responseCode: action.payload.code
@@ -61,7 +61,8 @@ export default function (state = INITIAL_STATE, action) {
 				}
 			}
 			return {
-				...INITIAL_STATE,
+				...state,
+				returningBooks: [],
 				responseMsg: action.payload.textMessage,
 				responseCode: action.payload.code
 			}

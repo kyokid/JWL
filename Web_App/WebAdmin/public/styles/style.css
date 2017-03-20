@@ -285,3 +285,19 @@ input[type="password"]{
 .account-detail .back {
   font-size: 20px;
 }
+
+/**
+ * Return books.
+ */
+p.returned-books-title,
+p.returning-books-title {
+  text-align: left;
+  margin-top: 60px;
+  margin-bottom: 40px;
+  font-size: 30px;
+  color: gray
+}
+
+p.returning-books-title {
+  margin-top: 40px;
+}

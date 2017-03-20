@@ -2,6 +2,22 @@ import axios from 'axios'
 import * as Api from '../constants/api'
 import * as Types from '../constants/action-type'
 
+export function addReturnCopyToCart(librarianId, rfid) {
+	const addReturnUrl = `${Api.ROOT_URL}${Api.ADD_RETURN_COPY}`
+	const request = axios.post(
+		addReturnUrl,
+		{
+			librarianId: librarianId,
+			rfid: rfid
+		}
+	)
+
+	return {
+		type: Types.ADD_RETURN_COPY,
+		payload: request
+	}
+}
+
 export function fetchAddedReturnedCopyFromCart(returnedCopyData) {
 	return {
 		type: Types.FETCH_ADDED_RETURN_COPY,
@@ -10,7 +26,7 @@ export function fetchAddedReturnedCopyFromCart(returnedCopyData) {
 }
 
 export function commitReturnCopies(librarianId) {
-	const commitReturnUrl = `${Api.ROOT_URL}librarian/${librarianId}${Api.COMMIT_RETURN_COPIES_PATH}`
+	const commitReturnUrl = `${Api.ROOT_URL}librarian/${librarianId}/${Api.COMMIT_RETURN_COPIES_PATH}`
 	const request = axios.get(commitReturnUrl)
 
 	return {
@@ -27,7 +43,7 @@ export function fetchCommittedReturnCopies(returnedCopyData) {
 }
 
 export function cancelReturnCopies(librarianId) {
-	const cancelReturnUrl = `${Api.ROOT_URL}librarian/${librarianId}${Api.CANCEL_RETURN_COPIES_PATH}`
+	const cancelReturnUrl = `${Api.ROOT_URL}librarian/${librarianId}/${Api.CANCEL_RETURN_COPIES_PATH}`
 	const request = axios.get(cancelReturnUrl)
 
 	return {

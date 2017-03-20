@@ -42,7 +42,7 @@ public class BookReturnService implements IBookReturnService {
         RestServiceModel<BorrowedBookCopyDto> result = new RestServiceModel<>();
         if (rfidDto == null || rfidDto.getRfid() == null
                 || rfidDto.getRfid().isEmpty() || rfidDto.getLibrarianId() == null) {
-            result.setFailData(null, "No book found, please rescan the book.");
+            result.setFailData(null, "Invalid input librarianId or rfid.");
             return result;
         }
 
@@ -67,7 +67,10 @@ public class BookReturnService implements IBookReturnService {
             rfids.add(rfid);
             returnCart = new ReturnCart(userIdOfReturnedBook, librarianId, rfids);
             returnCarts.add(returnCart);
-            result.setSuccessData(borrowedBookCopyDto, "Added returned copy successfully!");
+            result.setSuccessData(
+                    borrowedBookCopyDto,
+                    "Added returned copy successfully!",
+                    "Book added!");
             return result;
         }
 
@@ -88,11 +91,17 @@ public class BookReturnService implements IBookReturnService {
                 }
                 rfids.add(rfid);
             }
-            result.setSuccessData(borrowedBookCopyDto, "Added returned copy successfully!");
+            result.setSuccessData(
+                    borrowedBookCopyDto,
+                    "Added returned copy successfully!",
+                    "Book added!");
             return result;
         }
 
-        result.setWaitForConfirmData(borrowedBookCopyDto, "New user found. End user " + userIdInCart + " transaction?");
+        result.setWaitForConfirmData(
+                borrowedBookCopyDto,
+                "New user found. End user " + userIdInCart + " transaction?",
+                "New user found. Need confirmation.");
         return result;
     }
 
