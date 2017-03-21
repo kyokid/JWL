@@ -8,7 +8,7 @@ Just Walk Out Library
 * [ ] View detail book with full information
 * [ ] View detail book can renew
 * [ ] View list borrowing book can renew
-* [ ] Notification when deadline remaining [3] days
+* [x] Notification when deadline remaining [3] days
 
 
 **Tuan Anh**
