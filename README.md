@@ -53,9 +53,9 @@ Just Walk Out Library
 * [ ] Add to wish list
 
 
-## Task Pending
+## Optional
 * [ ] Edit account
 * [ ] Edit book
 * [ ] Delete book
 * [ ] Delete account (soft delete): check user are borrowing books or not. add delete_date and is_activated = false when not. In the other hand, just only change is_activated = false
-* [ ] Print report for borrow and return books.
+* [ ] Print report for borrow and return books: restructure database
