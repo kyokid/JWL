@@ -5,14 +5,9 @@ Just Walk Out Library
 
 **HaVH**
 * [ ] Complete report 3.
-* [?] View detail book with full information: We have api to get book details AND its borrowing copies
-* [?] View detail book can renew: What's the different from other kinds of books?
-* [?] View list borrowing books can renew. Why? And what about books that cannot be renewed?
-* ?[x]? Notification when deadline remaining [3] days EVERYDAY? And when will it end?
-* [ ] Delete account (soft delete)
-* [ ] Edit account
-* [ ] Edit book
-* [ ] Delete book
+* [ ] View detail book with full information: use api: /books/{id}
+* [ ] Add renew button at: get book list and get book detail
+* [x] Notification when deadline remaining [3] days and on the deadline day
 * [ ] Check borrower while checking in:
     + [ ] borrower is activated/unactivated?
     + [ ] borrower is in library?
@@ -56,3 +51,11 @@ Just Walk Out Library
 * [ ] Update report 3
 * [ ] Search books
 * [ ] Add to wish list
+
+
+## Task Pending
+* [ ] Edit account
+* [ ] Edit book
+* [ ] Delete book
+* [ ] Delete account (soft delete): check user are borrowing books or not. add delete_date and is_activated = false when not. In the other hand, just only change is_activated = false
+* [ ] Print report for borrow and return books.
