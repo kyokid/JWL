@@ -11,10 +11,9 @@ import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.util.Constant;
 import jwl.fpt.util.Constant.SoundMessages;
 import jwl.fpt.util.Helper;
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.LocalDate;
-import org.joda.time.Period;
+import jwl.fpt.util.NotificationUtils;
+import lombok.Data;
+import org.joda.time.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -617,27 +616,55 @@ public class BookBorrowService implements IBookBorrowService {
 
         logger.info("The check deadline has begun...");
         int count = 0;
-        DateTime currentDateTime = new DateTime();
-        DateTime deadlineDateTime;
+        List<BorrowedBookCopyDto> result = new ArrayList<>();
+        LocalDate currentLocal = new LocalDate();
+        LocalDate deadLineLocal;
+        Days diffDate;
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByReturnDateIsNull();
+        List<BorrowedBookCopyEntity> borrowedBook3DayDeadline = new ArrayList<>();
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 borrowedBookCopyEntities) {
-            deadlineDateTime = new DateTime(borrowedBookCopyEntity.getDeadlineDate());
-            Duration duration = new Duration(currentDateTime, deadlineDateTime);
-            logger.info("Duration is {}", duration.getStandardDays());
+            deadLineLocal = LocalDate.fromDateFields(borrowedBookCopyEntity.getDeadlineDate());
+            diffDate = Days.daysBetween(currentLocal, deadLineLocal);
+            logger.info("Duration is {} of {} book", diffDate.getDays(), borrowedBookCopyEntity.getId());
 
             // deadline - current = 3 thì push notiviện
-            // Todo: push notification 2 times
-            if (duration.getStandardDays() == DAY_REMAIN_DEADLINE) {
+            // Todo: push notification 2
+            if (diffDate.getDays() == DAY_REMAIN_DEADLINE) {
+                borrowedBook3DayDeadline.add(borrowedBookCopyEntity);
                 logger.info("còn 3 ngày nữa là đến deadline sách: {} ", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
                 count++;
-            } else if (duration.getStandardDays() == DAY_OF_DEADLINE) {
+            } else if (diffDate.getDays() == DAY_OF_DEADLINE) {
                 logger.info("sách {} đã hết hạn, vui lòng trả lại thư ", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
+                count++;
             }
         }
         if (count == 0) {
             logger.info("không có sách nào phải noti");
-        } else {
+        } else if (borrowedBook3DayDeadline.size() != 0){
+            List<AccountDto> listUser = new ArrayList<>();
+
+            for (BorrowedBookCopyEntity borrowedBookCopyEntity :
+                    borrowedBook3DayDeadline) {
+                AccountDto accountDto = modelMapper.map(borrowedBookCopyEntity.getAccount(), AccountDto.class);
+//                borrowedBookCopyEntity.getAccount().getGoogleToken()
+                if (!listUser.contains(accountDto)) {
+                    listUser.add(accountDto);
+                }
+                BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+                result.add(dto);
+            }
+            for (AccountDto dto : listUser) {
+                List<BorrowedBookCopyDto> bookDeadlines = new ArrayList<>();
+
+                for (BorrowedBookCopyDto borrowedBookCopyDto : result) {
+                    if (dto.getUserId().equals(borrowedBookCopyDto.getAccountUserId())) {
+                        bookDeadlines.add(borrowedBookCopyDto);
+                    }
+                }
+                NotificationUtils.pushNotificationDeadline(bookDeadlines, dto.getGoogleToken());
+                logger.info("Gửi noti cho thằng {} với số sách {} ", dto.getUserId(), bookDeadlines.size());
+            }
             logger.info("Có {} cuốn sách chuẩn bị tới deadline", count);
         }
         try {
@@ -648,4 +675,5 @@ public class BookBorrowService implements IBookBorrowService {
             logger.info("Sample job has finished...");
         }
     }
+
 }
