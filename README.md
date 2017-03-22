@@ -16,13 +16,11 @@ Just Walk Out Library
 * [ ] Init borrow:
     + [ ] borrower inits while another hasn't finished checking out
 * [ ] Check borrow book:
-    + [ ] Recalculate the number of available copies
     + [ ] Check the number of books a borrower can borrow
     + [ ] Check if a book can be borrowed or not
 * [ ] Checkout:
     + [ ] timeout for checkout -> noti borrower that checkout failed
 * [ ] Check after a book is returned:
-    + [ ] Recalculate the number of available copies
     + [ ] Notify wish list
 * [ ] Vietnamese/English on mobile
 * [ ] Record sound
@@ -50,6 +48,9 @@ Just Walk Out Library
 **ThienDN** 
 * [ ] Update report 3
 * [x] Search books
+	[x] Search api
+	[x] Check available of book
+	[x] Mobile implement
 * [ ] Add to wish list
 	+ [x] return 'available' state of book. numberOfCopies at BookEntity is number of 'total book copies'
 	+ [x] api add to wishlist
