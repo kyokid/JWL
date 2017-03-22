@@ -17,7 +17,8 @@ class Header extends Component {
 
 	render() {
 		const { activeManageAccounts, activeManageBooks, activeReturnBooks } = this.props
-		const { userId } = localStorage
+		const { userId, imgUrl } = localStorage
+		debugger
 
 		return (
 			<header className="navbar navbar-fixed-top navbar-inverse">
@@ -46,7 +47,7 @@ class Header extends Component {
 								 role="button"
 								 aria-haspopup="true"
 								 aria-expanded="false">
-								<img className="img-circle" src="/bep.jpg" />
+								<img className="img-circle" src={imgUrl || "/bep.jpg"} />
 								<span className="account-fullname">{userId}</span>
 							</a>
 
@@ -67,6 +68,8 @@ class Header extends Component {
 
 	onClickLogout() {
 		localStorage.userId = ""
+		localStorage.userRole = ""
+		localStorage.imgUrl = ""
 		browserHistory.push(path.LOGIN)
 	}
 }

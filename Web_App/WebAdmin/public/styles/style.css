@@ -301,3 +301,19 @@ p.returning-books-title {
 p.returning-books-title {
   margin-top: 40px;
 }
+
+/**
+ * Login.
+ */
+.login-panel.panel {
+  width: 50%;
+  margin: 80px auto auto;
+}
+
+.login-btn.btn {
+  margin-left: 40%;
+  width: 120px;
+  height: 40px;
+  font-size: 20px;
+  margin-bottom: 20px;
+}

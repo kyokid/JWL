@@ -32,7 +32,7 @@ class Login extends Component {
 
 		return (
 			<div>
-				<div className="panel panel-default" style={{ width: "100%" }}>
+				<div className="login-panel panel panel-default">
 					<div className="panel-heading">
 						<h3 className="panel-title">Login</h3>
 					</div>
@@ -53,7 +53,7 @@ class Login extends Component {
 										 type="password"
 										 helpBlock="Enter your Password."
 										 component={renderCommonField} />
-							<input type="submit" className="btn btn-primary" value="Login" />
+							<input type="submit" className="login-btn btn btn-primary" value="Login" />
 							{code !== "200" && <span className="help-block" style={{ color: "red", marginTop: "20px" }}>{message}</span>}
 						</form>
 
@@ -77,8 +77,10 @@ class Login extends Component {
 					code: "",
 					message: ""
 				})
+				debugger
 				localStorage.userId = data.data.userId
 				localStorage.userRole = data.data.userRoleRole
+				localStorage.imgUrl = data.data.profileImgUrl || ""
 				browserHistory.push("/")
 			}
 		})

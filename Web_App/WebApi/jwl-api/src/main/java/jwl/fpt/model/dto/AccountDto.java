@@ -10,6 +10,7 @@ public class AccountDto {
     private String userId;
     private String password;
     private String userRoleRole;
+    private String profileImgUrl;
     private boolean isInLibrary;
     private boolean isActivated;
     private String googleToken;
