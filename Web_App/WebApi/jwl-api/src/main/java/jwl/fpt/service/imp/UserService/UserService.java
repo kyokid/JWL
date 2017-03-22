@@ -28,9 +28,6 @@ import java.util.List;
 @Service
 public class UserService implements IUserService {
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private AccountRepository accountRepository;
 
     @Autowired
@@ -91,21 +88,36 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public AccountDto findByUsernameAndPassword(String username, String password) {
-        AccountEntity entity = userRepository.findByUserIdAndPassword(username, password);
+    public RestServiceModel<AccountDto> login(AccountDto accountDto) {
+        RestServiceModel<AccountDto> result = new RestServiceModel<>();
 
-        if (entity == null) {
-            return null;
+        if (accountDto == null) {
+            result.setFailData(null, "Please input userID and password!");
+            return result;
+        }
+        String userId = accountDto.getUserId();
+        String password = accountDto.getPassword();
+        if (userId == null || password == null || userId.trim().equals("") || password.trim().equals("")) {
+            result.setFailData(null, "Invalid userID or password.");
+            return result;
         }
 
-        AccountDto dto = modelMapper.map(entity, AccountDto.class);
+        AccountEntity entity = accountRepository.login(userId, password);
+        if (entity == null) {
+            result.setFailData(null, "Invalid userID or password.");
+            return result;
+        }
 
-        return dto;
+        AccountDto resultData = modelMapper.map(entity, AccountDto.class);
+        resultData.setPassword("");
+        result.setSuccessData(resultData, "Login successfully!");
+
+        return result;
     }
 
     @Override
     public AccountDto findByUsername(String userId) {
-        AccountEntity entity = userRepository.findByUserId(userId);
+        AccountEntity entity = accountRepository.findByUserId(userId);
 
         if (entity == null) {
             return null;
@@ -143,7 +155,7 @@ public class UserService implements IUserService {
 
     @Override
     public ProfileDto findProfileByUserId(String userId) {
-        ProfileEntity profileEntity = userRepository.findProfileByUserId(userId);
+        ProfileEntity profileEntity = accountRepository.findProfileByUserId(userId);
         if (profileEntity == null) return null;
         ProfileDto profileDTO = modelMapper.map(profileEntity, ProfileDto.class);
 

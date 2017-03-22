@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {Field, Fields, reduxForm} from 'redux-form'
+import { Field, Fields, reduxForm } from 'redux-form'
 import { Link, browserHistory } from 'react-router'
 
 import { renderCommonField, renderUserRoleRadioGroup } from '../helpers/FieldRenderer'

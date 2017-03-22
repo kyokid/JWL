@@ -8,9 +8,12 @@ import {
 	addReturnCopyToCart,
 	fetchCancelReturnCopies
 } from '../actions/BookReturnAction'
+import { browserHistory } from 'react-router'
+
+import { LOGIN } from '../constants/UrlPath'
 import { switchStateNavBar } from '../actions/RouteAction'
 import ReturnBooksPanel from '../components/ReturnBooksPanel'
-
+import isLoggedIn from '../helpers/Authentication'
 import * as Socket from "../helpers/Socket"
 
 class BooksReturn extends Component {
@@ -31,6 +34,12 @@ class BooksReturn extends Component {
 	}
 
 	componentWillMount() {
+		// need to check before connectToChannel
+		// if not, connectToChannel will prevent this page from redirecting to login
+		if (!isLoggedIn()) {
+			browserHistory.push(LOGIN)
+			return
+		}
 		this.connectToChannel()
 		this.props.cancelReturnCopies(this.state.librarianId)
 

@@ -18,7 +18,7 @@ public interface IUserService {
 
     RestServiceModel<List<UserDto>> findByUserIdLike(String term);
 
-    AccountDto findByUsernameAndPassword(String username, String password);
+    RestServiceModel<AccountDto> login(AccountDto accountDto);
 
     AccountDto findByUsername(String userId);
 

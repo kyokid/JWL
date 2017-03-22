@@ -1,3 +1,4 @@
+export const LOGIN = "LOGIN"
 export const FETCH_ACCOUNTS = "FETCH_ACCOUNTS"
 export const FETCH_ACCOUNT = "FETCH_ACCOUNT"
 export const CREATE_ACCOUNT = "CREATE_ACCOUNT"

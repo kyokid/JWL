@@ -9,10 +9,15 @@ class Header extends Component {
 		super(props)
 
 		this.onClickActive = this.onClickActive.bind(this)
+
+		this.state = {
+			userId: ""
+		}
 	}
 
 	render() {
 		const { activeManageAccounts, activeManageBooks, activeReturnBooks } = this.props
+		const { userId } = localStorage
 
 		return (
 			<header className="navbar navbar-fixed-top navbar-inverse">
@@ -42,11 +47,11 @@ class Header extends Component {
 								 aria-haspopup="true"
 								 aria-expanded="false">
 								<img className="img-circle" src="/bep.jpg" />
-								<span className="account-fullname">Bep</span>
+								<span className="account-fullname">{userId}</span>
 							</a>
 
 							<ul className="dropdown-menu">
-								<a>Logout</a>
+								<a onClick={() => this.onClickLogout()}>Logout</a>
 							</ul>
 						</div>
 					</div>
@@ -58,6 +63,11 @@ class Header extends Component {
 	onClickActive(pathName) {
 		this.props.switchStateNavBar(pathName)
 		browserHistory.push(pathName)
+	}
+
+	onClickLogout() {
+		localStorage.userId = ""
+		browserHistory.push(path.LOGIN)
 	}
 }
 

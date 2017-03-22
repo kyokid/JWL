@@ -9,7 +9,7 @@ import lombok.Data;
 public class AccountDto {
     private String userId;
     private String password;
-    private int roleId;
+    private String userRoleRole;
     private boolean isInLibrary;
     private boolean isActivated;
     private String googleToken;

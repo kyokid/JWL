@@ -38,23 +38,9 @@ public class UserController {
         return userService.createUser(userDto);
     }
 
-    @RequestMapping(path = "users/login", method = RequestMethod.POST)
-    public RestServiceModel<AccountDto> login(@RequestBody AccountDto userBody) {
-//        System.out.println("request detection");
-        RestServiceModel<AccountDto> result = new RestServiceModel<>();
-        String username = userBody.getUserId();
-        String password = userBody.getPassword();
-        AccountDto user = userService.findByUsernameAndPassword(username, password);
-        if (user != null) {
-
-            result.setTextMessage("Login Successfully!");
-            result.setSucceed(true);
-            result.setData(user);
-            result.setCode("200");
-        } else {
-            result.setTextMessage("Login Fail cmnr!");
-        }
-        return result;
+    @RequestMapping(path = "user/login", method = RequestMethod.POST)
+    public RestServiceModel<AccountDto> login(@RequestBody AccountDto userLogin) {
+        return userService.login(userLogin);
     }
 
     @RequestMapping(path = "/users/search", method = RequestMethod.GET)

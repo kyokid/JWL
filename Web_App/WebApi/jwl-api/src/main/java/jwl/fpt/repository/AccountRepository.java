@@ -1,6 +1,7 @@
 package jwl.fpt.repository;
 
 import jwl.fpt.entity.AccountEntity;
+import jwl.fpt.entity.ProfileEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,14 @@ import java.util.List;
  * Created by Entaard on 2/7/17.
  */
 public interface AccountRepository extends JpaRepository<AccountEntity, String> {
+    @Query("select user " +
+            "from AccountEntity user " +
+            "where user.userId = ?1 and user.password = ?2 and user.activated = true")
+    AccountEntity login(String userId, String password);
+
+    @Query("select p from ProfileEntity p where p.userId = ?1")
+    ProfileEntity findProfileByUserId(String userId);
+
     @Query("select users from AccountEntity users where users.deleteDate is null")
     List<AccountEntity> findAllUsers();
 
