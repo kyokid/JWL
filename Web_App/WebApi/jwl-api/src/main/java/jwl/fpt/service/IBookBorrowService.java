@@ -24,5 +24,5 @@ public interface IBookBorrowService {
     List<BorrowedBookCopyDto> deleteBorrowingCopy(BorrowedBookCopyDto borrowedBookCopyDto);
     RestServiceModel<BorrowedBookCopyDto> addCopyToCartByLibrarian(RfidDto rfidDto);
 
-    RestServiceModel<Boolean> renewBorrowedBookCopy(String rfid);
+    RestServiceModel<BorrowedBookCopyDto> renewBorrowedBookCopy(String rfid);
 }

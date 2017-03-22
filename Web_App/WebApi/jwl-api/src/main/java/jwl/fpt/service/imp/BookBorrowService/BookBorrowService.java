@@ -336,8 +336,8 @@ public class BookBorrowService implements IBookBorrowService {
     }
 
     @Override
-    public RestServiceModel<Boolean> renewBorrowedBookCopy(String rfid) {
-        RestServiceModel<Boolean> result = new RestServiceModel<>();
+    public RestServiceModel<BorrowedBookCopyDto> renewBorrowedBookCopy(String rfid) {
+        RestServiceModel<BorrowedBookCopyDto> result = new RestServiceModel<>();
 
         if (rfid == null) {
             result.setFailData(null, "Sách bạn yêu cầu không có");
@@ -366,7 +366,7 @@ public class BookBorrowService implements IBookBorrowService {
             }
 
             // insert borrowedbookcopy mới
-            List<BorrowedBookCopyEntity> borrowedBookCopyEntities = new ArrayList<>();
+//            List<BorrowedBookCopyEntity> borrowedBookCopyEntities = new ArrayList<>();
             BorrowedBookCopyEntity entity = new BorrowedBookCopyEntity();
             entity.setAccount(userId);
             entity.setBookCopy(bookCopyEntity);
@@ -375,17 +375,17 @@ public class BookBorrowService implements IBookBorrowService {
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(currentExtentNumber + 1);
             entity.setRootId(rootId);
-            borrowedBookCopyEntities.add(entity);
+//            borrowedBookCopyEntities.add(entity);
             //save to db
-            borrowedBookCopyEntities = borrowedBookCopyRepo.save(borrowedBookCopyEntities);
+            entity = borrowedBookCopyRepo.save(entity);
 
-            List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
-            for (BorrowedBookCopyEntity borrowedBookCopyEntity :
-                    borrowedBookCopyEntities) {
-                BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
-                borrowedBookCopyDtos.add(dto);
-            }
-            result.setSuccessData(true, "Bạn đã gia hạn thành công");
+//            List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
+//            for (BorrowedBookCopyEntity borrowedBookCopyEntity :
+//                    borrowedBookCopyEntities) {
+            BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
+//                borrowedBookCopyDtos.add(dto);
+//            }
+            result.setSuccessData(dto, "Bạn đã gia hạn thành công");
         }
 
         return result;
@@ -656,7 +656,8 @@ public class BookBorrowService implements IBookBorrowService {
         } else if (borrowedBook3DayDeadline.size() != 0) {
             messageBody = "Bạn có sách phải trả sau 3 ngày nữa";
             pushNotificationBook(user2Deadline, borrowedBook3DayDeadline, result, messageBody, 0);
-        } if (borrowedBookDeadline.size() != 0) {
+        }
+        if (borrowedBookDeadline.size() != 0) {
             messageBody = "Bạn có sách phải trả vào hôm nay";
             pushNotificationBook(user2Deadline, borrowedBookDeadline, result, messageBody, 1);
         }

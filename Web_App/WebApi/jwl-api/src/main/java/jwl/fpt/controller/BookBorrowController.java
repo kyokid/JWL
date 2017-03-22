@@ -87,7 +87,7 @@ public class BookBorrowController {
     }
 
     @RequestMapping(value = "/renew/{rfid}", method = RequestMethod.GET)
-    public RestServiceModel<Boolean> renewBookCopy(@PathVariable("rfid") String rfid) {
+    public RestServiceModel<BorrowedBookCopyDto> renewBookCopy(@PathVariable("rfid") String rfid) {
         return bookBorrowService.renewBorrowedBookCopy(rfid);
     }
 }
