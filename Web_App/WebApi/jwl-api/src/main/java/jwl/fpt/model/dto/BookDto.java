@@ -16,4 +16,5 @@ public class BookDto {
     private Integer publishYear;
     private Integer numberOfCopies;
     private String isbn;
+    private boolean isAvailable;
 }

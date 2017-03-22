@@ -101,7 +101,21 @@ public class BookService implements IBookService {
         bookEntities = bookRepo.searchBooks(searchTerm);
         List<BookDto> bookDtos = new ArrayList<>();
         for (BookEntity bookEntity: bookEntities){
+            RestServiceModel<List<BorrowedBookCopyDto>> rest_NumberOfCopiesIsBorrowing =
+                    getBorrowingCopies(bookEntity.getId());
+
             BookDto bookDto = modelMapper.map(bookEntity, BookDto.class);
+            if (rest_NumberOfCopiesIsBorrowing.getData() != null){
+                int numberOfCopiesIsBorrowing = rest_NumberOfCopiesIsBorrowing.getData().size();
+                if (numberOfCopiesIsBorrowing < bookEntity.getNumberOfCopies()){
+                    bookDto.setAvailable(true);
+                }else{
+                    bookDto.setAvailable(false);
+                }
+            }else {
+                bookDto.setAvailable(true);
+            }
+
             bookDtos.add(bookDto);
         }
         result.setSuccessData(bookDtos, "Found " + bookDtos.size() + " book(s).");
