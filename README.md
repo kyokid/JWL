@@ -47,10 +47,12 @@ Just Walk Out Library
     + [x] api return copies
 
 
-**HôiHángMộtTí** NO UPDATE?
+**ThienDN** NO UPDATE?
 * [ ] Update report 3
-* [ ] Search books
+* [x] Search books
 * [ ] Add to wish list
+	+ [] api add to wishlist
+	+ [] notification method util (book's id is topic)
 
 
 ## Optional
