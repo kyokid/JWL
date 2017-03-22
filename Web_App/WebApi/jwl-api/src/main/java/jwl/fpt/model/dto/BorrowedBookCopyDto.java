@@ -3,6 +3,7 @@ package jwl.fpt.model.dto;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
  * Created by Entaard on 1/29/17.
@@ -28,5 +29,6 @@ public class BorrowedBookCopyDto {
     private Integer bookCopyBookPublishYear;
     private Integer bookCopyBookPrice;
     private String bookCopyBookThumbnail;
-    private Integer bookCopyBookId;
+    private List<BookAuthorDto> bookCopyBookBookAuthors;
+    private List<BookCategoryDto> bookCopyBookBookCategories;
 }
