@@ -100,13 +100,16 @@ public class BookService implements IBookService {
         List<BookEntity> bookEntities;
         bookEntities = bookRepo.searchBooks(searchTerm);
         List<BookDto> bookDtos = new ArrayList<>();
-        for (BookEntity bookEntity: bookEntities) {
+        for (BookEntity bookEntity: bookEntities){
             BookDto bookDto = modelMapper.map(bookEntity, BookDto.class);
-            if (bookEntity.getNumberOfCopies() != null && bookEntity.getNumberOfCopies()>0){
+            List<BorrowedBookCopyEntity> borrowedBookCopyEntities =
+                    borrowedBookCopyRepo.findBorrowingCopiesOfBook(bookEntity.getId());
+            if (borrowedBookCopyEntities == null || borrowedBookCopyEntities.size() == 0){
                 bookDto.setAvailable(true);
             }else {
                 bookDto.setAvailable(false);
             }
+            bookDtos.add(bookDto);
         }
         result.setSuccessData(bookDtos, "Found " + bookDtos.size() + " book(s).");
 
