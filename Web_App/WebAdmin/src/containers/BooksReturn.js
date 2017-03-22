@@ -8,6 +8,7 @@ import {
 	addReturnCopyToCart,
 	fetchCancelReturnCopies
 } from '../actions/BookReturnAction'
+import { switchStateNavBar } from '../actions/RouteAction'
 import ReturnBooksPanel from '../components/ReturnBooksPanel'
 
 import * as Socket from "../helpers/Socket"
@@ -40,6 +41,8 @@ class BooksReturn extends Component {
 				return 'You have unsaved information, are you sure you want to leave this page?'
 			}
 		})
+
+		this.props.switchStateNavBar(this.props.route.path)
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -197,5 +200,6 @@ export default connect(mapStateToProps, {
 	commitReturnCopies,
 	cancelReturnCopies,
 	fetchCancelReturnCopies,
-	addReturnCopyToCart
+	addReturnCopyToCart,
+	switchStateNavBar
 })(BooksReturn)
