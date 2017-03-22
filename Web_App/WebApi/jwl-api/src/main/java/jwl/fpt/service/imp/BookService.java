@@ -108,9 +108,13 @@ public class BookService implements IBookService {
             BookDto bookDto = modelMapper.map(bookEntity, BookDto.class);
             List<BorrowedBookCopyEntity> borrowedBookCopyEntities =
                     borrowedBookCopyRepo.findBorrowingCopiesOfBook(bookEntity.getId());
-            if (borrowedBookCopyEntities == null || borrowedBookCopyEntities.size() == 0){
+            if (borrowedBookCopyEntities == null){
                 bookDto.setAvailable(true);
-            }else {
+            }else if (borrowedBookCopyEntities.size() == 0){
+                bookDto.setAvailable(true);
+            }else if(bookEntity.getNumberOfCopies() - borrowedBookCopyEntities.size() > 0) {
+                bookDto.setAvailable(true);
+            }else if(bookEntity.getNumberOfCopies() == borrowedBookCopyEntities.size()) {
                 bookDto.setAvailable(false);
             }
             List<WishBookEntity> wishBookEntitys = wishBookRepository.findByUserIdBookId(userId, bookEntity.getId());
