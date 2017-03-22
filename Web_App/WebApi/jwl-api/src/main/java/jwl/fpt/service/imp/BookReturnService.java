@@ -214,6 +214,7 @@ public class BookReturnService implements IBookReturnService {
             for (AccountEntity accountEntity: accountEntities){
                 try {
                     NotificationUtils.pushNotificationWishList(accountEntity.getGoogleToken(), bookEntity.getTitle());
+                    wishBookRepository.deleteByBookId(bookEntity.getId());
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                     return;
