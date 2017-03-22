@@ -8,7 +8,7 @@ Just Walk Out Library
 * [x] View detail book with full information: use api: /books/{id}
 * [ ] Add renew button at: get book list and get book detail
     + [x] Renew a book in view book detail
-    + [ ] Renew a list of book in view list borrowing books
+    + [x] Renew a list of book in view list borrowing books
 * [x] Notification when deadline remaining [3] days and on the deadline day
 * [ ] Check borrower while checking in:
     + [ ] borrower is activated/unactivated?

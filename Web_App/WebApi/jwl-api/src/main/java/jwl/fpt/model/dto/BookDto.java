@@ -17,4 +17,5 @@ public class BookDto {
     private Integer numberOfCopies;
     private String isbn;
     private boolean isAvailable;
+    private boolean isFollow;
 }

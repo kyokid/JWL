@@ -34,7 +34,8 @@ public class BookController {
     }
 
     @RequestMapping(value = "/books/search", method = RequestMethod.GET)
-    public RestServiceModel<List<BookDto>> searchBooks(@RequestParam("search_term")String searchTerm){
-        return bookService.searchBooks(searchTerm);
+    public RestServiceModel<List<BookDto>> searchBooks(@RequestParam("search_term")String searchTerm,
+                                                       @RequestParam("user_id")String userId){
+        return bookService.searchBooks(searchTerm, userId);
     }
 }

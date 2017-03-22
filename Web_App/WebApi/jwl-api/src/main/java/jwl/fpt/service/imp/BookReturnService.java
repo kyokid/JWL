@@ -1,6 +1,8 @@
 package jwl.fpt.service.imp;
 
+import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.BookCopyEntity;
+import jwl.fpt.entity.BookEntity;
 import jwl.fpt.entity.BorrowedBookCopyEntity;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.ReturnCart;
@@ -8,12 +10,15 @@ import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.RfidDto;
 import jwl.fpt.repository.BookCopyRepo;
 import jwl.fpt.repository.BorrowedBookCopyRepo;
+import jwl.fpt.repository.WishBookRepository;
 import jwl.fpt.service.IBookReturnService;
+import jwl.fpt.util.NotificationUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.util.*;
 
@@ -26,7 +31,8 @@ public class BookReturnService implements IBookReturnService {
     private BorrowedBookCopyRepo borrowedBookCopyRepo;
     @Autowired
     private ModelMapper modelMapper;
-
+    @Autowired
+    WishBookRepository wishBookRepository;
     private List<ReturnCart> returnCarts = new ArrayList<>();
 
     // 0. Check find BorrowedBookCopyEntity by rfid. If not found, return fail: "Book is not being borrowed." Else:
@@ -159,12 +165,16 @@ public class BookReturnService implements IBookReturnService {
     private RestServiceModel<List<BorrowedBookCopyDto>> saveReturnCart(ReturnCart returnCart) {
         RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
         Set<String> rfids = returnCart.getRfids();
+        //khi nao thi rfids == null?
         if (rfids == null || rfids.isEmpty()) {
             result.setSuccessData(null, "Returned successfully! No book returned. (rfids are null)");
             return result;
         }
-
+        //remove null?
         rfids.remove(null);
+
+        //day la list nhung cuon' sach dang muon ma co' rfid vua quet cua chinh xac 1 *user*
+        // xac dinh. truoc do o ham 1.
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByRfids(rfids);
         if (borrowedBookCopyEntities.isEmpty()) {
             result.setSuccessData(null, "Returned successfully! No book returned.");
@@ -174,13 +184,42 @@ public class BookReturnService implements IBookReturnService {
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 borrowedBookCopyEntities) {
+            //bug co the xuat hien o day
+            BookEntity bookEntity = borrowedBookCopyEntity.getBookCopy().getBook();
+            notiWishBook(bookEntity);
+
             borrowedBookCopyEntity.setReturnDate(new Date(Calendar.getInstance().getTimeInMillis()));
             BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
             borrowedBookCopyDtos.add(dto);
+            borrowedBookCopyEntity.getBookCopy().getBook();
         }
         borrowedBookCopyRepo.save(borrowedBookCopyEntities);
 
         result.setSuccessData(borrowedBookCopyDtos, "Returned book(s) successfully!");
         return result;
+    }
+
+    private void notiWishBook(BookEntity bookEntity){
+        //day la list nhung ban copies dang muon chua tra cua 1 *tua sach*
+        //list nay null or = 0: nghia la khong co ai dang muon sach ma chua tra ca.
+        //minh se noti cho user neu
+        List<BorrowedBookCopyEntity> totalBrrowedBookCopyEntities =
+                borrowedBookCopyRepo.findBorrowingCopiesOfBook(bookEntity.getId());
+        //de can than. theo logic toi - thiendn nghi khong the == null
+        if (totalBrrowedBookCopyEntities == null) return;
+        if  (bookEntity.getNumberOfCopies() - totalBrrowedBookCopyEntities.size() == 0){
+            List<AccountEntity> accountEntities = wishBookRepository.findAccountByBookId(bookEntity.getId());
+            if (accountEntities == null) return;
+            if (accountEntities.size() == 0) return;
+            for (AccountEntity accountEntity: accountEntities){
+                try {
+                    NotificationUtils.pushNotificationWishList(accountEntity.getGoogleToken(), bookEntity.getTitle());
+                    wishBookRepository.deleteByBookId(bookEntity.getId());
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        }
     }
 }
