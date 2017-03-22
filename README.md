@@ -47,13 +47,15 @@ Just Walk Out Library
     + [x] api return copies
 
 
-**ThienDN** NO UPDATE?
+**ThienDN** 
 * [ ] Update report 3
 * [x] Search books
 * [ ] Add to wish list
 	+ [x] return 'available' state of book. numberOfCopies at BookEntity is number of 'total book copies'
-	+ [] api add to wishlist
+	+ [x] api add to wishlist
+	+ [x] api remove from wishlist
 	+ [] notification method util (book's id is topic)
+	+ [] implement mobile
 
 
 ## Optional
