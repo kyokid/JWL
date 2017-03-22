@@ -5,7 +5,7 @@ Just Walk Out Library
 
 **HaVH**
 * [ ] Complete report 3.
-* [ ] View detail book with full information: use api: /books/{id}
+* [x] View detail book with full information: use api: /books/{id}
 * [ ] Add renew button at: get book list and get book detail
 * [x] Notification when deadline remaining [3] days and on the deadline day
 * [ ] Check borrower while checking in:
