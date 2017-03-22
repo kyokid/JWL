@@ -25,6 +25,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
 //            "inner join acc.borrowedBookCopies c1 " +
 //            "where c1.returnDate is null " +
 //            "and acc.userId = ?1")
+    // TODO: add delete date not null
     AccountEntity findByUserId(String userId);
 
     @Query("select users from AccountEntity users where lower(users.userId) like lower(?1) and users.deleteDate is null")

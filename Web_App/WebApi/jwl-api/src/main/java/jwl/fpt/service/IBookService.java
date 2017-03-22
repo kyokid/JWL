@@ -17,5 +17,5 @@ public interface IBookService {
 
     RestServiceModel<List<BorrowedBookCopyDto>> getBorrowingCopies(Integer bookId);
 
-    RestServiceModel<List<BookDto>> searchBooks(String searchTerm);
+    RestServiceModel<List<BookDto>> searchBooks(String searchTerm, String userId);
 }

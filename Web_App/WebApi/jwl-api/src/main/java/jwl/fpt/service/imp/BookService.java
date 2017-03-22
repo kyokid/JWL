@@ -2,12 +2,14 @@ package jwl.fpt.service.imp;
 
 import jwl.fpt.entity.BookEntity;
 import jwl.fpt.entity.BorrowedBookCopyEntity;
+import jwl.fpt.entity.WishBookEntity;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.BookDetailDto;
 import jwl.fpt.model.dto.BookDto;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.repository.BookRepo;
 import jwl.fpt.repository.BorrowedBookCopyRepo;
+import jwl.fpt.repository.WishBookRepository;
 import jwl.fpt.service.IBookService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class BookService implements IBookService {
     private BorrowedBookCopyRepo borrowedBookCopyRepo;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private WishBookRepository wishBookRepository;
 
     @Override
     public RestServiceModel<List<BookDto>> getAllBooks() {
@@ -95,7 +99,7 @@ public class BookService implements IBookService {
     }
 
     @Override
-    public RestServiceModel<List<BookDto>> searchBooks(String searchTerm) {
+    public RestServiceModel<List<BookDto>> searchBooks(String searchTerm, String userId) {
         RestServiceModel<List<BookDto>> result = new RestServiceModel<>();
         List<BookEntity> bookEntities;
         bookEntities = bookRepo.searchBooks(searchTerm);
@@ -108,6 +112,14 @@ public class BookService implements IBookService {
                 bookDto.setAvailable(true);
             }else {
                 bookDto.setAvailable(false);
+            }
+            List<WishBookEntity> wishBookEntitys = wishBookRepository.findByUserIdBookId(userId, bookEntity.getId());
+            if (wishBookEntitys == null){
+                bookDto.setFollow(false);
+            }else if (wishBookEntitys.size() == 0){
+                bookDto.setFollow(false);
+            }else if (wishBookEntitys.size() > 0){
+                bookDto.setFollow(true);
             }
             bookDtos.add(bookDto);
         }
