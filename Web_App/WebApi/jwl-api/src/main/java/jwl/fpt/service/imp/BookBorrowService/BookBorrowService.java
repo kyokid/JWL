@@ -340,7 +340,7 @@ public class BookBorrowService implements IBookBorrowService {
         RestServiceModel<BorrowedBookCopyDto> result = new RestServiceModel<>();
 
         if (rfid == null) {
-            result.setFailData(null, "Sách bạn yêu cầu không có");
+            result.setFailData(null, "Sách bạn yêu cầu không có.");
             return result;
         }
         BorrowedBookCopyEntity currentBook = borrowedBookCopyRepo.findByBookCopy_RfidAndReturnDateIsNull(rfid);
@@ -349,7 +349,8 @@ public class BookBorrowService implements IBookBorrowService {
         BookTypeEntity bookTypeEntity = bookCopyEntity.getBook().getBookType();
         int maxExtend = bookTypeEntity.getExtendTimesLimit();
         if (currentExtentNumber == maxExtend) {
-            result.setFailData(null, "Bạn không thể gia hạn sách do vượt quá số lần cho phép, vui lòng trả lại sách cho thư viện");
+            String message = "Bạn không thể gia hạn sách " + bookCopyEntity.getBook().getTitle() + " do vượt quá số lần cho phép, vui lòng trả lại sách cho thư viện.";
+            result.setFailData(null, message);
             return result;
         }
         //trả sách
@@ -385,7 +386,8 @@ public class BookBorrowService implements IBookBorrowService {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
 //                borrowedBookCopyDtos.add(dto);
 //            }
-            result.setSuccessData(dto, "Bạn đã gia hạn thành công");
+            String message = "Bạn đã gia hạn sách " + dto.getBookCopyBookTitle() + " thành công.";
+            result.setSuccessData(dto, message);
         }
 
         return result;
