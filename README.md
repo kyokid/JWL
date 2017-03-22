@@ -51,6 +51,7 @@ Just Walk Out Library
 * [ ] Update report 3
 * [x] Search books
 * [ ] Add to wish list
+	+ [x] return 'available' state of book. numberOfCopies at BookEntity is number of 'total book copies'
 	+ [] api add to wishlist
 	+ [] notification method util (book's id is topic)
 
