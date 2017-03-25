@@ -28,4 +28,5 @@ public class BorrowedBookCopyDto {
     private Integer bookCopyBookPublishYear;
     private Integer bookCopyBookPrice;
     private String bookCopyBookThumbnail;
+    private Integer bookCopyBookId;
 }
