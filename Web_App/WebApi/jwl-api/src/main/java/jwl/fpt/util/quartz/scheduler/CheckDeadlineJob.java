@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 
@@ -28,7 +29,11 @@ public class CheckDeadlineJob implements Job{
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         //Todo: check deadline of book here
         logger.info("Job ** {} ** fired @ {}", jobExecutionContext.getJobDetail().getKey().getName(), jobExecutionContext.getFireTime());
-        bookBorrowService.checkBorrowingBookCopyDeadline();
+        try {
+            bookBorrowService.checkBorrowingBookCopyDeadline();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         logger.info("Next job scheduled @ {}", jobExecutionContext.getNextFireTime());
 
     }

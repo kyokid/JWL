@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.util.*;
 
@@ -611,68 +612,96 @@ public class BookBorrowService implements IBookBorrowService {
         return rfids;
     }
 
-    public void checkBorrowingBookCopyDeadline() {
+    public void checkBorrowingBookCopyDeadline() throws UnsupportedEncodingException {
         Logger logger = LoggerFactory.getLogger(getClass());
 
         logger.info("The check deadline has begun...");
         int count = 0;
         List<BorrowedBookCopyDto> result = new ArrayList<>();
+        // ngày hiện tại
         LocalDate currentLocal = new LocalDate();
+        // ngày deadline của book
         LocalDate deadLineLocal;
+        // biến để so sánh ngày
         Days diffDate;
+        String messageBody = "";
+        // list sách đang mượn
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByReturnDateIsNull();
+        // list sách còn 3 ngày là deadline
         List<BorrowedBookCopyEntity> borrowedBook3DayDeadline = new ArrayList<>();
+        // list sách tới hạn deadline
+        List<BorrowedBookCopyEntity> borrowedBookDeadline = new ArrayList<>();
+
+        List<String> user2Deadline = new ArrayList<>();
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 borrowedBookCopyEntities) {
             deadLineLocal = LocalDate.fromDateFields(borrowedBookCopyEntity.getDeadlineDate());
             diffDate = Days.daysBetween(currentLocal, deadLineLocal);
-            logger.info("Duration is {} of {} book", diffDate.getDays(), borrowedBookCopyEntity.getId());
 
             // deadline - current = 3 thì push notiviện
-            // Todo: push notification 2
             if (diffDate.getDays() == DAY_REMAIN_DEADLINE) {
                 borrowedBook3DayDeadline.add(borrowedBookCopyEntity);
                 logger.info("còn 3 ngày nữa là đến deadline sách: {} ", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
                 count++;
-            } else if (diffDate.getDays() == DAY_OF_DEADLINE) {
-                logger.info("sách {} đã hết hạn, vui lòng trả lại thư ", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
+            }
+            // tới ngày deadline -> noti
+            if (diffDate.getDays() == DAY_OF_DEADLINE) {
+                borrowedBookDeadline.add(borrowedBookCopyEntity);
+                logger.info("sách {} đã hết hạn, vui lòng trả lại thư viện", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
                 count++;
             }
         }
         if (count == 0) {
             logger.info("không có sách nào phải noti");
-        } else if (borrowedBook3DayDeadline.size() != 0){
-            List<AccountDto> listUser = new ArrayList<>();
-
-            for (BorrowedBookCopyEntity borrowedBookCopyEntity :
-                    borrowedBook3DayDeadline) {
-                AccountDto accountDto = modelMapper.map(borrowedBookCopyEntity.getAccount(), AccountDto.class);
-//                borrowedBookCopyEntity.getAccount().getGoogleToken()
-                if (!listUser.contains(accountDto)) {
-                    listUser.add(accountDto);
-                }
-                BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
-                result.add(dto);
-            }
-            for (AccountDto dto : listUser) {
-                List<BorrowedBookCopyDto> bookDeadlines = new ArrayList<>();
-
-                for (BorrowedBookCopyDto borrowedBookCopyDto : result) {
-                    if (dto.getUserId().equals(borrowedBookCopyDto.getAccountUserId())) {
-                        bookDeadlines.add(borrowedBookCopyDto);
-                    }
-                }
-                NotificationUtils.pushNotificationDeadline(bookDeadlines, dto.getGoogleToken());
-                logger.info("Gửi noti cho thằng {} với số sách {} ", dto.getUserId(), bookDeadlines.size());
-            }
-            logger.info("Có {} cuốn sách chuẩn bị tới deadline", count);
+        } else if (borrowedBook3DayDeadline.size() != 0) {
+            messageBody = "Bạn có sách phải trả sau 3 ngày nữa";
+            pushNotificationBook(user2Deadline, borrowedBook3DayDeadline, result, messageBody, 0);
+        } if (borrowedBookDeadline.size() != 0) {
+            messageBody = "Bạn có sách phải trả vào hôm nay";
+            pushNotificationBook(user2Deadline, borrowedBookDeadline, result, messageBody, 1);
         }
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
-            logger.error("Error while executing sample job", e);
+            logger.error("Error while executing check deadline job", e);
         } finally {
-            logger.info("Sample job has finished...");
+            logger.info("Check deadline job has finished...");
+        }
+    }
+
+    private void pushNotificationBook(List<String> user2Deadline, List<BorrowedBookCopyEntity> books, List<BorrowedBookCopyDto> result, String messageBody, int behavior) {
+        List<AccountDto> listUser = new ArrayList<>();
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity :
+                books) {
+            AccountDto accountDto = modelMapper.map(borrowedBookCopyEntity.getAccount(), AccountDto.class);
+            // lấy danh sách userId không trùng để gửi
+            if (!listUser.contains(accountDto)) {
+                listUser.add(accountDto);
+            }
+            BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+            result.add(dto);
+        }
+        for (AccountDto dto : listUser) {
+            List<BorrowedBookCopyDto> bookDeadlines = new ArrayList<>();
+
+            if (behavior == 0) {
+                user2Deadline.add(dto.getUserId());
+            } else if (behavior == 1) {
+                if (user2Deadline.contains(dto.getUserId())) {
+                    messageBody = "Bạn có sách phải trả vào hôm nay và sau 3 ngày nữa";
+                }
+            }
+            for (BorrowedBookCopyDto borrowedBookCopyDto : result) {
+                if (dto.getUserId().equals(borrowedBookCopyDto.getAccountUserId())) {
+                    bookDeadlines.add(borrowedBookCopyDto);
+                }
+            }
+            try {
+                // push noti
+                NotificationUtils.pushNotificationDeadline(dto.getGoogleToken(), messageBody);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
     }
 

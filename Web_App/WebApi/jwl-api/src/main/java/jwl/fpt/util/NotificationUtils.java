@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class NotificationUtils {
         }
     }
 
-    public static void pushNotificationDeadline(List<BorrowedBookCopyDto> result, String googleToken) {
+    public static void pushNotificationDeadline(String googleToken, String messageBody) throws UnsupportedEncodingException {
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
 
@@ -74,13 +75,11 @@ public class NotificationUtils {
         post.setHeader("Authorization", "key=" + Constant.APP_TOKEN);
         JSONObject body = new JSONObject();
 
-        body.put("body", "Bạn có sách phải trả sau 3 ngày nữa");
+        body.put("body", URLEncoder.encode(messageBody, "UTF-8"));
         body.put("title", "Remaining day");
         JSONObject entity = new JSONObject();
         entity.put("to", googleToken);
-        entity.put("notification", body);
-        System.out.println(entity.toString());
-        System.out.println("Gửi noti cho thằng " + googleToken + " size " + result.size());
+        entity.put("data", body);
         try {
             post.setEntity(new StringEntity(entity.toString()));
 
