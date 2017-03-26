@@ -1,5 +1,5 @@
-export function switchStateNavBar(pathName) {
+export function switchStateNavBar(navbarState) {
 	return {
-		type: pathName
+		type: navbarState
 	}
 }

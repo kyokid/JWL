@@ -17,3 +17,4 @@ export const COMMIT_RETURN_COPIES_PATH = "commit/return"
 export const CANCEL_RETURN_COPIES_PATH = "cancel/return"
 
 export const BOOKS = "books"
+export const BORROWING_COPIES_PATH = "borrowing_copies"

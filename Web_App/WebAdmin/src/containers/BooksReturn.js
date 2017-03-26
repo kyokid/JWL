@@ -11,7 +11,7 @@ import {
 import { browserHistory } from 'react-router'
 
 import { LOGIN } from '../constants/url-path'
-import { UNDEFINED } from '../constants/common'
+import { UNDEFINED, RETURN_BOOKS } from '../constants/common'
 import { switchStateNavBar } from '../actions/RouteAction'
 import ReturnBooksPanel from './ReturnBooksPanel'
 import isLoggedIn from '../helpers/Authentication'
@@ -52,7 +52,7 @@ class BooksReturn extends Component {
 			}
 		})
 
-		this.props.switchStateNavBar(this.props.route.path)
+		this.props.switchStateNavBar(RETURN_BOOKS)
 	}
 
 	componentWillReceiveProps(nextProps) {

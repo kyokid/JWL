@@ -1,26 +1,29 @@
-import React, { Component } from "react"
-import { connect } from "react-redux"
-import { Link } from "react-router"
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Link, browserHistory } from 'react-router'
 
-import { getBookDetail } from "../actions/BooksAction"
+import { getBookDetail, getBorrowingCopies } from '../actions/BooksAction'
 import { switchStateNavBar } from '../actions/RouteAction'
 import { BOOK_LIST } from '../constants/url-path'
+import { MANAGE_BOOKS } from '../constants/common'
 
 class BookDetail extends Component {
 	constructor(props) {
 		super(props)
 
-		this.renderBorrowedBooks = this.renderBorrowedBooks.bind(this)
-		this.renderBorrowedBookPanel = this.renderBorrowedBookPanel.bind(this)
+		this.renderBorrowingBooks = this.renderBorrowingBooks.bind(this)
+		this.renderBorrowingBookPanel = this.renderBorrowingBookPanel.bind(this)
 	}
 
 	componentWillMount() {
-		this.props.getBookDetail(this.props.params.id)
-		this.props.switchStateNavBar(this.props.route.path)
+		const bookId = this.props.params.id
+		this.props.getBookDetail(bookId)
+		this.props.getBorrowingCopies(bookId)
+		this.props.switchStateNavBar(MANAGE_BOOKS)
 	}
 
 	render() {
-		const { book } = this.props
+		const { book, borrowingCopiesOfBook } = this.props
 
 		if (!book) {
 			return <div>Loading...</div>
@@ -58,7 +61,7 @@ class BookDetail extends Component {
 					</div>
 				</div>
 
-				{/*{this.renderBorrowedBookPanel(userId, book.borrowedBookCopies)}*/}
+				{this.renderBorrowingBookPanel(borrowingCopiesOfBook)}
 
 			</div>
 		)
@@ -82,27 +85,23 @@ class BookDetail extends Component {
 		})
 	}
 
-	renderBorrowedBookPanel(userId, borrowedBookCopies) {
-		if (!borrowedBookCopies || borrowedBookCopies.length == 0) {
-			return (
-				<div style={{ marginTop: "50px" }}>
-					<h3>User {userId} is not borrowing any books.</h3>
-				</div>
-			)
+	renderBorrowingBookPanel(borrowingBookCopies) {
+		if (!borrowingBookCopies || borrowingBookCopies.length === 0) {
+			return
 		}
 		return (
 			<div className="panel panel-default" style={{ width: "100%" }}>
 				<div className="panel-heading">
-					<h3 className="panel-title">Borrowing Books of user {userId}</h3>
+					<h3 className="panel-title">Borrowing Copies of this book:</h3>
 				</div>
 				<div className="panel-body">
-					{this.renderBorrowedBooks(borrowedBookCopies)}
+					{this.renderBorrowingBooks(borrowingBookCopies)}
 				</div>
 			</div>
 		)
 	}
 
-	renderBorrowedBooks(borrowedBookCopies) {
+	renderBorrowingBooks(borrowingBookCopies) {
 		return (
 			<table className="table table-striped">
 				<thead>
@@ -110,43 +109,44 @@ class BookDetail extends Component {
 					<th>No.</th>
 					<th>RFID</th>
 					<th>Title</th>
+					<th>Borrower</th>
 					<th>Borrowed Date</th>
 					<th>Dealine Date</th>
-					<th>Tools</th>
 				</tr>
 				</thead>
 				<tbody>
-				{borrowedBookCopies.map((borrowedBook, index) => this.renderBorrowedBook(borrowedBook, index))}
+				{borrowingBookCopies.map((borrowingBook, index) => this.renderBorrowingBook(borrowingBook, index))}
 				</tbody>
 			</table>
 		)
 	}
 
-	renderBorrowedBook(borrowedBook, index) {
-		const userId = this.state.userId
-		const borrowedCopyRfid = borrowedBook.bookCopyRfid
+	renderBorrowingBook(borrowingBook, index) {
+		const borrowedCopyRfid = borrowingBook.bookCopyRfid
+		const userId = borrowingBook.accountUserId
 
 		return (
-			<tr key={borrowedCopyRfid}>
+			<tr key={borrowedCopyRfid} onClick={() => browserHistory.push(`/users/${userId}`)}>
 				<td>{index + 1}</td>
 				<td>{borrowedCopyRfid}</td>
-				<td>{borrowedBook.bookCopyBookTitle}</td>
-				<td>{borrowedBook.borrowedDate}</td>
-				<td>{borrowedBook.deadlineDate}</td>
-				<td>
-					<a
-						className={`${this.state.isAddingBook ? "disable" : ""}`}
-						onClick={() => this.onClickDeleteCopy(userId, borrowedCopyRfid)}>
-						<span className="glyphicon glyphicon-remove" aria-hidden="true" />
-					</a>
-				</td>
+				<td>{borrowingBook.bookCopyBookTitle}</td>
+				<td>{userId}</td>
+				<td>{borrowingBook.borrowedDate}</td>
+				<td>{borrowingBook.deadlineDate}</td>
 			</tr>
 		)
 	}
 }
 
 function mapStateToProps(state) {
-	return { book: state.books.book }
+	return {
+		book: state.books.book,
+		borrowingCopiesOfBook: state.books.borrowingCopiesOfBook
+	}
 }
 
-export default connect(mapStateToProps, { getBookDetail, switchStateNavBar })(BookDetail)
+export default connect(mapStateToProps, {
+	getBookDetail,
+	getBorrowingCopies,
+	switchStateNavBar
+})(BookDetail)

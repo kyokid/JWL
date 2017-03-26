@@ -298,6 +298,16 @@ input[type="password"]{
   font-size: 20px;
 }
 
+.account-detail tbody tr,
+.book-detail tbody tr {
+  cursor: pointer;
+}
+
+.account-detail tbody tr:hover td,
+.book-detail tbody tr:hover td {
+  color: #1d5d90;
+}
+
 /**
  * Return books.
  */

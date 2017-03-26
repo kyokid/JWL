@@ -14,11 +14,20 @@ export function getAllBooks() {
 	}
 }
 
-export function getBookDetail(id) {
-	const request = axios.get(`${Api.ROOT_URL}${Api.BOOKS}/${id}`)
+export function getBookDetail(bookId) {
+	const request = axios.get(`${Api.ROOT_URL}${Api.BOOKS}/${bookId}`)
 
 	return {
 		type: Types.FETCH_BOOK,
+		payload: request
+	}
+}
+
+export function getBorrowingCopies(bookId) {
+	const request = axios.get(`${Api.ROOT_URL}${Api.BOOKS}/${bookId}/${Api.BORROWING_COPIES_PATH}`)
+
+	return {
+		type: Types.FETCH_BORROWING_COPIES,
 		payload: request
 	}
 }

@@ -1,4 +1,4 @@
-import * as path from '../constants/url-path'
+import { MANAGE_BOOKS, MANAGE_ACCOUNTS, RETURN_BOOKS } from '../constants/common'
 
 const INITIAL_STATE = {
 	activeManageAccounts: true,
@@ -8,20 +8,17 @@ const INITIAL_STATE = {
 
 export default function (state = INITIAL_STATE, action) {
 	switch (action.type) {
-		case path.ACCOUNT_LIST:
-		case path.ACCOUNT_DETAIL:
-		case path.ACCOUNT_NEW:
+		case MANAGE_ACCOUNTS:
 			return INITIAL_STATE
 
-		case path.BOOKS_RETURN:
+		case RETURN_BOOKS:
 			return {
 				activeManageAccounts: false,
 				activeManageBooks: false,
 				activeReturnBooks: true
 			}
 
-		case path.BOOK_LIST:
-		case path.BOOK_DETAIL:
+		case MANAGE_BOOKS:
 			return {
 				activeManageAccounts: false,
 				activeManageBooks: true,

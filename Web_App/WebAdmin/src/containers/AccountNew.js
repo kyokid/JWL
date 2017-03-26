@@ -9,6 +9,8 @@ import ReactDatePicker from '../helpers/ReactDatePicker'
 import ImgField from '../helpers/ImgFieldRenderer'
 
 import { createAccount } from '../actions/AccountsAction'
+import { switchStateNavBar } from '../actions/RouteAction'
+import { MANAGE_ACCOUNTS } from '../constants/common'
 
 class AccountNew extends Component {
 	constructor(props) {
@@ -34,6 +36,7 @@ class AccountNew extends Component {
 		if (nextProps.dirty) {
 			this.setState({ dirty: true })
 		}
+		this.props.switchStateNavBar(MANAGE_ACCOUNTS)
 	}
 
 	render() {
@@ -181,5 +184,5 @@ let accountNewForm = reduxForm({
 	validate
 })(AccountNew)
 
-export default connect(null, { createAccount })(accountNewForm)
+export default connect(null, { createAccount, switchStateNavBar })(accountNewForm)
 

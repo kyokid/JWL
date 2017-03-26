@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
+import { Link, browserHistory } from 'react-router'
 
 import { getAccountDetail } from '../actions/AccountsAction'
 import { initBorrow, checkout, deleteBorrowedCopy, fetchCopyFromCart, cancelAddingCopies } from '../actions/BookBorrowAction'
+import { switchStateNavBar } from '../actions/RouteAction'
 import * as Socket from '../helpers/Socket'
-import { UNDEFINED } from '../constants/common'
+import { UNDEFINED, MANAGE_ACCOUNTS } from '../constants/common'
 
 class AccountDetail extends Component {
 	librarianId = 1
@@ -47,6 +48,8 @@ class AccountDetail extends Component {
 
 		window.addEventListener("beforeunload", this.beforeUnload)
 		window.addEventListener("unload", this.onUnload)
+
+		this.props.switchStateNavBar(MANAGE_ACCOUNTS)
 	}
 
 	componentWillUnmount() {
@@ -204,9 +207,10 @@ class AccountDetail extends Component {
 	renderBorrowedBook(borrowedBook, index) {
 		const userId = this.state.userId
 		const borrowedCopyRfid = borrowedBook.bookCopyRfid
+		const bookId = borrowedBook.bookCopyBookId
 
 		return (
-			<tr key={borrowedCopyRfid}>
+			<tr key={borrowedCopyRfid} onClick={() => browserHistory.push(`/books/${bookId}`)}>
 				<td>{index + 1}</td>
 				<td>{borrowedCopyRfid}</td>
 				<td>{borrowedBook.bookCopyBookTitle}</td>
@@ -232,7 +236,12 @@ function mapStateToProps(state) {
 	return { account: state.accounts.account }
 }
 
-export default connect(
-	mapStateToProps,
-	{ getAccountDetail, deleteBorrowedCopy, initBorrow, checkout, fetchCopyFromCart, cancelAddingCopies })
-(AccountDetail)
+export default connect(mapStateToProps, {
+	getAccountDetail,
+	deleteBorrowedCopy,
+	initBorrow,
+	checkout,
+	fetchCopyFromCart,
+	cancelAddingCopies,
+	switchStateNavBar
+})(AccountDetail)

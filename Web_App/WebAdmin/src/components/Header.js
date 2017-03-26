@@ -3,6 +3,7 @@ import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
 import { switchStateNavBar } from '../actions/RouteAction'
 import * as path from '../constants/url-path'
+import * as status from '../constants/common'
 
 class Header extends Component {
 	constructor(props) {
@@ -26,15 +27,15 @@ class Header extends Component {
 					<nav>
 						<ul className="nav navbar-nav navbar-left">
 							<li className={activeManageAccounts ? 'active' : ''}
-									onClick={() => this.onClickActive(path.ACCOUNT_LIST)}>
+									onClick={() => this.onClickActive(status.MANAGE_ACCOUNTS, path.ACCOUNT_LIST)}>
 								<a href="#">Manage Accounts</a>
 							</li>
 							<li className={activeManageBooks ? 'active' : ''}
-									onClick={() => this.onClickActive(path.BOOK_LIST)}>
+									onClick={() => this.onClickActive(status.MANAGE_BOOKS, path.BOOK_LIST)}>
 								<a href="#">Manage Books</a>
 							</li>
 							<li className={activeReturnBooks ? 'active' : ''}
-									onClick={() => this.onClickActive(path.BOOKS_RETURN)}>
+									onClick={() => this.onClickActive(status.RETURN_BOOKS, path.BOOKS_RETURN)}>
 								<a href="#">Return Books</a>
 							</li>
 						</ul>
@@ -61,8 +62,8 @@ class Header extends Component {
 		)
 	}
 
-	onClickActive(pathName) {
-		this.props.switchStateNavBar(pathName)
+	onClickActive(status, pathName) {
+		this.props.switchStateNavBar(status)
 		browserHistory.push(pathName)
 	}
 

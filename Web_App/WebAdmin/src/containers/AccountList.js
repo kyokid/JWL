@@ -5,6 +5,8 @@ import { bindActionCreators } from 'redux'
 import { browserHistory, Link } from "react-router"
 
 import { getAllAccounts } from '../actions/AccountsAction'
+import { switchStateNavBar } from '../actions/RouteAction'
+import { MANAGE_ACCOUNTS } from '../constants/common'
 
 class AccountList extends Component {
 	constructor(props) {
@@ -13,6 +15,7 @@ class AccountList extends Component {
 
 	componentWillMount() {
 		this.props.getAllAccounts()
+		this.props.switchStateNavBar(MANAGE_ACCOUNTS)
 	}
 
 	render() {
@@ -78,7 +81,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-	return bindActionCreators({ getAllAccounts }, dispatch)
+	return bindActionCreators({ getAllAccounts, switchStateNavBar }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountList)

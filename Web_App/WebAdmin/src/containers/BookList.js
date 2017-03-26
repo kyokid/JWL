@@ -6,6 +6,7 @@ import { browserHistory, Link } from "react-router"
 
 import { getAllBooks } from '../actions/BooksAction'
 import { switchStateNavBar } from '../actions/RouteAction'
+import { MANAGE_BOOKS } from '../constants/common'
 
 class BookList extends Component {
 	constructor(props) {
@@ -13,7 +14,7 @@ class BookList extends Component {
 	}
 
 	componentWillMount() {
-		this.props.switchStateNavBar(this.props.route.path)
+		this.props.switchStateNavBar(MANAGE_BOOKS)
 		this.props.getAllBooks()
 	}
 
