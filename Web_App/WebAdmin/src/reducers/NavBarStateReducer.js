@@ -1,4 +1,4 @@
-import * as path from '../constants/UrlPath'
+import * as path from '../constants/url-path'
 
 const INITIAL_STATE = {
 	activeManageAccounts: true,
@@ -18,6 +18,14 @@ export default function (state = INITIAL_STATE, action) {
 				activeManageAccounts: false,
 				activeManageBooks: false,
 				activeReturnBooks: true
+			}
+
+		case path.BOOK_LIST:
+		case path.BOOK_DETAIL:
+			return {
+				activeManageAccounts: false,
+				activeManageBooks: true,
+				activeReturnBooks: false
 			}
 	}
 	return state

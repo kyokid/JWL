@@ -21,7 +21,7 @@ export default function (state = INITIAL_STATE, action) {
 					responseCode: action.payload.code
 				}
 			}
-			if (action.payload.code == "405") {
+			if (action.payload.code === "405") {
 				return {
 					...state,
 					returnedBookOfAnotherUser: action.payload.data,
@@ -37,7 +37,7 @@ export default function (state = INITIAL_STATE, action) {
 			}
 
 		case Types.FETCH_COMMITTED_RETURN_COPIES:
-			if (action.payload.code != "200" || !action.payload.data) {
+			if (action.payload.code !== "200" || !action.payload.data) {
 				return {
 					...state,
 					responseMsg: action.payload.textMessage,
@@ -53,7 +53,7 @@ export default function (state = INITIAL_STATE, action) {
 			}
 
 		case Types.FETCH_CANCEL_RETURN_COPIES:
-			if (action.payload.code != "200") {
+			if (action.payload.code !== "200") {
 				return {
 					...state,
 					responseMsg: action.payload.textMessage,

@@ -2,7 +2,7 @@ import { EMAIL_REGEX, PHONE_NO_REGEX } from '../constants/regex'
 
 export const validate = (values) => {
 	const errors = {}
-	if (!values.profileImgUrl || typeof(values.profileImgUrl) != 'string' || values.profileImgUrl.trim() == '') {
+	if (!values.profileImgUrl || typeof(values.profileImgUrl) !== 'string' || values.profileImgUrl.trim() === '') {
 		errors.profileImgUrl = 'User profile image is required.'
 	}
 	if (!values.userId) {
@@ -21,7 +21,7 @@ export const validate = (values) => {
 		errors.password = 'Password is required.'
 	} else if (values.password.length < 6 || values.password.length > 50) {
 		errors.password = 'Password’s length must be 6-50 characters.'
-	} else if (values.password != values.confirmPassword) {
+	} else if (values.password !== values.confirmPassword) {
 		errors.confirmPassword = 'Confirm Password must match Password.'
 	}
 

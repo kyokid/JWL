@@ -25,7 +25,7 @@ class ImgFieldRenderer extends Component {
 					<img id="uploadImg"
 							 src={this.state.imgSrc}
 							 alt="Your profile image."
-							 style={{ display: this.state.imgSrc != '#' ? "block" : "none" }}	/>
+							 style={{ display: this.state.imgSrc !== '#' ? "block" : "none" }}	/>
 					<input id={id}
 								 type="file"
 								 accept="image/*"

@@ -1,10 +1,11 @@
-import React, { Component, PropTypes } from "react"
-import { connect } from "react-redux"
-import { Link } from "react-router"
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Link } from 'react-router'
 
-import { getAccountDetail } from "../actions/AccountsAction"
-import { initBorrow, checkout, deleteBorrowedCopy, fetchCopyFromCart, cancelAddingCopies } from "../actions/BookBorrowAction"
-import * as Socket from "../helpers/Socket"
+import { getAccountDetail } from '../actions/AccountsAction'
+import { initBorrow, checkout, deleteBorrowedCopy, fetchCopyFromCart, cancelAddingCopies } from '../actions/BookBorrowAction'
+import * as Socket from '../helpers/Socket'
+import { UNDEFINED } from '../constants/common'
 
 class AccountDetail extends Component {
 	librarianId = 1
@@ -19,6 +20,8 @@ class AccountDetail extends Component {
 		this.onClickCancel = this.onClickCancel.bind(this)
 		this.beforeUnload = this.beforeUnload.bind(this)
 		this.onUnload = this.onUnload.bind(this)
+		this.disconnectFromChannel = this.disconnectFromChannel.bind(this)
+		this.connectToChannel = this.connectToChannel.bind(this)
 
 		this.state = {
 			userId: this.props.params.id,
@@ -138,7 +141,7 @@ class AccountDetail extends Component {
 	}
 
 	disconnectFromChannel() {
-		if (this.socketClient != null) {
+		if (typeof this.socketClient !== UNDEFINED) {
 			this.socketClient.disconnect()
 		}
 		console.log("Disconnected")
@@ -159,7 +162,7 @@ class AccountDetail extends Component {
 	}
 
 	renderBorrowedBookPanel(userId, borrowedBookCopies) {
-		if (!borrowedBookCopies || borrowedBookCopies.length == 0) {
+		if (!borrowedBookCopies || borrowedBookCopies.length === 0) {
 			return (
 				<div style={{ marginTop: "50px" }}>
 					<h3>User {userId} is not borrowing any books.</h3>

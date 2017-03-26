@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
 import { switchStateNavBar } from '../actions/RouteAction'
-import * as path from '../constants/UrlPath'
+import * as path from '../constants/url-path'
 
 class Header extends Component {
 	constructor(props) {
@@ -18,7 +18,6 @@ class Header extends Component {
 	render() {
 		const { activeManageAccounts, activeManageBooks, activeReturnBooks } = this.props
 		const { userId, imgUrl } = localStorage
-		debugger
 
 		return (
 			<header className="navbar navbar-fixed-top navbar-inverse">
@@ -30,7 +29,8 @@ class Header extends Component {
 									onClick={() => this.onClickActive(path.ACCOUNT_LIST)}>
 								<a href="#">Manage Accounts</a>
 							</li>
-							<li className={activeManageBooks ? 'active' : ''}>
+							<li className={activeManageBooks ? 'active' : ''}
+									onClick={() => this.onClickActive(path.BOOK_LIST)}>
 								<a href="#">Manage Books</a>
 							</li>
 							<li className={activeReturnBooks ? 'active' : ''}

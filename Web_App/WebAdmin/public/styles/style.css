@@ -128,25 +128,29 @@ p {
 }
 
 /**
- * Table User
+ * Table Accounts, Books
  */
 .table-user-container {
   margin-top: 30px;
   position: relative;
 }
 
-.table-users {
+.table-users,
+.table-books {
   margin-top: 25px;
 }
 
-.table-user-container table .glyphicon {
+.table-user-container table .glyphicon,
+.table-book-container table .glyphicon {
   padding-right: 5px;
 }
 
-.table-user-container .table-users tbody tr {
+.table-user-container .table-users tbody tr,
+.table-book-container .table-books tbody tr {
   cursor: pointer;
 }
-.table-user-container .table-users tbody tr:hover td {
+.table-user-container .table-users tbody tr:hover td,
+.table-book-container .table-books tbody tr:hover td {
   color: #1d5d90;
 }
 
@@ -272,17 +276,25 @@ input[type="password"]{
 
 /**
  * Account detail
+ * Book detail
  */
-.account-detail .panel {
+.account-detail .panel,
+.book-detail .panel {
   margin-top: 30px;
 }
 
-.account-detail .user-img {
+.account-detail .user-img{
   height: 250px;
-  width: 250px;
+  max-width: 250px;
 }
 
-.account-detail .back {
+.book-detail .book-img {
+  height: 350px;
+  max-width: 300px;
+}
+
+.account-detail .back,
+.book-detail .back {
   font-size: 20px;
 }
 

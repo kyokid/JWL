@@ -35,7 +35,7 @@ class SearchBar extends Component {
 
 		let searchTerm = this.state.term.trim()
 
-		if (searchTerm == "") {
+		if (searchTerm === "") {
 			this.setState({term: ''})
 			this.props.getAllAccounts()
 			return

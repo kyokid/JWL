@@ -77,7 +77,6 @@ class Login extends Component {
 					code: "",
 					message: ""
 				})
-				debugger
 				localStorage.userId = data.data.userId
 				localStorage.userRole = data.data.userRoleRole
 				localStorage.imgUrl = data.data.profileImgUrl || ""

@@ -10,11 +10,12 @@ import {
 } from '../actions/BookReturnAction'
 import { browserHistory } from 'react-router'
 
-import { LOGIN } from '../constants/UrlPath'
+import { LOGIN } from '../constants/url-path'
+import { UNDEFINED } from '../constants/common'
 import { switchStateNavBar } from '../actions/RouteAction'
-import ReturnBooksPanel from '../components/ReturnBooksPanel'
+import ReturnBooksPanel from './ReturnBooksPanel'
 import isLoggedIn from '../helpers/Authentication'
-import * as Socket from "../helpers/Socket"
+import * as Socket from '../helpers/Socket'
 
 class BooksReturn extends Component {
 	constructor(props) {
@@ -61,7 +62,7 @@ class BooksReturn extends Component {
 			this.setState({ returningBooks: false })
 		}
 
-		if (nextProps.responseCode == "405") {
+		if (nextProps.responseCode === "405") {
 			$(this.refs.modal).modal('show')
 		}
 	}
@@ -73,21 +74,21 @@ class BooksReturn extends Component {
 	render() {
 		let { returningBooks, returnedBooks, responseMsg, responseCode, returnedBookOfAnotherUser } = this.props
 
-		if (returningBooks.length == 0) {
+		if (returningBooks.length === 0) {
 			return (
 				<div>
 					<h1 style={{ marginTop: "40px" }}>Scan a returned book to start.</h1>
-					{returnedBooks.length != 0 && <ReturnBooksPanel librarianId={this.state.librarianId}
-																													userId={returnedBooks[0].accountUserId}
-																													books={returnedBooks}
-																													returningBooks={this.state.returningBooks}
-																													isReturningBooks={false} />}
+					{returnedBooks.length !== 0 && <ReturnBooksPanel librarianId={this.state.librarianId}
+																													 userId={returnedBooks[0].accountUserId}
+																													 books={returnedBooks}
+																													 returningBooks={this.state.returningBooks}
+																													 isReturningBooks={false} />}
 				</div>
 			)
 		}
 
 		const currentUserId = returningBooks[0].accountUserId
-		const lastUserId = returnedBooks.length != 0 ? returnedBooks[0].accountUserId : "last User ID"
+		const lastUserId = returnedBooks.length !== 0 ? returnedBooks[0].accountUserId : "last User ID"
 
 		return (
 			<div>
@@ -100,11 +101,11 @@ class BooksReturn extends Component {
 													returningBooks={this.state.returningBooks}
 													isReturningBooks={true} />
 
-				{returnedBooks.length != 0 && <ReturnBooksPanel librarianId={this.state.librarianId}
-																												userId={lastUserId}
-																												books={returnedBooks}
-																												returningBooks={this.state.returningBooks}
-																												isReturningBooks={false} />}
+				{returnedBooks.length !== 0 && <ReturnBooksPanel librarianId={this.state.librarianId}
+																												 userId={lastUserId}
+																												 books={returnedBooks}
+																												 returningBooks={this.state.returningBooks}
+																												 isReturningBooks={false} />}
 			</div>
 		)
 	}
@@ -167,9 +168,9 @@ class BooksReturn extends Component {
 				console.log("Socket Called!!")
 				console.log(returnedData)
 				const returnedJson = JSON.parse(returnedData.body)
-				if (returnedJson.data == null) {
+				if (returnedJson.data === null) {
 					self.props.fetchCancelReturnCopies(returnedJson)
-				} else if (returnedJson.data.constructor == Array) {
+				} else if (returnedJson.data.constructor === Array) {
 					self.props.fetchCommittedReturnCopies(returnedJson)
 				} else {
 					self.props.fetchAddedReturnedCopyFromCart(returnedJson)
@@ -179,7 +180,7 @@ class BooksReturn extends Component {
 	}
 
 	disconnectFromChannel() {
-		if (this.socketClient != null) {
+		if (typeof this.socketClient !== UNDEFINED) {
 			this.socketClient.disconnect()
 		}
 		console.log("Disconnected")

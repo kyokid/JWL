@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { browserHistory, Link } from "react-router"
+
 import { getAllAccounts } from '../actions/AccountsAction'
 
 class AccountList extends Component {

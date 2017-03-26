@@ -84,7 +84,7 @@ class AccountNew extends Component {
 								 helpBlock="Confirm Password must match Password."
 								 component={renderCommonField} />
 				</div>
-				<div className="col-md-1 col-sm-1"></div>
+				<div className="col-md-1 col-sm-1" />
 				<Field id="inputImg"
 							 className="col-md-5 col-sm-5"
 							 name="profileImgUrl"
@@ -99,7 +99,7 @@ class AccountNew extends Component {
 								 type="text"
 								 helpBlock="Enter the user's Full name."
 								 component={renderCommonField} />
-					<div className="col-md-1 col-sm-1"></div>
+					<div className="col-md-1 col-sm-1" />
 					<Field id="email"
 								 className="col-md-5 col-sm-5"
 								 name="profileEmail"
@@ -116,7 +116,7 @@ class AccountNew extends Component {
 								 type="text"
 								 helpBlock="Phone number can be like +841692536224 or 01692536224."
 								 component={renderCommonField} />
-					<div className="col-md-1 col-sm-1"></div>
+					<div className="col-md-1 col-sm-1" />
 					<Field id="address"
 								 className="col-md-5 col-sm-5"
 								 name="profileAddress"
@@ -133,7 +133,7 @@ class AccountNew extends Component {
 								 type="text"
 								 helpBlock="Enter a company or school name."
 								 component={renderCommonField} />
-					<div className="col-md-1 col-sm-1"></div>
+					<div className="col-md-1 col-sm-1" />
 					<Field id="birthDate"
 								 className="col-md-5 col-sm-5"
 								 name="profileDateOfBirth"

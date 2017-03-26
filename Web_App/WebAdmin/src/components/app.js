@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { browserHistory } from 'react-router'
 
-import * as path from '../constants/UrlPath'
+import * as path from '../constants/url-path'
 import Header from './Header'
 import isLoggedIn from '../helpers/Authentication'
 
