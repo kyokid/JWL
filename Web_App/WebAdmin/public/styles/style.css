@@ -145,13 +145,14 @@ p {
   padding-right: 5px;
 }
 
-.table-user-container .table-users tbody tr,
-.table-book-container .table-books tbody tr {
+.table-user-container .table-users tbody td.clickable,
+.table-book-container .table-books tbody td.clickable {
   cursor: pointer;
-}
-.table-user-container .table-users tbody tr:hover td,
-.table-book-container .table-books tbody tr:hover td {
   color: #1d5d90;
+}
+.table-user-container .table-users tbody td.clickable:hover,
+.table-book-container .table-books tbody td.clickable:hover {
+  font-style: italic;
 }
 
 /**
@@ -298,14 +299,15 @@ input[type="password"]{
   font-size: 20px;
 }
 
-.account-detail tbody tr,
-.book-detail tbody tr {
+.account-detail tbody td.clickable,
+.book-detail tbody td.clickable {
   cursor: pointer;
+  color: #1d5d90;
 }
 
-.account-detail tbody tr:hover td,
-.book-detail tbody tr:hover td {
-  color: #1d5d90;
+.account-detail tbody td.clickable:hover,
+.book-detail tbody td.clickable:hover {
+  font-style: italic;
 }
 
 /**

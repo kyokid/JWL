@@ -63,9 +63,9 @@ class AccountList extends Component {
 	renderAccount(account, index) {
 		const userId = account.userId
 		return (
-			<tr key={userId} onClick={() => browserHistory.push(`users/${userId}`)}>
+			<tr key={userId}>
 				<td>{index + 1}</td>
-				<td>{userId}</td>
+				<td className="clickable" onClick={() => browserHistory.push(`users/${userId}`)}>{userId}</td>
 				<td>{account.profileFullname}</td>
 				<td>{account.profileEmail}</td>
 				<td>{account.inLibrary? "True" : "False"}</td>

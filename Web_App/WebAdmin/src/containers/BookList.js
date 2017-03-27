@@ -68,9 +68,9 @@ class BookList extends Component {
 	renderBook(book, index) {
 		const bookId = book.id
 		return (
-			<tr key={bookId} onClick={() => browserHistory.push(`books/${bookId}`)}>
+			<tr key={bookId}>
 				<td>{index + 1}</td>
-				<td>{book.title}</td>
+				<td className="clickable" onClick={() => browserHistory.push(`books/${bookId}`)}>{book.title}</td>
 				<td>
 					{book.bookAuthors.map((author) => <p style={{ fontSize: "inherit" }} key={author.id}>{author.authorName}</p>)}
 				</td>

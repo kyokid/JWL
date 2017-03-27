@@ -219,10 +219,10 @@ class AccountDetail extends Component {
 		const bookId = borrowedBook.bookCopyBookId
 
 		return (
-			<tr key={borrowedCopyRfid} onClick={() => browserHistory.push(`/books/${bookId}`)}>
+			<tr key={borrowedCopyRfid}>
 				<td>{index + 1}</td>
 				<td>{borrowedCopyRfid}</td>
-				<td>{borrowedBook.bookCopyBookTitle}</td>
+				<td className="clickable" onClick={() => browserHistory.push(`/books/${bookId}`)}>{borrowedBook.bookCopyBookTitle}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
 				<td>
