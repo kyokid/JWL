@@ -11,10 +11,13 @@ VALUES (1, 'admin'), (2, 'librarian'), (3, 'borrower');
 -- ON CONFLICT (id) DO UPDATE SET role = EXCLUDED.role;
 
 INSERT INTO account (user_id, password, role_id, is_in_library, is_activated)
-VALUES  ('SE61476', '123', '3', TRUE, TRUE);
+VALUES  ('SE61476', '123', '3', FALSE, TRUE);
 INSERT INTO account (user_id, password, role_id, is_in_library, is_activated)
 VALUES  ('thiendn', '123', '3', FALSE, TRUE),
   ('havh', '123', '3', FALSE, TRUE);
+INSERT INTO account (user_id, password, role_id, is_in_library, is_activated)
+VALUES  ('admin', 'admin123', '1', FALSE, TRUE),
+  ('librarian', 'librarian123', '2', FALSE, TRUE);
 
 INSERT INTO borrower_ticket (qr_id, user_id, create_date)
 VALUES  ('123', 'SE61476', '2017-01-01');
@@ -87,6 +90,9 @@ VALUES ('SE61476', 'Nguyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn 
 INSERT INTO profile (user_id, fullname, email, address, date_of_birth, phone_no, place_of_work)
 VALUES ('thiendn', 'Đặng Nhật Thiên', 'thiendn@gmail.com', 'Đối diện trường', '1994-02-28', '01678785551', 'FPT'),
   ('havh', 'Võ Hồng Hà', 'havh0108@gmail.com', '23 TCH 35 Q12', '1994-06-28', '01635782661', 'FPT');
+INSERT INTO profile (user_id, fullname, email, address, date_of_birth, phone_no, place_of_work)
+VALUES ('admin', 'Nguyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn F12 Gò Vấp', '1992-04-26', '01692536559', 'FPT'),
+  ('librarian', 'Nguyễn Tuấn Anh', 'dratannta@gmail.com', '433 Tân Sơn F12 Gò Vấp', '1992-04-26', '01692536559', 'FPT');
 UPDATE profile
 SET gender = CASE user_id
              WHEN 'SE61476' THEN 'male'
@@ -94,6 +100,3 @@ SET gender = CASE user_id
              WHEN 'havh' THEN 'male'
              END
 WHERE user_id IN ('SE61476', 'thiendn', 'havh');
-
-
-
