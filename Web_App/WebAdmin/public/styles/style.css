@@ -299,6 +299,12 @@ input[type="password"]{
   font-size: 20px;
 }
 
+.account-detail .back:hover,
+.book-detail .back:hover {
+  cursor: pointer;
+  text-decoration: none;
+}
+
 .account-detail tbody td.clickable,
 .book-detail tbody td.clickable {
   cursor: pointer;

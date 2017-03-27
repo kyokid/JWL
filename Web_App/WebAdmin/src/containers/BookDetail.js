@@ -41,7 +41,7 @@ class BookDetail extends Component {
 
 		return (
 			<div className="book-detail">
-				<a href="#" onClick={browserHistory.goBack} className="back">Back</a>
+				<a onClick={browserHistory.goBack} className="back">Back</a>
 				<div className="panel panel-primary" style={{ width: "100%" }}>
 					<div className="panel-heading">
 						<h3 className="panel-title">Detail of {book.title}.</h3>

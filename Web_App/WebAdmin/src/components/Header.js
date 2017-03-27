@@ -15,8 +15,8 @@ class Header extends Component {
 
 	render() {
 		const { activeManageAccounts, activeManageBooks, activeReturnBooks } = this.props
-		const { userRole } = localStorage
-
+		const { userId, userRole } = localStorage
+		
 		if (userRole === constant.ROLE_ADMIN) {
 			return (
 				<header className="navbar navbar-fixed-top navbar-inverse">
@@ -30,7 +30,9 @@ class Header extends Component {
 								</li>
 							</ul>
 						</nav>
-						<UserAvatar {...localStorage} onClickLogout={this.onClickLogout} />
+						<UserAvatar userId={userId}
+												userRole={userRole}
+												onClickLogout={this.onClickLogout} />
 					</div>
 				</header>
 			)
@@ -56,7 +58,9 @@ class Header extends Component {
 							</li>
 						</ul>
 					</nav>
-					<UserAvatar {...localStorage} onClickLogout={this.onClickLogout} />
+					<UserAvatar userId={userId}
+											userRole={userRole}
+											onClickLogout={this.onClickLogout} />
 				</div>
 			</header>
 		)
