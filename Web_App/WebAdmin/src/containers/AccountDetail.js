@@ -6,7 +6,7 @@ import { getAccountDetail } from '../actions/AccountsAction'
 import { initBorrow, checkout, deleteBorrowedCopy, fetchCopyFromCart, cancelAddingCopies } from '../actions/BookBorrowAction'
 import { switchStateNavBar } from '../actions/RouteAction'
 import * as Socket from '../helpers/Socket'
-import { UNDEFINED, MANAGE_ACCOUNTS } from '../constants/common'
+import { UNDEFINED, MANAGE_ACCOUNTS, ROLE_LIBRARIAN, DEFAULT_IMG } from '../constants/common'
 
 class AccountDetail extends Component {
 	librarianId = 1
@@ -14,6 +14,7 @@ class AccountDetail extends Component {
 	constructor(props) {
 		super(props)
 
+		this.renderBorrowBookBtns = this.renderBorrowBookBtns.bind(this)
 		this.renderBorrowedBooks = this.renderBorrowedBooks.bind(this)
 		this.renderBorrowedBookPanel = this.renderBorrowedBookPanel.bind(this)
 		this.onClickDeleteCopy = this.onClickDeleteCopy.bind(this)
@@ -54,12 +55,13 @@ class AccountDetail extends Component {
 
 	componentWillUnmount() {
 		if (this.state.isAddingBook) {
-			this.onUnload()
+			this.disconnectFromChannel()
 		}
 	}
 
 	render() {
 		const { account } = this.props
+		const { userRole } = localStorage
 
 		if (!account) {
 			return <div>Loading...</div>
@@ -85,24 +87,13 @@ class AccountDetail extends Component {
 							<p>Date of Birth: {account.profile.dateOfBirth}</p>
 						</div>
 						<div className="col-md-6 col-sm-6">
-							<img className="user-img" src={account.profile.imgUrl} alt="User Image" />
+							<img className="user-img" src={account.profile.imgUrl || DEFAULT_IMG} alt="User Image" />
 						</div>
 					</div>
 				</div>
-				<button
-					className={`cancel-add-book-btn btn btn-default ${this.state.isAddingBook ? '' : 'hidden'}`}
-					onClick={() => this.onClickCancel()}
-					style={{ marginLeft: "10px" }}>
-					Cancel
-				</button>
-				<button
-					className="btn btn-primary"
-					onClick={() => this.onClickStartAddBooks(userId, ibeaconId)}>
-					{this.state.isAddingBook? "Stop Adding Books" : "Start Adding Books"}
-				</button>
 
-				{this.renderBorrowedBookPanel(userId, account.borrowedBookCopies)}
-
+				{userRole === ROLE_LIBRARIAN && this.renderBorrowBookBtns(userId, ibeaconId)}
+				{userRole === ROLE_LIBRARIAN && this.renderBorrowedBookPanel(userId, account.borrowedBookCopies)}
 			</div>
 		)
 	}
@@ -162,6 +153,24 @@ class AccountDetail extends Component {
 		}
 
 		this.setState({ isAddingBook: !this.state.isAddingBook })
+	}
+
+	renderBorrowBookBtns(userId, ibeaconId) {
+		return (
+			<div className="borrow-books-btn-container">
+				<button
+					className={`cancel-add-book-btn btn btn-default ${this.state.isAddingBook ? '' : 'hidden'}`}
+					onClick={() => this.onClickCancel()}
+					style={{ marginLeft: "10px" }}>
+					Cancel
+				</button>
+				<button
+					className="btn btn-primary"
+					onClick={() => this.onClickStartAddBooks(userId, ibeaconId)}>
+					{this.state.isAddingBook? "Stop Adding Books" : "Start Adding Books"}
+				</button>
+			</div>
+		)
 	}
 
 	renderBorrowedBookPanel(userId, borrowedBookCopies) {

@@ -35,4 +35,10 @@ public class Constant {
         public static final String ALREADY = "beepbeep.mp3";
         public static final String ERROR = "alarm.mp3";
     }
+
+    public static final class Role {
+        public static final String ADMIN = "admin";
+        public static final String LIBRARIAN = "librarian";
+        public static final String BORROWER = "borrower";
+    }
 }

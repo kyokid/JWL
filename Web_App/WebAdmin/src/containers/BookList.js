@@ -7,18 +7,28 @@ import { browserHistory, Link } from "react-router"
 import { getAllBooks } from '../actions/BooksAction'
 import { switchStateNavBar } from '../actions/RouteAction'
 import { MANAGE_BOOKS } from '../constants/common'
+import { checkLibrarian } from '../helpers/Authorization'
 
 class BookList extends Component {
 	constructor(props) {
 		super(props)
+
+		this.state = { isLibrarian: true }
 	}
 
 	componentWillMount() {
+		if (!checkLibrarian()) {
+			this.setState({ isLibrarian: false })
+			return
+		}
+
 		this.props.switchStateNavBar(MANAGE_BOOKS)
 		this.props.getAllBooks()
 	}
 
 	render() {
+		if (!this.state.isLibrarian) return <div />
+
 		const { books, message } = this.props
 		if (!books) {
 			return (

@@ -33,6 +33,12 @@ public class UserController {
         return userService.getAllUser();
     }
 
+    // TODO: temporary function for client side's authorization
+    @RequestMapping(value = "/borrowers", method = RequestMethod.GET)
+    public RestServiceModel<List<UserDto>> getAllBorrowers() {
+        return userService.getAllBorrowers();
+    }
+
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public RestServiceModel<UserDto> createUser(@RequestBody UserDto userDto) {
         return userService.createUser(userDto);
@@ -43,9 +49,21 @@ public class UserController {
         return userService.login(userLogin);
     }
 
+    // TODO: temporary function for client side's authorization
+    @RequestMapping(path = "staff/login", method = RequestMethod.POST)
+    public RestServiceModel<AccountDto> loginByStaff(@RequestBody AccountDto userLogin) {
+        return userService.loginByStaff(userLogin);
+    }
+
     @RequestMapping(path = "/users/search", method = RequestMethod.GET)
     public RestServiceModel<List<UserDto>> search(@RequestParam(value = "term") String searchTerm) {
         return userService.findByUserIdLike(searchTerm);
+    }
+
+    // TODO: temporary function for client side's authorization
+    @RequestMapping(path = "/borrowers/search", method = RequestMethod.GET)
+    public RestServiceModel<List<UserDto>> searchBorrowers(@RequestParam(value = "term") String searchTerm) {
+        return userService.findBorrowersByUserIdLike(searchTerm);
     }
 
     @RequestMapping(path = "users/profile", method = RequestMethod.GET)

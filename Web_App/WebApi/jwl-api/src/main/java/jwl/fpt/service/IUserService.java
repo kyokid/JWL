@@ -14,11 +14,17 @@ import java.util.List;
 public interface IUserService {
     RestServiceModel<List<UserDto>> getAllUser();
 
+    RestServiceModel<List<UserDto>> getAllBorrowers();
+
     RestServiceModel<UserDto> createUser(UserDto newUserDto);
 
     RestServiceModel<List<UserDto>> findByUserIdLike(String term);
 
+    RestServiceModel<List<UserDto>> findBorrowersByUserIdLike(String term);
+
     RestServiceModel<AccountDto> login(AccountDto accountDto);
+
+    RestServiceModel<AccountDto> loginByStaff(AccountDto accountDto);
 
     AccountDto findByUsername(String userId);
 

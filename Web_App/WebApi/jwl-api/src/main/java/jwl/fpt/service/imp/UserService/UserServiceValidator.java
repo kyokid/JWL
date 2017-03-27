@@ -3,6 +3,7 @@ package jwl.fpt.service.imp.UserService;
 import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.UserRoleEntity;
 import jwl.fpt.model.RestServiceModel;
+import jwl.fpt.model.dto.AccountDto;
 import jwl.fpt.model.dto.UserDto;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.RoleRepository;
@@ -65,6 +66,23 @@ class UserServiceValidator {
         }
 
         // TODO: check for attr's length
+
+        return null;
+    }
+
+    static RestServiceModel<AccountDto> checkNullAccountDto(AccountDto accountDto) {
+        RestServiceModel<AccountDto> result = new RestServiceModel<>();
+
+        if (accountDto == null) {
+            result.setFailData(null, "Please input userID and password!");
+            return result;
+        }
+        String userId = accountDto.getUserId();
+        String password = accountDto.getPassword();
+        if (userId == null || password == null || userId.trim().equals("") || password.trim().equals("")) {
+            result.setFailData(null, "Invalid userID or password.");
+            return result;
+        }
 
         return null;
     }

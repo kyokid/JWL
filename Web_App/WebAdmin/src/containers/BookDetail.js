@@ -5,17 +5,25 @@ import { Link, browserHistory } from 'react-router'
 import { getBookDetail, getBorrowingCopies } from '../actions/BooksAction'
 import { switchStateNavBar } from '../actions/RouteAction'
 import { BOOK_LIST } from '../constants/url-path'
-import { MANAGE_BOOKS } from '../constants/common'
+import { MANAGE_BOOKS, DEFAULT_BOOK_IMG } from '../constants/common'
+import { checkLibrarian } from '../helpers/Authorization'
 
 class BookDetail extends Component {
 	constructor(props) {
 		super(props)
+
+		this.state = { isLibrarian: true }
 
 		this.renderBorrowingBooks = this.renderBorrowingBooks.bind(this)
 		this.renderBorrowingBookPanel = this.renderBorrowingBookPanel.bind(this)
 	}
 
 	componentWillMount() {
+		if (!checkLibrarian()) {
+			this.setState({ isLibrarian: false })
+			return
+		}
+
 		const bookId = this.props.params.id
 		this.props.getBookDetail(bookId)
 		this.props.getBorrowingCopies(bookId)
@@ -23,6 +31,8 @@ class BookDetail extends Component {
 	}
 
 	render() {
+		if (!this.state.isLibrarian) return <div />
+
 		const { book, borrowingCopiesOfBook } = this.props
 
 		if (!book) {
@@ -56,7 +66,7 @@ class BookDetail extends Component {
 							<p>Description: {book.description}</p>
 						</div>
 						<div className="col-md-6 col-sm-6">
-							<img className="book-img" src={book.thumbnail} alt="Book thumbnail" />
+							<img className="book-img" src={book.thumbnail || DEFAULT_BOOK_IMG} alt="Book thumbnail" />
 						</div>
 					</div>
 				</div>

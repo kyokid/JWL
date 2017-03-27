@@ -4,9 +4,9 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { browserHistory, Link } from "react-router"
 
-import { getAllAccounts } from '../actions/AccountsAction'
+import { getAllAccounts, getAllBorrowers } from '../actions/AccountsAction'
 import { switchStateNavBar } from '../actions/RouteAction'
-import { MANAGE_ACCOUNTS } from '../constants/common'
+import { MANAGE_ACCOUNTS, ROLE_ADMIN, ROLE_LIBRARIAN } from '../constants/common'
 
 class AccountList extends Component {
 	constructor(props) {
@@ -14,16 +14,21 @@ class AccountList extends Component {
 	}
 
 	componentWillMount() {
-		this.props.getAllAccounts()
+		const userRole = localStorage.userRole
+		if (userRole === ROLE_ADMIN) {
+			this.props.getAllAccounts()
+		} else if (userRole === ROLE_LIBRARIAN) {
+			this.props.getAllBorrowers()
+		}
+
 		this.props.switchStateNavBar(MANAGE_ACCOUNTS)
 	}
 
 	render() {
 		if (!this.props.accounts) {
 			return (
-				<div>
-
-					<h2>{this.props.message}</h2>
+				<div style={{ marginTop: "100px" }}>
+					<h2 style={{ fontSize: "35px" }}>{this.props.message}</h2>
 				</div>
 			)
 		}
@@ -81,7 +86,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-	return bindActionCreators({ getAllAccounts, switchStateNavBar }, dispatch)
+	return bindActionCreators({ getAllAccounts, switchStateNavBar, getAllBorrowers }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountList)

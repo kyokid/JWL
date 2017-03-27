@@ -15,6 +15,7 @@ import { UNDEFINED, RETURN_BOOKS } from '../constants/common'
 import { switchStateNavBar } from '../actions/RouteAction'
 import ReturnBooksPanel from './ReturnBooksPanel'
 import isLoggedIn from '../helpers/Authentication'
+import { checkLibrarian } from '../helpers/Authorization'
 import * as Socket from '../helpers/Socket'
 
 class BooksReturn extends Component {
@@ -23,6 +24,7 @@ class BooksReturn extends Component {
 
 		// TODO: get librarianId from current librarian
 		this.state = {
+			isLibrarian: true,
 			returningBooks: false,
 			librarianId: '1'
 		}
@@ -35,6 +37,11 @@ class BooksReturn extends Component {
 	}
 
 	componentWillMount() {
+		if (!checkLibrarian()) {
+			this.setState({ isLibrarian: false })
+			return
+		}
+
 		// need to check before connectToChannel
 		// if not, connectToChannel will prevent this page from redirecting to login
 		if (!isLoggedIn()) {
@@ -72,6 +79,8 @@ class BooksReturn extends Component {
 	}
 
 	render() {
+		if (!this.state.isLibrarian) return <div />
+
 		let { returningBooks, returnedBooks, responseMsg, responseCode, returnedBookOfAnotherUser } = this.props
 
 		if (returningBooks.length === 0) {

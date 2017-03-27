@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getUserByUsername, getAllAccounts } from '../actions/AccountsAction'
+import { getUserByUsername, getAllAccounts, getBorrowerByUsername, getAllBorrowers } from '../actions/AccountsAction'
+import { ROLE_ADMIN } from '../constants/common'
 
 class SearchBar extends Component {
 	constructor(props) {
@@ -34,10 +35,15 @@ class SearchBar extends Component {
 		event.preventDefault()
 
 		let searchTerm = this.state.term.trim()
+		let userRole = localStorage.userRole
 
 		if (searchTerm === "") {
 			this.setState({term: ''})
-			this.props.getAllAccounts()
+			if (userRole === ROLE_ADMIN) {
+				this.props.getAllAccounts()
+			} else {
+				this.props.getAllBorrowers()
+			}
 			return
 		}
 
@@ -46,7 +52,11 @@ class SearchBar extends Component {
 			searchTerm += "..."
 		}
 
-		this.props.getUserByUsername(searchTerm)
+		if (userRole === ROLE_ADMIN) {
+			this.props.getUserByUsername(searchTerm)
+		} else {
+			this.props.getBorrowerByUsername(searchTerm)
+		}
 
 		this.setState({term: ''})
 	}
@@ -57,7 +67,12 @@ class SearchBar extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-	return bindActionCreators({ getUserByUsername, getAllAccounts }, dispatch)
+	return bindActionCreators({
+		getUserByUsername,
+		getAllAccounts,
+		getBorrowerByUsername,
+		getAllBorrowers
+	}, dispatch)
 }
 
 export default connect(null, mapDispatchToProps)(SearchBar)

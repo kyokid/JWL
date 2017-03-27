@@ -15,6 +15,18 @@ export function getAllAccounts() {
 	}
 }
 
+export function getAllBorrowers() {
+	const request = axios({
+		method: 'GET',
+		url: `${Api.ROOT_URL}${Api.BORROWERS}`
+	})
+
+	return {
+		type: Types.FETCH_ACCOUNTS,
+		payload: request
+	}
+}
+
 export function getAccountDetail(id) {
 	const request = axios.get(`${Api.ROOT_URL}${Api.USERS}/${id}`)
 
@@ -26,6 +38,15 @@ export function getAccountDetail(id) {
 
 export function getUserByUsername(term) {
 	const request = axios.get(`${Api.ROOT_URL}${Api.USERS}/search?term=${term}`)
+
+	return {
+		type: Types.FETCH_ACCOUNTS,
+		payload: request
+	}
+}
+
+export function getBorrowerByUsername(term) {
+	const request = axios.get(`${Api.ROOT_URL}${Api.BORROWERS}/search?term=${term}`)
 
 	return {
 		type: Types.FETCH_ACCOUNTS,

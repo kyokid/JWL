@@ -43,7 +43,7 @@ public class UserService implements IUserService {
         if (accountEntities == null || accountEntities.isEmpty()) {
             result.setSuccessData(
                     null,
-                    "There is no user in the system...yet.Please add some.");
+                    "There is no user in the system...yet. Please add some.");
             return result;
         }
 
@@ -56,6 +56,30 @@ public class UserService implements IUserService {
         }
 
         result.setSuccessData(userDtos, "Found " + userDtos.size() + " user(s).");
+
+        return result;
+    }
+
+    @Override
+    public RestServiceModel<List<UserDto>> getAllBorrowers() {
+        RestServiceModel<List<UserDto>> result = new RestServiceModel<>();
+        List<AccountEntity> accountEntities = accountRepository.findAllBorrowers();
+        if (accountEntities == null || accountEntities.isEmpty()) {
+            result.setSuccessData(
+                    null,
+                    "There is no borrower in the system...yet. Please add some.");
+            return result;
+        }
+
+        List<UserDto> userDtos = new ArrayList<>();
+
+        for (AccountEntity accountEntity :
+                accountEntities) {
+            UserDto dto = modelMapper.map(accountEntity, UserDto.class);
+            userDtos.add(dto);
+        }
+
+        result.setSuccessData(userDtos, "Found " + userDtos.size() + " borrower(s).");
 
         return result;
     }
@@ -87,20 +111,38 @@ public class UserService implements IUserService {
 
     @Override
     public RestServiceModel<AccountDto> login(AccountDto accountDto) {
-        RestServiceModel<AccountDto> result = new RestServiceModel<>();
-
-        if (accountDto == null) {
-            result.setFailData(null, "Please input userID and password!");
+        RestServiceModel<AccountDto> result = UserServiceValidator.checkNullAccountDto(accountDto);
+        if (result != null) {
             return result;
         }
+
+        result = new RestServiceModel<>();
         String userId = accountDto.getUserId();
         String password = accountDto.getPassword();
-        if (userId == null || password == null || userId.trim().equals("") || password.trim().equals("")) {
+        AccountEntity entity = accountRepository.login(userId, password);
+        if (entity == null) {
             result.setFailData(null, "Invalid userID or password.");
             return result;
         }
 
-        AccountEntity entity = accountRepository.login(userId, password);
+        AccountDto resultData = modelMapper.map(entity, AccountDto.class);
+        resultData.setPassword("");
+        result.setSuccessData(resultData, "Login successfully!");
+
+        return result;
+    }
+
+    @Override
+    public RestServiceModel<AccountDto> loginByStaff(AccountDto accountDto) {
+        RestServiceModel<AccountDto> result = UserServiceValidator.checkNullAccountDto(accountDto);
+        if (result != null) {
+            return result;
+        }
+
+        result = new RestServiceModel<>();
+        String userId = accountDto.getUserId();
+        String password = accountDto.getPassword();
+        AccountEntity entity = accountRepository.loginByStaff(userId, password);
         if (entity == null) {
             result.setFailData(null, "Invalid userID or password.");
             return result;
@@ -146,7 +188,32 @@ public class UserService implements IUserService {
             userDtos.add(dto);
         }
 
-        result.setSuccessData(userDtos, "Found " + userDtos.size() + " user(s).");
+        result.setSuccessData(userDtos, "Found " + userDtos.size() + " account(s).");
+
+        return result;
+    }
+
+    @Override
+    public RestServiceModel<List<UserDto>> findBorrowersByUserIdLike(String searchTerm) {
+        RestServiceModel<List<UserDto>> result = new RestServiceModel<>();
+        List<AccountEntity> accountEntities = accountRepository
+                .findBorrowersByUserIdLike('%' + searchTerm + '%');
+        if (accountEntities == null || accountEntities.isEmpty()) {
+            result.setSuccessData(
+                    null,
+                    "We could not find any borrowers with userID like '" + searchTerm + "'");
+            return result;
+        }
+
+        List<UserDto> userDtos = new ArrayList<>();
+
+        for (AccountEntity accountEntity :
+                accountEntities) {
+            UserDto dto = modelMapper.map(accountEntity, UserDto.class);
+            userDtos.add(dto);
+        }
+
+        result.setSuccessData(userDtos, "Found " + userDtos.size() + " borrower(s).");
 
         return result;
     }

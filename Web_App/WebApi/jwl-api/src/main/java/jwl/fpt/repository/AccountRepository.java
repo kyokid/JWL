@@ -18,11 +18,22 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
             "where user.userId = ?1 and user.password = ?2 and user.activated = true")
     AccountEntity login(String userId, String password);
 
+    @Query("select user " +
+            "from AccountEntity user " +
+            "where user.userRole.role not like 'borrower' " +
+            "and user.userId = ?1 and user.password = ?2 and user.activated = true")
+    AccountEntity loginByStaff(String userId, String password);
+
     @Query("select p from ProfileEntity p where p.userId = ?1")
     ProfileEntity findProfileByUserId(String userId);
 
     @Query("select users from AccountEntity users where users.deleteDate is null")
     List<AccountEntity> findAllUsers();
+
+    @Query("select users " +
+            "from AccountEntity users " +
+            "where users.userRole.role like 'borrower' and users.deleteDate is null")
+    List<AccountEntity> findAllBorrowers();
 
     @Transactional
     @Modifying
@@ -39,6 +50,11 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
 
     @Query("select users from AccountEntity users where lower(users.userId) like lower(?1) and users.deleteDate is null")
     List<AccountEntity> findByUserIdLike(String term);
+
+    @Query("select users " +
+            "from AccountEntity users " +
+            "where lower(users.userId) like lower(?1) and users.userRole.role like 'borrower' and users.deleteDate is null")
+    List<AccountEntity> findBorrowersByUserIdLike(String term);
 
     @Transactional
     @Modifying
