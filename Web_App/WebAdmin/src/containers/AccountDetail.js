@@ -71,7 +71,7 @@ class AccountDetail extends Component {
 		const ibeaconId = this.state.ibeaconId
 		return (
 			<div className="account-detail">
-				<Link to="/" className="back">Back</Link>
+				<a href="#" onClick={browserHistory.goBack} className="back">Back</a>
 				<div className="panel panel-primary" style={{ width: "100%" }}>
 					<div className="panel-heading">
 						<h3 className="panel-title">Detail of User {userId}.</h3>
