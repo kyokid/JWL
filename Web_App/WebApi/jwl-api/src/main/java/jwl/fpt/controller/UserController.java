@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -168,5 +169,13 @@ public class UserController {
         responseObj.setSucceed(true);
         responseObj.setData(result);
         return responseObj;
+    }
+
+    @RequestMapping(path = "/getSystemDate", method = RequestMethod.GET)
+    public RestServiceModel<String> getSystemDate() {
+        Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
+        RestServiceModel<String> result = new RestServiceModel<>();
+        result.setSuccessData(currentDate.toString(), null);
+        return result;
     }
 }
