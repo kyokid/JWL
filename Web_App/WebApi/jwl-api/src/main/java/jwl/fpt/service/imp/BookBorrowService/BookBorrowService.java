@@ -681,8 +681,8 @@ public class BookBorrowService implements IBookBorrowService {
             if (!listUser.contains(accountDto)) {
                 listUser.add(accountDto);
             }
-            BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
-            result.add(dto);
+//            BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+//            result.add(dto);
         }
         for (AccountDto dto : listUser) {
             List<BorrowedBookCopyDto> bookDeadlines = new ArrayList<>();
@@ -694,11 +694,11 @@ public class BookBorrowService implements IBookBorrowService {
                     messageBody = "Bạn có sách phải trả vào hôm nay và sau 3 ngày nữa";
                 }
             }
-            for (BorrowedBookCopyDto borrowedBookCopyDto : result) {
-                if (dto.getUserId().equals(borrowedBookCopyDto.getAccountUserId())) {
-                    bookDeadlines.add(borrowedBookCopyDto);
-                }
-            }
+//            for (BorrowedBookCopyDto borrowedBookCopyDto : result) {
+//                if (dto.getUserId().equals(borrowedBookCopyDto.getAccountUserId())) {
+//                    bookDeadlines.add(borrowedBookCopyDto);
+//                }
+//            }
             try {
                 // push noti
                 NotificationUtils.pushNotificationDeadline(dto.getGoogleToken(), messageBody);
