@@ -439,6 +439,8 @@ public class BookBorrowService implements IBookBorrowService {
             }
         }
         result.setData(listKhongGiaHanDTO);
+        result.setSucceed(true);
+        result.setTextMessage("Found " + listKhongGiaHanDTO.size() + " book(s).");
         return result;
     }
 
