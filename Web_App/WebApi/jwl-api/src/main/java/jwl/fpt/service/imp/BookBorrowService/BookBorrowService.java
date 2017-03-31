@@ -338,7 +338,7 @@ public class BookBorrowService implements IBookBorrowService {
     @Override
     public RestServiceModel<BorrowedBookCopyDto> renewBorrowedBookCopy(String rfid) {
         RestServiceModel<BorrowedBookCopyDto> result = new RestServiceModel<>();
-
+        int resultUpdate;
         if (rfid == null) {
             result.setFailData(null, "Sách bạn yêu cầu không có.");
             return result;
@@ -355,7 +355,11 @@ public class BookBorrowService implements IBookBorrowService {
             return result;
         }
         //trả sách
-        int resultUpdate = borrowedBookCopyRepo.updateReturnDate(new Date(Calendar.getInstance().getTimeInMillis()), rfid);
+        if (currentExtentNumber == 0) {
+            resultUpdate = borrowedBookCopyRepo.updateReturnDateWhereExtendEquals0(new Date(Calendar.getInstance().getTimeInMillis()), rfid);
+        } else {
+            resultUpdate = borrowedBookCopyRepo.updateReturnDate(new Date(Calendar.getInstance().getTimeInMillis()), rfid);
+        }
         if (resultUpdate != 0) {
             //get information sách mới trả
 
@@ -391,6 +395,50 @@ public class BookBorrowService implements IBookBorrowService {
             result.setSuccessData(dto, message);
         }
 
+        return result;
+    }
+
+    @Override
+    public RestServiceModel<List<BorrowedBookCopyDto>> getHistory(String userId) {
+        RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
+        //1. get tat ca sach cua user khanhkt, co rootId is null and return date not null
+        List<BorrowedBookCopyEntity> listKhongGiaHan = borrowedBookCopyRepo.findByUserIdAndRootIdNULL(userId);
+        //2. convert list 1 to dto
+        List<BorrowedBookCopyDto> listKhongGiaHanDTO = new ArrayList<>();
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity: listKhongGiaHan){
+            BorrowedBookCopyDto borrowedBookCopyDto =
+                    modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+            listKhongGiaHanDTO.add(borrowedBookCopyDto);
+        }
+
+        //3. get tat ca sach cua user khanhkt, co root id not null, return date not null * get last row.
+        List<BorrowedBookCopyEntity> listGiaHanVaDaTra = borrowedBookCopyRepo.getListLast(userId);
+        //4. convert list 3
+        List<BorrowedBookCopyDto> listGiaHanVaDaTraDTO = new ArrayList<>();
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity: listGiaHanVaDaTra){
+            BorrowedBookCopyDto borrowedBookCopyDto =
+                    modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+            listGiaHanVaDaTraDTO.add(borrowedBookCopyDto);
+        }
+        //5. set borrow_date
+        List<BorrowedBookCopyEntity> listFirstGiaHan = borrowedBookCopyRepo.getListFirst(userId);
+        for (int i = 0; i < listGiaHanVaDaTraDTO.size(); i++){
+            listGiaHanVaDaTraDTO.get(i).setBorrowedDate(listFirstGiaHan.get(i).getBorrowedDate());
+        }
+
+        listKhongGiaHanDTO.addAll(listGiaHanVaDaTraDTO);
+        for (BorrowedBookCopyDto dto: listKhongGiaHanDTO){
+            Date deadline = dto.getDeadlineDate();
+            Date returnDate = dto.getReturnDate();
+            long aaa = (deadline.getTime() - returnDate.getTime())/86400000;
+            System.out.println("So ngay: " + aaa);
+            if (aaa >= 0){
+                dto.setBookStatus(0);
+            }else {
+                dto.setBookStatus((int)aaa);
+            }
+        }
+        result.setData(listKhongGiaHanDTO);
         return result;
     }
 

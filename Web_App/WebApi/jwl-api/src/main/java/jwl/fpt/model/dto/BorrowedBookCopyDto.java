@@ -32,4 +32,5 @@ public class BorrowedBookCopyDto {
     private String bookCopyBookThumbnail;
     private List<BookAuthorDto> bookCopyBookBookAuthors;
     private List<BookCategoryDto> bookCopyBookBookCategories;
+    private Integer bookStatus;
 }

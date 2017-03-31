@@ -25,4 +25,6 @@ public interface IBookBorrowService {
     RestServiceModel<BorrowedBookCopyDto> addCopyToCartByLibrarian(RfidDto rfidDto);
 
     RestServiceModel<BorrowedBookCopyDto> renewBorrowedBookCopy(String rfid);
+
+    RestServiceModel<List<BorrowedBookCopyDto>> getHistory(String userId);
 }
