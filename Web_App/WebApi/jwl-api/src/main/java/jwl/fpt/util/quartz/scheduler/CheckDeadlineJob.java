@@ -27,7 +27,6 @@ public class CheckDeadlineJob implements Job{
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        //Todo: check deadline of book here
         logger.info("Job ** {} ** fired @ {}", jobExecutionContext.getJobDetail().getKey().getName(), jobExecutionContext.getFireTime());
         try {
             bookBorrowService.checkBorrowingBookCopyDeadline();

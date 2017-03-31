@@ -79,6 +79,11 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
             "and acc.activated = true")
     String checkBorrowerByLibrarian(String userId);
 
+    @Transactional
+    @Modifying
+    @Query("update AccountEntity acc set acc.inLibrary = false where acc.inLibrary = true")
+    int updateInLibrary();
+
 //    @Transactional
 //    @Modifying
 //    @Query("update AccountEntity a set a.checkinKey = ?1 where a.userId = ?2")

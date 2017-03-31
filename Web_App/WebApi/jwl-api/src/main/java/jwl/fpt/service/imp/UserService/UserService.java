@@ -284,4 +284,9 @@ public class UserService implements IUserService {
     private List<BorrowerTicketEntity> createNewBorrowerTicket(){
         return null;
     }
+
+
+    public void autoCheckOutUser() {
+        accountRepository.updateInLibrary();
+    }
 }
