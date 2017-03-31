@@ -18,6 +18,8 @@ public class AccountEntity {
     private Boolean isInLibrary;
     private Boolean isActivated;
     private String googleToken;
+    private Integer maxNumberOfBooks;
+    private Integer budget;
     private Date deleteDate;
     private UserRoleEntity userRole;
     private ProfileEntity profile;
@@ -83,6 +85,26 @@ public class AccountEntity {
 
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
+    }
+
+    @Basic
+    @Column(name = "max_number_of_books")
+    public Integer getMaxNumberOfBooks() {
+        return maxNumberOfBooks;
+    }
+
+    public void setMaxNumberOfBooks(Integer maxNumberOfBooks) {
+        this.maxNumberOfBooks = maxNumberOfBooks;
+    }
+
+    @Basic
+    @Column(name = "budget")
+    public Integer getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Integer budget) {
+        this.budget = budget;
     }
 
     @Override

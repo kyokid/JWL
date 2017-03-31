@@ -1,6 +1,7 @@
 package jwl.fpt.entity;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.Collection;
 
 /**
@@ -19,6 +20,7 @@ public class BookEntity {
     private String isbn;
     private Integer price;
     private String thumbnail;
+    private Date deleteDate;
     private BookTypeEntity bookType;
     private BookPositionEntity bookPosition;
     private Collection<BookAuthorEntity> bookAuthors;
@@ -126,6 +128,16 @@ public class BookEntity {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
+    }
+
+    @Basic
+    @Column(name = "delete_date")
+    public Date getDeleteDate() {
+        return deleteDate;
+    }
+
+    public void setDeleteDate(Date deleteDate) {
+        this.deleteDate = deleteDate;
     }
 
     @Override

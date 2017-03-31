@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS public.account
 );
 ALTER TABLE public.account ADD COLUMN google_token text;
 ALTER TABLE public.account ADD COLUMN delete_date DATE;
+ALTER TABLE public.account ADD COLUMN max_number_of_books INTEGER DEFAULT 3;
+ALTER TABLE public.account ADD COLUMN budget INTEGER DEFAULT 0;
 
 -- profile:
 -- Other information of a user.
@@ -143,6 +145,7 @@ CREATE TABLE IF NOT EXISTS public.book
 );
 ALTER TABLE public.book ADD COLUMN thumbnail TEXT;
 ALTER TABLE public.book ADD COLUMN price INTEGER;
+ALTER TABLE public.book ADD COLUMN delete_date DATE;
 
 -- book_category:
 -- Relation table of book and category.
