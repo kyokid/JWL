@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS public.account
 ALTER TABLE public.account ADD COLUMN google_token text;
 ALTER TABLE public.account ADD COLUMN delete_date DATE;
 ALTER TABLE public.account ADD COLUMN max_number_of_books INTEGER DEFAULT 3;
-ALTER TABLE public.account ADD COLUMN budget INTEGER DEFAULT 0;
+ALTER TABLE public.account ADD COLUMN total_balance INTEGER DEFAULT 0;
+ALTER TABLE public.account ADD COLUMN usable_balance INTEGER DEFAULT 0;
 
 -- profile:
 -- Other information of a user.
@@ -121,6 +122,7 @@ CREATE TABLE IF NOT EXISTS public.book_type
 );
 CREATE UNIQUE INDEX IF NOT EXISTS book_type_name_uindex ON public.book_type (name);
 ALTER TABLE public.book_type ADD COLUMN extend_times_limit INT NOT NULL DEFAULT 3;
+ALTER TABLE public.book_type ADD COLUMN late_days_limit INT NOT NULL DEFAULT 7;
 
 -- book:
 -- Hold all information of a book, and the number of its copies.
@@ -238,6 +240,7 @@ ALTER TABLE public.borrowed_book_copy DROP COLUMN days_per_extend;
 ALTER TABLE public.borrowed_book_copy ADD COLUMN extend_number INTEGER NOT NULL;
 ALTER TABLE public.borrowed_book_copy ADD COLUMN root_id INTEGER;
 ALTER TABLE public.borrowed_book_copy ADD COLUMN deadline_date DATE NOT NULL;
+ALTER TABLE public.borrowed_book_copy ADD COLUMN deposit INTEGER DEFAULT 0;
 
 -- borrower_ticket:
 -- A ticket that a borrower uses to check in library.

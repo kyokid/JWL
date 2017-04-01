@@ -15,6 +15,7 @@ public class BorrowedBookCopyEntity {
     private Date deadlineDate;
     private Integer extendNumber;
     private Integer rootId;
+    private Integer deposit;
     private BookCopyEntity bookCopy;
     private AccountEntity account;
 
@@ -138,5 +139,15 @@ public class BorrowedBookCopyEntity {
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setUserId(userId);
         this.account = accountEntity;
+    }
+
+    @Basic
+    @Column(name = "deposit")
+    public Integer getDeposit() {
+        return deposit;
+    }
+
+    public void setDeposit(Integer deposit) {
+        this.deposit = deposit;
     }
 }

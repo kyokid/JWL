@@ -19,7 +19,8 @@ public class AccountEntity {
     private Boolean isActivated;
     private String googleToken;
     private Integer maxNumberOfBooks;
-    private Integer budget;
+    private Integer totalBalance;
+    private Integer usableBalance;
     private Date deleteDate;
     private UserRoleEntity userRole;
     private ProfileEntity profile;
@@ -98,13 +99,23 @@ public class AccountEntity {
     }
 
     @Basic
-    @Column(name = "budget")
-    public Integer getBudget() {
-        return budget;
+    @Column(name = "total_balance")
+    public Integer getTotalBalance() {
+        return totalBalance;
     }
 
-    public void setBudget(Integer budget) {
-        this.budget = budget;
+    public void setTotalBalance(Integer totalBalance) {
+        this.totalBalance = totalBalance;
+    }
+
+    @Basic
+    @Column(name = "usable_balance")
+    public Integer getUsableBalance() {
+        return usableBalance;
+    }
+
+    public void setUsableBalance(Integer usableBalance) {
+        this.usableBalance = usableBalance;
     }
 
     @Override

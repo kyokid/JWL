@@ -14,6 +14,7 @@ public class BookTypeEntity {
     private Integer borrowLimitDays;
     private Integer daysPerExtend;
     private Integer extendTimesLimit;
+    private Integer lateDaysLimit;
     private Collection<BookEntity> books;
 
     @Id
@@ -104,5 +105,15 @@ public class BookTypeEntity {
 
     public void setBooks(Collection<BookEntity> booksById) {
         this.books = booksById;
+    }
+
+    @Basic
+    @Column(name = "late_days_limit")
+    public Integer getLateDaysLimit() {
+        return lateDaysLimit;
+    }
+
+    public void setLateDaysLimit(Integer lateDaysLimit) {
+        this.lateDaysLimit = lateDaysLimit;
     }
 }
