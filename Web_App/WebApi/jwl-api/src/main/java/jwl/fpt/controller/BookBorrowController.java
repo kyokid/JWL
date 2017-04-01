@@ -3,6 +3,8 @@ package jwl.fpt.controller;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 import jwl.fpt.service.IBookBorrowService;
+import jwl.fpt.service.IUserService;
+import jwl.fpt.util.NotificationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,8 @@ public class BookBorrowController {
     private IBookBorrowService bookBorrowService;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private IUserService userService;
 
     @RequestMapping(value = "/init/borrow", method = RequestMethod.POST)
     public RestServiceModel<BorrowerDto> initBorrowCart(@RequestBody BorrowerDto borrowerDto) {
@@ -56,7 +60,14 @@ public class BookBorrowController {
 
     @RequestMapping(value = "/librarian/checkout", method = RequestMethod.POST)
     public RestServiceModel<List<BorrowedBookCopyDto>> checkoutCartByLirarian(@RequestBody BorrowerDto borrowerDto) {
-        return bookBorrowService.checkoutCart(borrowerDto, true);
+        RestServiceModel<List<BorrowedBookCopyDto>> result =
+                bookBorrowService.checkoutCart(borrowerDto, true);
+        if (result.isSucceed()){
+            String userId = result.getData().get(0).getAccountUserId();
+            String token = userService.findByUsername(userId).getGoogleToken();
+            NotificationUtils.pushNotiRefreshBorrowedBook(token);
+        }
+        return result;
     }
 
     @RequestMapping(value = "/librarian/cancel", method = RequestMethod.POST)

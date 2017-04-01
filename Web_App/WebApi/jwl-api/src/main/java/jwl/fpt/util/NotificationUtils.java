@@ -141,6 +141,39 @@ public class NotificationUtils {
         post.setHeader("Authorization", "key=" + Constant.APP_TOKEN);
         JSONObject body = new JSONObject();
         body.put("body", false);
+        body.put("title", "Refresh");
+        JSONObject entity = new JSONObject();
+        entity.put("to", googleToken);
+        entity.put("data", body);
+        System.out.println(entity.toString());
+        try {
+            post.setEntity(new StringEntity(entity.toString()));
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            HttpResponse response = client.execute(post);
+            System.out.println(response.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void pushNotiRefreshBorrowedBook(String googleToken){
+        HttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost(url);
+
+        // add header
+        post.setHeader("Content-Type", "application/json");
+        post.setHeader("Authorization", "key=" + Constant.APP_TOKEN);
+        JSONObject body = new JSONObject();
+        body.put("body", "refresh");
         JSONObject entity = new JSONObject();
         entity.put("to", googleToken);
         entity.put("notification", body);

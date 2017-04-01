@@ -181,10 +181,4 @@ public class UserController {
         result.setSuccessData(currentDate.toString(), null);
         return result;
     }
-
-    @RequestMapping(path = "/users/{id}/history", method = RequestMethod.GET)
-    public RestServiceModel<BookDto> getHistory(@PathVariable("id") String userId){
-
-        return null;
-    }
 }
