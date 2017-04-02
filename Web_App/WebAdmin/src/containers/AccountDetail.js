@@ -72,6 +72,7 @@ class AccountDetail extends Component {
 		return (
 			<div className="account-detail">
 				<a onClick={browserHistory.goBack} className="back">Back</a>
+				{this.renderToolBtns()}
 				<div className="panel panel-primary" style={{ width: "100%" }}>
 					<div className="panel-heading">
 						<h3 className="panel-title">Detail of User {userId}.</h3>
@@ -155,13 +156,26 @@ class AccountDetail extends Component {
 		this.setState({ isAddingBook: !this.state.isAddingBook })
 	}
 
+	renderToolBtns() {
+		return (
+			<div className="borrow-books-btn-container" style={{ marginTop: "30px" }}>
+				<button className="edit-account-btn btn btn-info" style={{ marginRight: "15px" }}>
+					Edit
+				</button>
+				<button className="delete-account-btn btn btn-danger">
+					Delete
+				</button>
+			</div>
+		)
+	}
+
 	renderBorrowBookBtns(userId, ibeaconId) {
 		return (
 			<div className="borrow-books-btn-container">
 				<button
 					className={`cancel-add-book-btn btn btn-default ${this.state.isAddingBook ? '' : 'hidden'}`}
 					onClick={() => this.onClickCancel()}
-					style={{ marginLeft: "10px" }}>
+					style={{ marginRight: "15px" }}>
 					Cancel
 				</button>
 				<button

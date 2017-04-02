@@ -71,6 +71,7 @@ class AccountList extends Component {
 				<td>{account.inLibrary? "True" : "False"}</td>
 				<td>{account.activated? "True" : "False"}</td>
 				<td>
+					<a href="#"><span className="glyphicon glyphicon-pencil" aria-hidden="true" /></a>
 					<a href="#"><span className="glyphicon glyphicon-remove" aria-hidden="true" /></a>
 				</td>
 			</tr>
