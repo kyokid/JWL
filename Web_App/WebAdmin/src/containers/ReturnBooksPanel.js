@@ -51,7 +51,7 @@ class ReturnBooksPanel extends Component {
 					<button
 						className={`cancel-add-book-btn btn btn-default ${returningBooks ? '' : 'hidden'}`}
 						onClick={() => this.props.cancelReturnCopies(librarianId)}
-						style={{ marginLeft: "10px" }}>
+						style={{ marginRight: "5px" }}>
 						Cancel
 					</button>
 					<button

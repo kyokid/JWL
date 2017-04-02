@@ -159,7 +159,7 @@ class AccountDetail extends Component {
 	renderToolBtns() {
 		return (
 			<div className="borrow-books-btn-container" style={{ marginTop: "30px" }}>
-				<button className="edit-account-btn btn btn-info" style={{ marginRight: "15px" }}>
+				<button className="edit-account-btn btn btn-info" style={{ marginRight: "5px" }}>
 					Edit
 				</button>
 				<button className="delete-account-btn btn btn-danger">
@@ -175,7 +175,7 @@ class AccountDetail extends Component {
 				<button
 					className={`cancel-add-book-btn btn btn-default ${this.state.isAddingBook ? '' : 'hidden'}`}
 					onClick={() => this.onClickCancel()}
-					style={{ marginRight: "15px" }}>
+					style={{ marginRight: "5px" }}>
 					Cancel
 				</button>
 				<button
