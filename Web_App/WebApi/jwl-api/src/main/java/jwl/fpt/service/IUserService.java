@@ -42,4 +42,6 @@ public interface IUserService {
 //    String requestKey(String userId);
 
 //    Boolean checkin(String key, String userId);
+
+    RestServiceModel<Boolean> setIsActivate(String userId, boolean isActivate);
 }

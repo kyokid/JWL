@@ -234,6 +234,25 @@ public class UserService implements IUserService {
         accountRepository.updateGoogleToken(googleToken, userId);
     }
 
+    @Override
+    public RestServiceModel<Boolean> setIsActivate(String userId, boolean isActivate) {
+        RestServiceModel<Boolean> result = new RestServiceModel<>();
+        int resultSQL = accountRepository.setActivate(userId, isActivate);
+        if (resultSQL > 0){
+            String textMessage = isActivate ? "Borrower " + userId + " has been activated!"
+                    : "Borrower " + userId + " has been deactivated!" ;
+            result.setTextMessage(textMessage);
+            //current state of isActivate after call api.
+            result.setData(isActivate);
+            result.setSucceed(true);
+        }else {
+            result.setData(false);
+            result.setSucceed(false);
+            result.setTextMessage("Unexpected error! Can not update account " + userId );
+        }
+        return result;
+    }
+
 //    @Override
 //    public String requestKey(String userId) {
 //        // TODO: Thiendn
@@ -297,4 +316,5 @@ public class UserService implements IUserService {
     public void autoCheckOutUser() {
         accountRepository.updateInLibrary();
     }
+
 }

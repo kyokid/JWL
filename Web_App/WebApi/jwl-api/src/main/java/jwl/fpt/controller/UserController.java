@@ -186,4 +186,10 @@ public class UserController {
         result.setSuccessData(currentDate.toString(), null);
         return result;
     }
+
+    @RequestMapping(path = "/users/{id}/set_activate/{is_activate}", method = RequestMethod.GET)
+    public RestServiceModel<Boolean> setIsActivate(@PathVariable("is_activate") boolean isActivate,
+                                                   @PathVariable("id") String userId){
+        return userService.setIsActivate(userId, isActivate);
+    }
 }
