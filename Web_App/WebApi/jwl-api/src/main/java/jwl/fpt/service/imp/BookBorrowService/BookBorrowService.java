@@ -286,7 +286,7 @@ public class BookBorrowService implements IBookBorrowService {
             return result;
         }
 
-        String rfid = rfidDto.getRfid();
+        String inputRfid = rfidDto.getRfid();
         String ibeaconId = rfidDto.getIbeaconId();
         BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
         RestServiceModel checkFoundCart = BookBorrowServiceValidator
@@ -296,22 +296,23 @@ public class BookBorrowService implements IBookBorrowService {
         }
 
         Set<String> cartRfids = borrowCart.getRfids();
-        if (cartRfids != null && cartRfids.contains(rfid)) {
+        if (cartRfids != null && cartRfids.contains(inputRfid)) {
             result.setFailData(
                     null,
-                    "The book copy " + rfid + " had already been added.",
+                    "The book copy " + inputRfid + " had already been added.",
                     "Book has just been added!");
             return result;
         }
 
-        BookCopyEntity bookCopyEntity = bookCopyRepo.findAvailableCopy(rfid);
+        int newUsableBalance;
+        BookCopyEntity bookCopyEntity = bookCopyRepo.findAvailableCopy(inputRfid);
         if (bookCopyEntity == null) {
-            rfid = bookCopyRepo.checkRfid(rfid);
+            inputRfid = bookCopyRepo.checkRfid(inputRfid);
 
-            if (rfid != null) {
+            if (inputRfid != null) {
                 result.setFailData(
                         null,
-                        "The book copy " + rfid + " had already been borrowed.",
+                        "The book copy " + inputRfid + " had already been borrowed.",
                         "Book added before!");
             } else {
                 result.setFailData(
@@ -320,11 +321,19 @@ public class BookBorrowService implements IBookBorrowService {
                         "Invalid book!");
             }
             return result;
+        } else {
+            int currentUsableBalance = borrowCart.getUsableBalance();
+            newUsableBalance = calculateRemainUsableBalanceIfBorrowCopy(bookCopyEntity, currentUsableBalance);
+            if (newUsableBalance < 0) {
+                result.setFailData(
+                        null,
+                        "User " + borrowCart.getUserId() + " does not have enough to borrow copy " + inputRfid,
+                        "Not enough money!");
+                return result;
+            }
         }
 
-        Set<String> rfids = new HashSet<>();
-        rfids.add(rfid);
-        addCopiesToBorrowCart(rfids, borrowCart);
+        addCopyToBorrowCart(inputRfid, newUsableBalance, borrowCart);
 
         List<BookCopyEntity> bookCopyEntities = new ArrayList<>();
         bookCopyEntities.add(bookCopyEntity);
