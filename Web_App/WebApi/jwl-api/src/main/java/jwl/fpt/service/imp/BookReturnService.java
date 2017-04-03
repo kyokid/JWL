@@ -8,6 +8,7 @@ import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.ReturnCart;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.RfidDto;
+import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BookCopyRepo;
 import jwl.fpt.repository.BorrowedBookCopyRepo;
 import jwl.fpt.repository.WishBookRepository;
@@ -34,6 +35,8 @@ public class BookReturnService implements IBookReturnService {
     @Autowired
     private WishBookRepository wishBookRepository;
 
+    @Autowired
+    AccountRepository accountRepository;
     private List<ReturnCart> returnCarts = new ArrayList<>();
 
     // 0. Check find BorrowedBookCopyEntity by rfid. If not found, return fail: "Book is not being borrowed." Else:
@@ -128,7 +131,6 @@ public class BookReturnService implements IBookReturnService {
 
         result = saveReturnCart(returnCart);
         returnCarts.remove(returnCart);
-
         return result;
     }
 

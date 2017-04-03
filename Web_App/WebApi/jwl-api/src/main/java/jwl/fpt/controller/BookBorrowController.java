@@ -63,7 +63,7 @@ public class BookBorrowController {
         RestServiceModel<List<BorrowedBookCopyDto>> result =
                 bookBorrowService.checkoutCart(borrowerDto, true);
         if (result.isSucceed()){
-            String userId = result.getData().get(0).getAccountUserId();
+            String userId = borrowerDto.getUserId();
             String token = userService.findByUsername(userId).getGoogleToken();
             NotificationUtils.pushNotiRefreshBorrowedBook(token);
         }

@@ -151,9 +151,9 @@ public class UserController {
     }
 
     @RequestMapping(path = "/users/{id}/checkin", method = RequestMethod.GET)
-    public RestServiceModel<Boolean> checkin(@PathVariable("id") String userId,
+    public RestServiceModel<String> checkin(@PathVariable("id") String userId,
             @RequestParam("key")String privateKey){
-        RestServiceModel<Boolean> responseObj = new RestServiceModel<>();
+        RestServiceModel<String> responseObj = new RestServiceModel<>();
 
         //Generate key from userid
         Date now = new Date(Calendar.getInstance().getTimeInMillis());
@@ -164,15 +164,18 @@ public class UserController {
         //so sanh key hien tai voi key client send.
         boolean result = finalKey.equals(privateKey);
         String token = userService.findByUsername(userId).getGoogleToken();
-        if (result) {
-
+        boolean isActivate_of_user = userService.getActivate(userId);
+        if (result && isActivate_of_user) {
             NotificationUtils.callNotification(userId, token);
             accountRepository.setStatus(true, userId);
+            responseObj.setData(userId);
+            responseObj.setSucceed(true);
         }else {
             NotificationUtils.callNotificationFail(userId, token);
+            responseObj.setSucceed(false);
+            responseObj.setData("Keys are equal?: " + result + "\n" + "isActivate: " + isActivate_of_user);
         }
-        responseObj.setSucceed(true);
-        responseObj.setData(result);
+
         return responseObj;
     }
 
