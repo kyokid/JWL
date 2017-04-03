@@ -7,6 +7,7 @@ import { initBorrow, checkout, deleteBorrowedCopy, fetchCopyFromCart, cancelAddi
 import { switchStateNavBar } from '../actions/RouteAction'
 import * as Socket from '../helpers/Socket'
 import { UNDEFINED, MANAGE_ACCOUNTS, ROLE_LIBRARIAN, DEFAULT_IMG, BOOK_STATUS_OK } from '../constants/common'
+import formatMoney from '../helpers/CurrencyFormatter'
 
 class AccountDetail extends Component {
 	librarianId = 1
@@ -69,6 +70,9 @@ class AccountDetail extends Component {
 
 		const userId = this.state.userId
 		const ibeaconId = this.state.ibeaconId
+		const totalBalance = formatMoney(account.totalBalance)
+		const usableBalance = formatMoney(account.usableBalance)
+
 		return (
 			<div className="account-detail">
 				<a onClick={browserHistory.goBack} className="back">Back</a>
@@ -86,6 +90,8 @@ class AccountDetail extends Component {
 							<p>Address: {account.profile.address}</p>
 							<p>Place of Work: {account.profile.placeOfWork}</p>
 							<p>Date of Birth: {account.profile.dateOfBirth}</p>
+							<p className="balance">Total Balance: {totalBalance}</p>
+							<p className="balance">Usable Balance: {usableBalance}</p>
 						</div>
 						<div className="col-md-6 col-sm-6">
 							<img className="user-img" src={account.profile.imgUrl || DEFAULT_IMG} alt="User Image" />
@@ -151,6 +157,8 @@ class AccountDetail extends Component {
 			console.log("On Disconnect Socket: " + userId + " " + ibeaconId)
 			this.props.checkout(userId, ibeaconId)
 			this.disconnectFromChannel()
+			// TODO: hack code. Fix with dividing account detail & its borrow books into 2 apis
+			window.location.reload()
 		}
 
 		this.setState({ isAddingBook: !this.state.isAddingBook })
@@ -215,6 +223,7 @@ class AccountDetail extends Component {
 						<th>No.</th>
 						<th>RFID</th>
 						<th>Title</th>
+						<th>Deposit</th>
 						<th>Borrowed Date</th>
 						<th>Dealine Date</th>
 						<th>Book Status</th>
@@ -233,12 +242,14 @@ class AccountDetail extends Component {
 		const borrowedCopyRfid = borrowedBook.bookCopyRfid
 		const bookId = borrowedBook.bookCopyBookId
 		const bookStatus = borrowedBook.bookStatus
+		const deposit = formatMoney(borrowedBook.deposit)
 
 		return (
 			<tr key={borrowedCopyRfid}>
 				<td>{index + 1}</td>
 				<td>{borrowedCopyRfid}</td>
 				<td className="clickable" onClick={() => browserHistory.push(`/books/${bookId}`)}>{borrowedBook.bookCopyBookTitle}</td>
+				<td className="deposit">{deposit}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
 				{bookStatus === null && <td>pending...</td>}
@@ -257,6 +268,8 @@ class AccountDetail extends Component {
 
 	onClickDeleteCopy(userId, borrowedCopyRfid) {
 		this.props.deleteBorrowedCopy(userId, borrowedCopyRfid)
+		// TODO: hack code. Fix with dividing account detail & its borrow books into 2 apis
+		window.location.reload()
 	}
 }
 

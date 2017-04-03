@@ -34,9 +34,10 @@ public class BorrowedBookCopyDto {
     private Integer bookCopyBookPublishYear;
     private Integer bookCopyBookPrice;
     private String bookCopyBookThumbnail;
+    private Integer bookStatus;
+    private Integer deposit;
     private List<BookAuthorDto> bookCopyBookBookAuthors;
     private List<BookCategoryDto> bookCopyBookBookCategories;
-    private Integer bookStatus;
 
     public static void setBookStatusForOneDto(BorrowedBookCopyDto borrowedBookCopyDto) {
         if (borrowedBookCopyDto == null || borrowedBookCopyDto.getDeadlineDate() == null) {

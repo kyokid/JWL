@@ -706,7 +706,8 @@ public class BookBorrowService implements IBookBorrowService {
         return result;
     }
 
-    private int calculateUsableBalanceFromDb(String userId) {
+    @Override
+    public int calculateUsableBalanceFromDb(String userId) {
         AccountEntity accountEntity = accountRepository.findByUserId(userId);
         int usableBalance = accountEntity.getTotalBalance();
         if (usableBalance == 0) {

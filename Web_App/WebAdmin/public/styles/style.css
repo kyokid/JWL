@@ -316,6 +316,15 @@ input[type="password"]{
   font-style: italic;
 }
 
+.balance {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #ff7d3c
+}
+.deposit {
+  color: #ff7d3c
+}
+
 /**
  * Return books.
  */

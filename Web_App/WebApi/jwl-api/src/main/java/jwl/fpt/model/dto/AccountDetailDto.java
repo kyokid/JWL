@@ -12,6 +12,8 @@ public class AccountDetailDto {
     private String userId;
     private Boolean inLibrary;
     private Boolean activated;
+    private Integer totalBalance;
+    private Integer usableBalance;
     private ProfileDto profile;
     private List<BorrowedBookCopyDto> borrowedBookCopies;
 }

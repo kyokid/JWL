@@ -7,6 +7,7 @@ import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.RoleRepository;
+import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.service.IUserService;
 import jwl.fpt.util.Helper;
 import static jwl.fpt.util.Constant.*;
@@ -34,7 +35,8 @@ public class UserService implements IUserService {
     @Autowired
     private ModelMapper modelMapper;
 
-    Calendar calendar;
+    @Autowired
+    private IBookBorrowService bookBorrowService;
 
     @Override
     public RestServiceModel<List<UserDto>> getAllUser() {
@@ -270,6 +272,7 @@ public class UserService implements IUserService {
         // TODO: Add necessary validations.
         AccountEntity accountEntity = accountRepository.findByUserId(userId);
         AccountDetailDto accountDetailDto = modelMapper.map(accountEntity, AccountDetailDto.class);
+        accountDetailDto.setUsableBalance(bookBorrowService.calculateUsableBalanceFromDb(userId));
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = accountDetailDto.getBorrowedBookCopies();
         BorrowedBookCopyDto.setBookStatusForListDtos(borrowedBookCopyDtos);
         return accountDetailDto;

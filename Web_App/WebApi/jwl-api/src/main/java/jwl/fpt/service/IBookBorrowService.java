@@ -30,4 +30,5 @@ public interface IBookBorrowService {
     RestServiceModel<List<BorrowedBookCopyDto>> getHistory(String userId);
 
     void checkBorrowingBookCopyDeadline() throws UnsupportedEncodingException;
+    int calculateUsableBalanceFromDb(String userId);
 }
