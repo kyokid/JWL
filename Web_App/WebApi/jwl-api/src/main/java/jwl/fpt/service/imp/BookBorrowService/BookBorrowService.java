@@ -12,7 +12,6 @@ import jwl.fpt.util.Constant;
 import jwl.fpt.util.Constant.SoundMessages;
 import jwl.fpt.util.Helper;
 import jwl.fpt.util.NotificationUtils;
-import lombok.Data;
 import org.joda.time.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -40,6 +39,8 @@ import static jwl.fpt.util.Constant.DAY_REMAIN_DEADLINE;
 @Service
 public class BookBorrowService implements IBookBorrowService {
     private final String principalName = FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
+    private final String USABLE_BALANCE = "usable_balance";
+    private final String DEPOSIT = "deposit";
 
     @Autowired
     private BorrowedBookCopyRepo borrowedBookCopyRepo;
@@ -57,6 +58,7 @@ public class BookBorrowService implements IBookBorrowService {
 
     private List<BorrowCart> borrowCarts = new ArrayList<>();
 
+    // Future plan
     @Override
     public boolean initBorrowSession(HttpServletRequest request, BorrowerDto borrowerDto) {
         // TODO: Add necessary validations.
@@ -78,6 +80,7 @@ public class BookBorrowService implements IBookBorrowService {
     SOLUTION: we init 1 session to hold the borrower id, then create another session to
     hold the real transaction of the borrower and the copies.
      */
+    // Future plan
     @Override
     public RfidDtoList addCopiesToSession(HttpServletRequest request, RfidDtoList rfidDtoList) {
         // TODO: Add necessary validations.
@@ -103,6 +106,7 @@ public class BookBorrowService implements IBookBorrowService {
         return rfidDtoList;
     }
 
+    // Future plan
     @Override
     @Transactional
     public List<BorrowedBookCopyDto> checkoutSession(HttpServletRequest request, String userId) {
@@ -135,6 +139,7 @@ public class BookBorrowService implements IBookBorrowService {
         return result;
     }
 
+    // Future plan
     @Override
     public RestServiceModel<RfidDtoList> scanCopiesToCart(RfidDtoList rfidDtoList) {
         // TODO: Add necessary validations.
@@ -563,6 +568,12 @@ public class BookBorrowService implements IBookBorrowService {
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(0);
 
+            // Calculate and set deposit
+            int maxLateDate = bookTypeEntity.getLateDaysLimit();
+            int bookPrice = bookEntity.getPrice();
+            int neededDeposit = fineCost * maxLateDate + bookPrice;
+            entity.setDeposit(neededDeposit);
+
             borrowedBookCopyEntities.add(entity);
         }
         return borrowedBookCopyEntities;
@@ -572,6 +583,7 @@ public class BookBorrowService implements IBookBorrowService {
         BorrowCart borrowCart = new BorrowCart();
         borrowCart.setIbeaconId(borrowerDto.getIBeaconId());
         borrowCart.setUserId(borrowerDto.getUserId());
+        borrowCart.setUsableBalance(calculateUsableBalanceFromDb(borrowerDto.getUserId()));
         borrowCarts.add(borrowCart);
     }
 
@@ -644,6 +656,7 @@ public class BookBorrowService implements IBookBorrowService {
             return result;
         }
 
+        int newUsableBalance;
         BookCopyEntity bookCopyEntity = bookCopyRepo.findAvailableCopy(inputRfid);
         if (bookCopyEntity == null) {
             inputRfid = bookCopyRepo.checkRfid(inputRfid);
@@ -661,18 +674,18 @@ public class BookBorrowService implements IBookBorrowService {
             }
             return result;
         } else {
-//            BookEntity bookEntity = bookCopyEntity.getBook();
-//            BookTypeEntity bookTypeEntity = bookEntity.getBookType();
-//            int maxLateDate = bookTypeEntity.getLateDaysLimit();
-//            int bookPrice = bookEntity.getPrice();
-//            int neededDeposit = fineCost * maxLateDate + bookPrice;
-//            AccountEntity accountEntity = accountRepository.findBorrowerByUserId(borrowCart.getUserId());
-//            int usableBalance = accountEntity.getUsableBalance();
+            int currentUsableBalance = borrowCart.getUsableBalance();
+            newUsableBalance = calculateRemainUsableBalanceIfBorrowCopy(bookCopyEntity, currentUsableBalance);
+            if (newUsableBalance < 0) {
+                result.setFailData(
+                        null,
+                        "User " + borrowCart.getUserId() + " does not have enough to borrow copy " + inputRfid,
+                        SoundMessages.ERROR);
+                return result;
+            }
         }
 
-
-
-        Set<String> rfids = addCopyToBorrowCart(inputRfid, borrowCart);
+        Set<String> rfids = addCopyToBorrowCart(inputRfid, newUsableBalance, borrowCart);
         RfidDtoList rfidDtoList = new RfidDtoList();
         rfidDtoList.setRfids(rfids);
         rfidDtoList.setIbeaconId(rfidDto.getIbeaconId());
@@ -682,6 +695,36 @@ public class BookBorrowService implements IBookBorrowService {
                 "Book was added successfully!",
                 SoundMessages.OK);
         return result;
+    }
+
+    private int calculateUsableBalanceFromDb(String userId) {
+        AccountEntity accountEntity = accountRepository.findByUserId(userId);
+        int usableBalance = accountEntity.getTotalBalance();
+        if (usableBalance == 0) {
+            return usableBalance;
+        }
+
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = (List<BorrowedBookCopyEntity>) accountEntity.getBorrowedBookCopies();
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity :
+                borrowedBookCopyEntities) {
+            int deposit = borrowedBookCopyEntity.getDeposit();
+            usableBalance -= deposit;
+        }
+        return usableBalance;
+    }
+
+    private int calculateRemainUsableBalanceIfBorrowCopy(BookCopyEntity bookCopyEntity, int currentUsableBalance) {
+        BookEntity bookEntity = bookCopyEntity.getBook();
+        BookTypeEntity bookTypeEntity = bookEntity.getBookType();
+        int maxLateDate = bookTypeEntity.getLateDaysLimit();
+        int bookPrice = bookEntity.getPrice();
+        int neededDeposit = fineCost * maxLateDate + bookPrice;
+        int usableBalance = currentUsableBalance;
+        if (usableBalance >= neededDeposit) {
+            int newUsableBalance = usableBalance - neededDeposit;
+            return newUsableBalance;
+        }
+        return -1;
     }
 
     private Set<String> addCopiesToBorrowCart(Set<String> rfids, BorrowCart borrowCart) {
@@ -696,18 +739,14 @@ public class BookBorrowService implements IBookBorrowService {
         return rfids;
     }
 
-    private Set<String> addCopyToBorrowCart(String rfid, BorrowCart borrowCart) {
+    private Set<String> addCopyToBorrowCart(String rfid,
+                                            int usableBalance,
+                                            BorrowCart borrowCart) {
         Set<String> cartRfids = borrowCart.getRfids();
-        Set<String> result = new HashSet<>();
+        cartRfids.add(rfid);
+        borrowCart.setUsableBalance(usableBalance);
 
-        if (cartRfids == null || cartRfids.isEmpty()) {
-            result.add(rfid);
-            borrowCart.setRfids(result);
-        } else {
-            borrowCart.getRfids().add(rfid);
-            result = borrowCart.getRfids();
-        }
-        return result;
+        return cartRfids;
     }
 
     public void checkBorrowingBookCopyDeadline() throws UnsupportedEncodingException {

@@ -48,6 +48,14 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     // TODO: add delete date not null
     AccountEntity findByUserId(String userId);
 
+    @Query("select borrowers " +
+            "from AccountEntity borrowers " +
+            "where borrowers.userId = ?1 " +
+            "and borrowers.deleteDate is null " +
+            "and borrowers.activated = true " +
+            "and borrowers.userRole.role like 'borrower'")
+    AccountEntity findBorrowerByUserId(String userId);
+
     @Query("select users from AccountEntity users where lower(users.userId) like lower(?1) and users.deleteDate is null")
     List<AccountEntity> findByUserIdLike(String term);
 
