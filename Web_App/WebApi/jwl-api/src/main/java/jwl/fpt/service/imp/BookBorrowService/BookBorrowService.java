@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,9 @@ public class BookBorrowService implements IBookBorrowService {
     private FindByIndexNameSessionRepository sessionRepository;
     @Autowired
     private AccountRepository accountRepository;
+
+    @Value("${library.fine.cost}")
+    private Integer fineCost;
 
     private List<BorrowCart> borrowCarts = new ArrayList<>();
 
@@ -132,7 +136,7 @@ public class BookBorrowService implements IBookBorrowService {
     }
 
     @Override
-    public RestServiceModel<RfidDtoList> addCopiesToCart(RfidDtoList rfidDtoList) {
+    public RestServiceModel<RfidDtoList> scanCopiesToCart(RfidDtoList rfidDtoList) {
         // TODO: Add necessary validations.
         RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
         boolean validInput = BookBorrowServiceValidator.validateRfidDtoList(rfidDtoList);
@@ -151,7 +155,7 @@ public class BookBorrowService implements IBookBorrowService {
     }
 
     @Override
-    public RestServiceModel<RfidDtoList> addCopyToCart(RfidDto rfidDto) {
+    public RestServiceModel<RfidDtoList> scanCopyToCart(RfidDto rfidDto) {
         RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
         boolean validInput = BookBorrowServiceValidator.validateRfidDto(rfidDto);
         if (!validInput) {
@@ -162,12 +166,10 @@ public class BookBorrowService implements IBookBorrowService {
             return result;
         }
 
-        RfidDtoList rfidDtoList = new RfidDtoList();
-        rfidDtoList.setIbeaconId(rfidDto.getIbeaconId());
-        Set<String> rfids = new HashSet<>();
-        rfids.add(rfidDto.getRfid());
-        rfidDtoList.setRfids(rfids);
-        return addCopiesToCart(rfidDtoList);
+        String ibeaconId = rfidDto.getIbeaconId();
+        BorrowCart borrowCart = getCartByIbeaconId(ibeaconId);
+        result = checkToAddCopyToBorrowCart(rfidDto, borrowCart);
+        return result;
     }
 
     @Override
@@ -269,7 +271,7 @@ public class BookBorrowService implements IBookBorrowService {
 
     @Override
     @Transactional
-    public RestServiceModel<BorrowedBookCopyDto> addCopyToCartByLibrarian(RfidDto rfidDto) {
+    public RestServiceModel<BorrowedBookCopyDto> scanCopyToCartByLibrarian(RfidDto rfidDto) {
         // TODO: later change to use librarian's id instead of ibeaconId.
         RestServiceModel<BorrowedBookCopyDto> result = new RestServiceModel<>();
         boolean validInput = BookBorrowServiceValidator.validateRfidDto(rfidDto);
@@ -603,6 +605,8 @@ public class BookBorrowService implements IBookBorrowService {
 
     private RestServiceModel<RfidDtoList> checkToAddCopiesToBorrowCart(RfidDtoList rfidDtoList,
                                                                        BorrowCart borrowCart) {
+        // TODO: check usable_balance and update deposit case many copies are scanned at the same time
+        // TODO: check validation
         RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
         RestServiceModel checkFoundCart = BookBorrowServiceValidator
                 .validateFoundBorrowCart(borrowCart, false);
@@ -611,40 +615,67 @@ public class BookBorrowService implements IBookBorrowService {
         }
 
         Set<String> inputRfids = rfidDtoList.getRfids();
-        // Case only one book is added => check to response correct sound message.
-        if (inputRfids != null && inputRfids.size() == 1) {
-            String rfid = inputRfids.iterator().next();
-
-            Set<String> cartRfids = borrowCart.getRfids();
-            if (cartRfids != null && cartRfids.contains(rfid)) {
-                result.setFailData(
-                        null,
-                        "The book copy " + rfid + " had already been added.",
-                        SoundMessages.ALREADY);
-                return result;
-            }
-
-            BookCopyEntity bookCopyEntity = bookCopyRepo.findAvailableCopy(rfid);
-            if (bookCopyEntity == null) {
-                rfid = bookCopyRepo.checkRfid(rfid);
-
-                if (rfid != null) {
-                    result.setFailData(
-                            null,
-                            "The book copy " + rfid + " had already been borrowed.",
-                            SoundMessages.ALREADY);
-                } else {
-                    result.setFailData(
-                            null,
-                            "Invalid book copy rfid!",
-                            SoundMessages.ERROR);
-                }
-                return result;
-            }
-        }
-
         Set<String> rfids = addCopiesToBorrowCart(inputRfids, borrowCart);
         rfidDtoList.setRfids(rfids);
+
+        result.setSuccessData(
+                rfidDtoList,
+                "Book was added successfully!",
+                SoundMessages.OK);
+        return result;
+    }
+
+    private RestServiceModel<RfidDtoList> checkToAddCopyToBorrowCart(RfidDto rfidDto,
+                                                                       BorrowCart borrowCart) {
+        RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
+        RestServiceModel checkFoundCart = BookBorrowServiceValidator
+                .validateFoundBorrowCart(borrowCart, false);
+        if (checkFoundCart != null) {
+            return checkFoundCart;
+        }
+
+        String inputRfid = rfidDto.getRfid();
+        Set<String> cartRfids = borrowCart.getRfids();
+        if (cartRfids != null && cartRfids.contains(inputRfid)) {
+            result.setFailData(
+                    null,
+                    "The book copy " + inputRfid + " had already been added.",
+                    SoundMessages.ALREADY);
+            return result;
+        }
+
+        BookCopyEntity bookCopyEntity = bookCopyRepo.findAvailableCopy(inputRfid);
+        if (bookCopyEntity == null) {
+            inputRfid = bookCopyRepo.checkRfid(inputRfid);
+
+            if (inputRfid != null) {
+                result.setFailData(
+                        null,
+                        "The book copy " + inputRfid + " had already been borrowed.",
+                        SoundMessages.ALREADY);
+            } else {
+                result.setFailData(
+                        null,
+                        "Invalid book copy rfid!",
+                        SoundMessages.ERROR);
+            }
+            return result;
+        } else {
+//            BookEntity bookEntity = bookCopyEntity.getBook();
+//            BookTypeEntity bookTypeEntity = bookEntity.getBookType();
+//            int maxLateDate = bookTypeEntity.getLateDaysLimit();
+//            int bookPrice = bookEntity.getPrice();
+//            int neededDeposit = fineCost * maxLateDate + bookPrice;
+//            AccountEntity accountEntity = accountRepository.findBorrowerByUserId(borrowCart.getUserId());
+//            int usableBalance = accountEntity.getUsableBalance();
+        }
+
+
+
+        Set<String> rfids = addCopyToBorrowCart(inputRfid, borrowCart);
+        RfidDtoList rfidDtoList = new RfidDtoList();
+        rfidDtoList.setRfids(rfids);
+        rfidDtoList.setIbeaconId(rfidDto.getIbeaconId());
 
         result.setSuccessData(
                 rfidDtoList,
@@ -663,6 +694,20 @@ public class BookBorrowService implements IBookBorrowService {
             rfids = borrowCart.getRfids();
         }
         return rfids;
+    }
+
+    private Set<String> addCopyToBorrowCart(String rfid, BorrowCart borrowCart) {
+        Set<String> cartRfids = borrowCart.getRfids();
+        Set<String> result = new HashSet<>();
+
+        if (cartRfids == null || cartRfids.isEmpty()) {
+            result.add(rfid);
+            borrowCart.setRfids(result);
+        } else {
+            borrowCart.getRfids().add(rfid);
+            result = borrowCart.getRfids();
+        }
+        return result;
     }
 
     public void checkBorrowingBookCopyDeadline() throws UnsupportedEncodingException {

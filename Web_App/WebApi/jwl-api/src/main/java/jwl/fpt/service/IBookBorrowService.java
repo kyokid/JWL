@@ -16,13 +16,13 @@ public interface IBookBorrowService {
     List<BorrowedBookCopyDto> checkoutSession(HttpServletRequest request, String userId);
 
     RestServiceModel<BorrowerDto> initBorrowCart(BorrowerDto borrowerDto, boolean isLibrarian);
-    RestServiceModel<RfidDtoList> addCopiesToCart(RfidDtoList rfidDtoList);
-    RestServiceModel<RfidDtoList> addCopyToCart(RfidDto rfidDto);
+    RestServiceModel<RfidDtoList> scanCopiesToCart(RfidDtoList rfidDtoList);
+    RestServiceModel<RfidDtoList> scanCopyToCart(RfidDto rfidDto);
     RestServiceModel<List<BorrowedBookCopyDto>> checkoutCart(BorrowerDto borrowerDto, boolean isLibrarian);
     RestServiceModel<Set<String>> cancelAddingCopies(BorrowerDto borrowerDto);
     List<BorrowedBookCopyDto> getBorrowingBookByUserId(AccountDto accountDto);
     List<BorrowedBookCopyDto> deleteBorrowingCopy(BorrowedBookCopyDto borrowedBookCopyDto);
-    RestServiceModel<BorrowedBookCopyDto> addCopyToCartByLibrarian(RfidDto rfidDto);
+    RestServiceModel<BorrowedBookCopyDto> scanCopyToCartByLibrarian(RfidDto rfidDto);
 
     RestServiceModel<BorrowedBookCopyDto> renewBorrowedBookCopy(String rfid);
 

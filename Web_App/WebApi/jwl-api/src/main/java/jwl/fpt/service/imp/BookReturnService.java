@@ -32,7 +32,8 @@ public class BookReturnService implements IBookReturnService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    WishBookRepository wishBookRepository;
+    private WishBookRepository wishBookRepository;
+
     private List<ReturnCart> returnCarts = new ArrayList<>();
 
     // 0. Check find BorrowedBookCopyEntity by rfid. If not found, return fail: "Book is not being borrowed." Else:
@@ -165,16 +166,12 @@ public class BookReturnService implements IBookReturnService {
     private RestServiceModel<List<BorrowedBookCopyDto>> saveReturnCart(ReturnCart returnCart) {
         RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
         Set<String> rfids = returnCart.getRfids();
-        //khi nao thi rfids == null?
         if (rfids == null || rfids.isEmpty()) {
             result.setSuccessData(null, "Returned successfully! No book returned. (rfids are null)");
             return result;
         }
-        //remove null?
         rfids.remove(null);
 
-        //day la list nhung cuon' sach dang muon ma co' rfid vua quet cua chinh xac 1 *user*
-        // xac dinh. truoc do o ham 1.
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByRfids(rfids);
         if (borrowedBookCopyEntities.isEmpty()) {
             result.setSuccessData(null, "Returned successfully! No book returned.");
@@ -184,7 +181,6 @@ public class BookReturnService implements IBookReturnService {
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 borrowedBookCopyEntities) {
-            //bug co the xuat hien o day
             BookEntity bookEntity = borrowedBookCopyEntity.getBookCopy().getBook();
             notiWishBook(bookEntity);
 

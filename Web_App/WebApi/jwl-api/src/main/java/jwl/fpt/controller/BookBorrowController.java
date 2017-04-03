@@ -32,12 +32,12 @@ public class BookBorrowController {
 
     @RequestMapping(value = "/add/copies", method = RequestMethod.POST)
     public RestServiceModel<RfidDtoList> addCopiesToCart(@RequestBody RfidDtoList rfidDtoList) {
-        return bookBorrowService.addCopiesToCart(rfidDtoList);
+        return bookBorrowService.scanCopiesToCart(rfidDtoList);
     }
 
     @RequestMapping(value = "/add/copy", method = RequestMethod.POST)
     public RestServiceModel<RfidDtoList> addCopyToCart(@RequestBody RfidDto rfidDto) {
-        return bookBorrowService.addCopyToCart(rfidDto);
+        return bookBorrowService.scanCopyToCart(rfidDto);
     }
 
     @RequestMapping(value = "/checkout", method = RequestMethod.POST)
@@ -52,7 +52,7 @@ public class BookBorrowController {
 
     @RequestMapping(value = "/librarian/add/copy", method = RequestMethod.POST)
     public RestServiceModel<BorrowedBookCopyDto> addCopyToCartByLibrarian(@RequestBody RfidDto rfidDto) {
-        RestServiceModel<BorrowedBookCopyDto> responseObj = bookBorrowService.addCopyToCartByLibrarian(rfidDto);
+        RestServiceModel<BorrowedBookCopyDto> responseObj = bookBorrowService.scanCopyToCartByLibrarian(rfidDto);
         simpMessagingTemplate.convertAndSend("/socket/add/books", responseObj);
 
         return responseObj;
