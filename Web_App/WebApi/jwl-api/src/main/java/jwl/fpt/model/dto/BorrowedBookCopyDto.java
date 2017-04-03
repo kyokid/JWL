@@ -1,9 +1,13 @@
 package jwl.fpt.model.dto;
 
+import jwl.fpt.util.Helper;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
+
+import static jwl.fpt.util.Constant.BOOK_STATUS_OK;
 
 /**
  * Created by Entaard on 1/29/17.
@@ -33,4 +37,30 @@ public class BorrowedBookCopyDto {
     private List<BookAuthorDto> bookCopyBookBookAuthors;
     private List<BookCategoryDto> bookCopyBookBookCategories;
     private Integer bookStatus;
+
+    public static void setBookStatusForOneDto(BorrowedBookCopyDto borrowedBookCopyDto) {
+        if (borrowedBookCopyDto == null || borrowedBookCopyDto.getDeadlineDate() == null) {
+            return;
+        }
+
+        Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
+        Date deadline = borrowedBookCopyDto.getDeadlineDate();
+        int daysInterval = Helper.getDaysInterval(deadline, currentDate);
+        if (daysInterval > 0) {
+            borrowedBookCopyDto.setBookStatus(BOOK_STATUS_OK);
+        } else {
+            borrowedBookCopyDto.setBookStatus(daysInterval);
+        }
+    }
+
+    public static void setBookStatusForListDtos(List<BorrowedBookCopyDto> borrowedBookCopyDtos) {
+        if (borrowedBookCopyDtos == null || borrowedBookCopyDtos.isEmpty()) {
+            return;
+        }
+
+        for (BorrowedBookCopyDto borrowedBookCopyDto :
+                borrowedBookCopyDtos) {
+            setBookStatusForOneDto(borrowedBookCopyDto);
+        }
+    }
 }

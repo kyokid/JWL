@@ -16,6 +16,9 @@ public class Constant {
     public static final String APP_TOKEN = "AAAAaNSpPQs:APA91bGlEsmuobSo775eGREdsUDisU1Pio3u8T8YPHrSfVSjJXHMOh_F7n5418hfKISaPbVF3bVnwSABAQukv81g5DgU0uMMmcaC_XHyU43J7FasSdBEyltHND2rRAxwJEXygjiZEKMH";
     public static final String CLIENT_TOKEN = "d_0cUQJavvU:APA91bGi83tS-ptRYoaRXdhhEmOdFp0ZQuSRmQq5XUyfs8OXkSgz9_LBe3Rv1e0zqHlaa4TbFufy2x9vRJgRXCPZ80eeZ5PxZljfkdp0SwChsgaCKs9aQDlfLsthspd054-RkthS7LQB";
 
+    public static final int MILISECOND_PER_DAYS = 24 * 60 * 60 * 1000;
+    public static final int BOOK_STATUS_OK = 0;
+
     public static final class UserAttributes {
         public static final String USERID = "userId";
         public static final String IMG_URL = "img Url";

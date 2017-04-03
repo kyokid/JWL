@@ -35,7 +35,7 @@ export default function (state = INITIAL_STATE, action) {
 				message: action.payload.data.textMessage
 			}
 
-		case Types.DELETE_ACCOUNT:
+		case Types.DELETE_ACCOUNT_COPY:
 			return {
 				...state,
 				account: {
@@ -54,7 +54,7 @@ export default function (state = INITIAL_STATE, action) {
 				...state,
 				account: {
 					...state.account,
-					borrowedBookCopies: [action.payload.data ,...state.account.borrowedBookCopies]
+					borrowedBookCopies: [action.payload.data, ...state.account.borrowedBookCopies]
 				}
 			}
 
@@ -63,6 +63,22 @@ export default function (state = INITIAL_STATE, action) {
 				return state
 			}
 			return { ...state, account: action.payload }
+
+		case Types.CHECKOUT:
+			if (!action.payload) {
+				return state
+			}
+
+			let borrowedBookCopies = [...state.account.borrowedBookCopies]
+			let updatedBorrowedBookCopies = action.payload.data.data
+			borrowedBookCopies.splice(0, updatedBorrowedBookCopies.length)
+			return {
+				...state,
+				account: {
+					...state.account,
+					borrowedBookCopies: [...updatedBorrowedBookCopies, ...borrowedBookCopies]
+				}
+			}
 	}
 	return state
 }

@@ -29,8 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.util.*;
 
-import static jwl.fpt.util.Constant.DAY_OF_DEADLINE;
-import static jwl.fpt.util.Constant.DAY_REMAIN_DEADLINE;
+import static jwl.fpt.util.Constant.*;
 
 
 /**
@@ -267,6 +266,7 @@ public class BookBorrowService implements IBookBorrowService {
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
         for (BorrowedBookCopyEntity entity : borrowedBookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
+            BorrowedBookCopyDto.setBookStatusForOneDto(dto);
             borrowedBookCopyDtos.add(dto);
         }
         return borrowedBookCopyDtos;
@@ -382,7 +382,7 @@ public class BookBorrowService implements IBookBorrowService {
             entity.setAccount(userId);
             entity.setBookCopy(bookCopyEntity);
             entity.setBorrowedDate(new Date(Calendar.getInstance().getTimeInMillis()));
-            Date deadline = Helper.GetDateAfter(currentBook.getDeadlineDate(), bookTypeEntity.getDaysPerExtend());
+            Date deadline = Helper.getDateAfter(currentBook.getDeadlineDate(), bookTypeEntity.getDaysPerExtend());
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(currentExtentNumber + 1);
             entity.setRootId(rootId);
@@ -436,10 +436,10 @@ public class BookBorrowService implements IBookBorrowService {
         for (BorrowedBookCopyDto dto: listKhongGiaHanDTO){
             Date deadline = dto.getDeadlineDate();
             Date returnDate = dto.getReturnDate();
-            long aaa = (deadline.getTime() - returnDate.getTime())/86400000;
+            long aaa = (deadline.getTime() - returnDate.getTime()) / MILISECOND_PER_DAYS;
             System.out.println("So ngay: " + aaa);
             if (aaa >= 0){
-                dto.setBookStatus(0);
+                dto.setBookStatus(BOOK_STATUS_OK);
             }else {
                 dto.setBookStatus((int)aaa);
             }
@@ -478,6 +478,7 @@ public class BookBorrowService implements IBookBorrowService {
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 borrowedBookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+            dto.setBookStatus(BOOK_STATUS_OK);
             borrowedBookCopyDtos.add(dto);
         }
 
@@ -563,7 +564,7 @@ public class BookBorrowService implements IBookBorrowService {
             entity.setAccount(userId);
             entity.setBookCopy(bookCopyEntity);
             entity.setBorrowedDate(new Date(Calendar.getInstance().getTimeInMillis()));
-            Date deadline = Helper.GetDateAfter(entity.getBorrowedDate(), bookTypeEntity.getBorrowLimitDays());
+            Date deadline = Helper.getDateAfter(entity.getBorrowedDate(), bookTypeEntity.getBorrowLimitDays());
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(0);
 

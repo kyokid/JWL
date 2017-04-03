@@ -1,6 +1,6 @@
 // export const ROOT_URL = "https://jwl-web-admin-v0.herokuapp.com/"
-// export const ROOT_URL = "http://localhost:8080/"
-export const ROOT_URL = "https://jwl-api-v0.herokuapp.com/"
+export const ROOT_URL = "http://localhost:8080/"
+// export const ROOT_URL = "https://jwl-api-v0.herokuapp.com/"
 export const LOGIN = "staff/login"
 export const USERS = "users"
 export const BORROWERS = "borrowers"

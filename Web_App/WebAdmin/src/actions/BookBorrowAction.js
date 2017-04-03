@@ -18,7 +18,7 @@ export function initBorrow(userId, ibeaconId) {
 }
 
 export function checkout(userId, ibeaconId) {
-	axios.post(`${Api.ROOT_URL}/${Api.CHECKOUT}`,
+	const request = axios.post(`${Api.ROOT_URL}/${Api.CHECKOUT}`,
 		{
 			userId: userId,
 			ibeaconId: ibeaconId
@@ -26,7 +26,8 @@ export function checkout(userId, ibeaconId) {
 	)
 
 	return {
-		type: Types.CHECKOUT
+		type: Types.CHECKOUT,
+		payload: request
 	}
 }
 
@@ -41,7 +42,7 @@ export function deleteBorrowedCopy(userId, borrowedCopyRfid) {
 	})
 
 	return {
-		type: Types.DELETE_ACCOUNT,
+		type: Types.DELETE_ACCOUNT_COPY,
 		payload: request
 	}
 }

@@ -6,7 +6,7 @@ import { getAccountDetail } from '../actions/AccountsAction'
 import { initBorrow, checkout, deleteBorrowedCopy, fetchCopyFromCart, cancelAddingCopies } from '../actions/BookBorrowAction'
 import { switchStateNavBar } from '../actions/RouteAction'
 import * as Socket from '../helpers/Socket'
-import { UNDEFINED, MANAGE_ACCOUNTS, ROLE_LIBRARIAN, DEFAULT_IMG } from '../constants/common'
+import { UNDEFINED, MANAGE_ACCOUNTS, ROLE_LIBRARIAN, DEFAULT_IMG, BOOK_STATUS_OK } from '../constants/common'
 
 class AccountDetail extends Component {
 	librarianId = 1
@@ -217,6 +217,7 @@ class AccountDetail extends Component {
 						<th>Title</th>
 						<th>Borrowed Date</th>
 						<th>Dealine Date</th>
+						<th>Book Status</th>
 						<th>Tools</th>
 					</tr>
 				</thead>
@@ -231,6 +232,7 @@ class AccountDetail extends Component {
 		const userId = this.state.userId
 		const borrowedCopyRfid = borrowedBook.bookCopyRfid
 		const bookId = borrowedBook.bookCopyBookId
+		const bookStatus = borrowedBook.bookStatus
 
 		return (
 			<tr key={borrowedCopyRfid}>
@@ -239,6 +241,9 @@ class AccountDetail extends Component {
 				<td className="clickable" onClick={() => browserHistory.push(`/books/${bookId}`)}>{borrowedBook.bookCopyBookTitle}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
+				{bookStatus === null && <td style={{ color: "purple" }}>pending...</td>}
+				{bookStatus === BOOK_STATUS_OK && <td style={{ color: "green" }}>OK</td>}
+				{bookStatus !== null && bookStatus !== BOOK_STATUS_OK && <td style={{ color: "red" }}>{`${-bookStatus} days late`}</td>}
 				<td>
 					<a
 						className={`${this.state.isAddingBook ? "disable" : ""}`}

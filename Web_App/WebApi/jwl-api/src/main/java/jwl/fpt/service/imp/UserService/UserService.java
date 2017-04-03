@@ -4,18 +4,18 @@ import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.BorrowerTicketEntity;
 import jwl.fpt.entity.ProfileEntity;
 import jwl.fpt.model.RestServiceModel;
-import jwl.fpt.model.dto.AccountDetailDto;
-import jwl.fpt.model.dto.AccountDto;
-import jwl.fpt.model.dto.ProfileDto;
-import jwl.fpt.model.dto.UserDto;
+import jwl.fpt.model.dto.*;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.RoleRepository;
 import jwl.fpt.service.IUserService;
+import jwl.fpt.util.Helper;
+import static jwl.fpt.util.Constant.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -270,6 +270,8 @@ public class UserService implements IUserService {
         // TODO: Add necessary validations.
         AccountEntity accountEntity = accountRepository.findByUserId(userId);
         AccountDetailDto accountDetailDto = modelMapper.map(accountEntity, AccountDetailDto.class);
+        List<BorrowedBookCopyDto> borrowedBookCopyDtos = accountDetailDto.getBorrowedBookCopies();
+        BorrowedBookCopyDto.setBookStatusForListDtos(borrowedBookCopyDtos);
         return accountDetailDto;
     }
 
@@ -288,11 +290,6 @@ public class UserService implements IUserService {
         }
         return accountRepository.getActivate(userId);
     }
-
-    private List<BorrowerTicketEntity> createNewBorrowerTicket(){
-        return null;
-    }
-
 
     public void autoCheckOutUser() {
         accountRepository.updateInLibrary();
