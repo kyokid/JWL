@@ -67,6 +67,7 @@ public class BookReturnService implements IBookReturnService {
         }
 
         BorrowedBookCopyDto borrowedBookCopyDto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+        BorrowedBookCopyDto.setBookStatusForOneDto(borrowedBookCopyDto);
         String userIdOfReturnedBook = borrowedBookCopyEntity.getAccount().getUserId();
         String librarianId = rfidDto.getLibrarianId();
         ReturnCart returnCart = getCartByLibrarianId(librarianId);
@@ -188,8 +189,8 @@ public class BookReturnService implements IBookReturnService {
 
             borrowedBookCopyEntity.setReturnDate(new Date(Calendar.getInstance().getTimeInMillis()));
             BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
+            BorrowedBookCopyDto.setBookStatusForOneDto(dto);
             borrowedBookCopyDtos.add(dto);
-            borrowedBookCopyEntity.getBookCopy().getBook();
         }
         borrowedBookCopyRepo.save(borrowedBookCopyEntities);
 

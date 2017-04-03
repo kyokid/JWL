@@ -241,9 +241,9 @@ class AccountDetail extends Component {
 				<td className="clickable" onClick={() => browserHistory.push(`/books/${bookId}`)}>{borrowedBook.bookCopyBookTitle}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
-				{bookStatus === null && <td style={{ color: "purple" }}>pending...</td>}
+				{bookStatus === null && <td>pending...</td>}
 				{bookStatus === BOOK_STATUS_OK && <td style={{ color: "green" }}>OK</td>}
-				{bookStatus !== null && bookStatus !== BOOK_STATUS_OK && <td style={{ color: "red" }}>{`${-bookStatus} days late`}</td>}
+				{bookStatus !== null && bookStatus !== BOOK_STATUS_OK && <td style={{ color: "red" }}>{`${-bookStatus} day(s) late`}</td>}
 				<td>
 					<a
 						className={`${this.state.isAddingBook ? "disable" : ""}`}

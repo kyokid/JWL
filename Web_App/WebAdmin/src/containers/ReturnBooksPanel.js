@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { commitReturnCopies, cancelReturnCopies } from "../actions/BookReturnAction"
+import { BOOK_STATUS_OK } from "../constants/common"
 
 class ReturnBooksPanel extends Component {
 	constructor(props) {
@@ -41,6 +42,7 @@ class ReturnBooksPanel extends Component {
 						<th>Borrowed Date</th>
 						<th>Dealine Date</th>
 						<th>Returned Date</th>
+						<th>Book Status</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -66,6 +68,7 @@ class ReturnBooksPanel extends Component {
 
 	renderBook(book, index) {
 		const returnedCopyRfid = book.bookCopyRfid
+		const bookStatus = book.bookStatus
 
 		return (
 			<tr key={returnedCopyRfid}>
@@ -75,6 +78,8 @@ class ReturnBooksPanel extends Component {
 				<td>{book.borrowedDate}</td>
 				<td>{book.deadlineDate}</td>
 				<td>{book.returnDate ? book.returnDate : "pending..."}</td>
+				{bookStatus === BOOK_STATUS_OK && <td style={{ color: "green" }}>OK</td>}
+				{bookStatus !== BOOK_STATUS_OK && <td style={{ color: "red" }}>{`${-bookStatus} day(s) late`}</td>}
 			</tr>
 		)
 	}
