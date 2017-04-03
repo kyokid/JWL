@@ -64,6 +64,9 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     @Query("select acc.inLibrary from AccountEntity acc where acc.userId = ?1")
     Boolean getStatus(String userId);
 
+    @Query("select acc.activated from AccountEntity acc where acc.userId = ?1")
+    Boolean getActivate(String userId);
+
     @Query("select acc.userId " +
             "from AccountEntity acc " +
             "where acc.userId = ?1 " +

@@ -4,6 +4,8 @@ import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.model.dto.RfidDto;
 import jwl.fpt.service.IBookReturnService;
+import jwl.fpt.service.IUserService;
+import jwl.fpt.util.NotificationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,8 @@ public class BookReturnController {
     private IBookReturnService bookReturnService;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
-
+    @Autowired
+    private IUserService userService;
     @RequestMapping(value = "librarian/add/return", method = RequestMethod.POST)
     public RestServiceModel<BorrowedBookCopyDto> addReturnCopyToCart(@RequestBody RfidDto rfidDto) {
         RestServiceModel<BorrowedBookCopyDto> responseObj = bookReturnService.addReturnCopyToCart(rfidDto);
@@ -32,7 +35,11 @@ public class BookReturnController {
     public RestServiceModel<List<BorrowedBookCopyDto>> commitReturnCopies(@PathVariable("librarianId") String librarianId) {
         RestServiceModel<List<BorrowedBookCopyDto>> responseObj = bookReturnService.returnCopies(librarianId);
         simpMessagingTemplate.convertAndSend("/socket/return/books", responseObj);
-
+        if (responseObj.isSucceed()){
+            String userId = responseObj.getData().get(0).getAccountUserId();
+            String token = userService.findByUsername(userId).getGoogleToken();
+            NotificationUtils.pushNotiRefreshBorrowedBook(token);
+        }
         return responseObj;
     }
 

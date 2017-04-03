@@ -34,6 +34,8 @@ public interface IUserService {
 
     Boolean getStatus(String userId);
 
+    Boolean getActivate(String userId);
+
     // TODO: Thiendn - update return type
     void updateGoogleToken(String googleToken, String userId);
 
