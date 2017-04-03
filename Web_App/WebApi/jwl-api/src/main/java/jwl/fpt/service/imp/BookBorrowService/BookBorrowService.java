@@ -39,8 +39,6 @@ import static jwl.fpt.util.Constant.DAY_REMAIN_DEADLINE;
 @Service
 public class BookBorrowService implements IBookBorrowService {
     private final String principalName = FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
-    private final String USABLE_BALANCE = "usable_balance";
-    private final String DEPOSIT = "deposit";
 
     @Autowired
     private BorrowedBookCopyRepo borrowedBookCopyRepo;
@@ -369,7 +367,7 @@ public class BookBorrowService implements IBookBorrowService {
         }
         if (resultUpdate != 0) {
             //get information sách mới trả
-
+            int deposit = currentBook.getDeposit();
             String userId = currentBook.getAccount().getUserId();
             int rootId;
             if (currentExtentNumber == 0) {
@@ -388,6 +386,7 @@ public class BookBorrowService implements IBookBorrowService {
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(currentExtentNumber + 1);
             entity.setRootId(rootId);
+            entity.setDeposit(deposit);
 //            borrowedBookCopyEntities.add(entity);
             //save to db
             entity = borrowedBookCopyRepo.save(entity);
@@ -749,7 +748,8 @@ public class BookBorrowService implements IBookBorrowService {
         return cartRfids;
     }
 
-    public void checkBorrowingBookCopyDeadline() throws UnsupportedEncodingException {
+    @Override
+    public void checkBorrowingBookCopyDeadline() throws UnsupportedEncodingException, NullPointerException {
         Logger logger = LoggerFactory.getLogger(getClass());
 
         logger.info("The check deadline has begun...");
@@ -769,23 +769,35 @@ public class BookBorrowService implements IBookBorrowService {
         // list sách tới hạn deadline
         List<BorrowedBookCopyEntity> borrowedBookDeadline = new ArrayList<>();
 
+        List<BorrowedBookCopyEntity> missDeadlineCopies = new ArrayList<>();
+
+        List<BorrowedBookCopyEntity> lostCopies = new ArrayList<>();
+
         List<String> user2Deadline = new ArrayList<>();
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 borrowedBookCopyEntities) {
             deadLineLocal = LocalDate.fromDateFields(borrowedBookCopyEntity.getDeadlineDate());
             diffDate = Days.daysBetween(currentLocal, deadLineLocal);
+            int diffDays = diffDate.getDays();
 
             // deadline - current = 3 thì push notiviện
-            if (diffDate.getDays() == DAY_REMAIN_DEADLINE) {
+            if (diffDays == DAY_REMAIN_DEADLINE) {
                 borrowedBook3DayDeadline.add(borrowedBookCopyEntity);
                 logger.info("còn 3 ngày nữa là đến deadline sách: {} ", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
                 count++;
             }
             // tới ngày deadline -> noti
-            if (diffDate.getDays() == DAY_OF_DEADLINE) {
+            if (diffDays == DAY_OF_DEADLINE) {
                 borrowedBookDeadline.add(borrowedBookCopyEntity);
                 logger.info("sách {} đã hết hạn, vui lòng trả lại thư viện", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
                 count++;
+            }
+
+            int lateDaysLimit = borrowedBookCopyEntity.getBookCopy().getBook().getBookType().getLateDaysLimit();
+            if (diffDays < 0 && diffDays > -lateDaysLimit) {
+                missDeadlineCopies.add(borrowedBookCopyEntity);
+            } else if (diffDays < -lateDaysLimit) {
+                lostCopies.add(borrowedBookCopyEntity);
             }
         }
         if (count == 0) {
@@ -798,6 +810,12 @@ public class BookBorrowService implements IBookBorrowService {
             messageBody = "Bạn có sách phải trả vào hôm nay";
             pushNotificationBook(user2Deadline, borrowedBookDeadline, result, messageBody, 1);
         }
+
+        handlePenalty(missDeadlineCopies, false);
+        handlePenalty(lostCopies, true);
+
+        // TODO: push noti after fined user.
+
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -805,6 +823,41 @@ public class BookBorrowService implements IBookBorrowService {
         } finally {
             logger.info("Check deadline job has finished...");
         }
+    }
+
+    @Transactional
+    private void handlePenalty(List<BorrowedBookCopyEntity> afterDeadlineCopies, boolean lostBook) {
+        if (afterDeadlineCopies.size() == 0) {
+            return;
+        }
+
+        List<AccountEntity> finedAccountEntities = new ArrayList<>();
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity :
+                afterDeadlineCopies) {
+            AccountEntity finedAccountEntity = borrowedBookCopyEntity.getAccount();
+            int totalBalance = finedAccountEntity.getTotalBalance();
+            int deposit = borrowedBookCopyEntity.getDeposit();
+
+            if (totalBalance == 0 || deposit == 0) {
+                continue;
+            }
+
+            finedAccountEntities.add(finedAccountEntity);
+            if (lostBook) {
+                int bookPrice = borrowedBookCopyEntity.getBookCopy().getBook().getPrice();
+                totalBalance -= bookPrice;
+                deposit -= bookPrice;
+
+                // TODO: what to do if a book copy is lost? Delete it? Or add more fields to mark lost status?
+            } else {
+                totalBalance -= fineCost;
+                deposit -= fineCost;
+            }
+            finedAccountEntity.setTotalBalance(totalBalance);
+            borrowedBookCopyEntity.setDeposit(deposit);
+        }
+        accountRepository.save(finedAccountEntities);
+        borrowedBookCopyRepo.save(afterDeadlineCopies);
     }
 
     private void pushNotificationBook(List<String> user2Deadline, List<BorrowedBookCopyEntity> books, List<BorrowedBookCopyDto> result, String messageBody, int behavior) {

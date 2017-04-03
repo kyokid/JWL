@@ -4,6 +4,7 @@ import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Set;
 
@@ -27,4 +28,6 @@ public interface IBookBorrowService {
     RestServiceModel<BorrowedBookCopyDto> renewBorrowedBookCopy(String rfid);
 
     RestServiceModel<List<BorrowedBookCopyDto>> getHistory(String userId);
+
+    void checkBorrowingBookCopyDeadline() throws UnsupportedEncodingException;
 }

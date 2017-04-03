@@ -1,5 +1,6 @@
 package jwl.fpt.util.quartz.scheduler;
 
+import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.service.imp.BookBorrowService.BookBorrowService;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -16,10 +17,10 @@ import java.util.Date;
  * Created by HaVH on 3/18/17.
  */
 public class CheckDeadlineJob implements Job{
-    Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    BookBorrowService bookBorrowService;
+    private IBookBorrowService bookBorrowService;
 
     public CheckDeadlineJob() {
     }
@@ -30,7 +31,7 @@ public class CheckDeadlineJob implements Job{
         logger.info("Job ** {} ** fired @ {}", jobExecutionContext.getJobDetail().getKey().getName(), jobExecutionContext.getFireTime());
         try {
             bookBorrowService.checkBorrowingBookCopyDeadline();
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException | NullPointerException e) {
             e.printStackTrace();
         }
         logger.info("Next job scheduled @ {}", jobExecutionContext.getNextFireTime());

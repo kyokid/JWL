@@ -62,11 +62,11 @@ SET number_of_copies = CASE id
 WHERE id IN (1, 2, 3, 4, 5);
 UPDATE book
 SET price = CASE id
-            WHEN 1 THEN 10
-            WHEN 2 THEN 20
-            WHEN 3 THEN 30
-            WHEN 4 THEN 40
-            WHEN 5 THEN 50
+            WHEN 1 THEN 100000
+            WHEN 2 THEN 200000
+            WHEN 3 THEN 300000
+            WHEN 4 THEN 400000
+            WHEN 5 THEN 500000
             END
 WHERE id IN (1, 2, 3, 4, 5);
 UPDATE book
