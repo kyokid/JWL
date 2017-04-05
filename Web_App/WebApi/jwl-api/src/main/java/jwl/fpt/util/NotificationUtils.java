@@ -107,7 +107,7 @@ public class NotificationUtils {
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Authorization", "key=" + Constant.APP_TOKEN);
         JSONObject body = new JSONObject();
-        String messageBody = "Tựa sách " + bookTitle + " bạn theo dõi hiện đã sẵn có tại thư viện. Nhanh chân nào!";
+        String messageBody = "Tựa sách " + bookTitle + " bạn theo dõi hiện đã sẵn có tại thư viện.";
         body.put("body", URLEncoder.encode(messageBody, "UTF-8"));
         body.put("title", "Remaining day");
         JSONObject entity = new JSONObject();

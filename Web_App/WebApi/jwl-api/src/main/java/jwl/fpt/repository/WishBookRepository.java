@@ -29,6 +29,8 @@ public interface WishBookRepository extends JpaRepository<WishBookEntity, String
     @Query(value = "select wb.account from WishBookEntity wb where wb.book.id = ?1")
     List<AccountEntity> findAccountByBookId(int bookId);
 
+    @Transactional
+    @Modifying
     @Query(value = "delete from WishBookEntity wb where wb.book.id = ?1")
     int deleteByBookId(int bookId);
 }
