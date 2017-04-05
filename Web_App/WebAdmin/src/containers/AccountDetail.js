@@ -157,8 +157,6 @@ class AccountDetail extends Component {
 			console.log("On Disconnect Socket: " + userId + " " + ibeaconId)
 			this.props.checkout(userId, ibeaconId)
 			this.disconnectFromChannel()
-			// TODO: hack code. Fix with dividing account detail & its borrow books into 2 apis
-			window.location.reload()
 		}
 
 		this.setState({ isAddingBook: !this.state.isAddingBook })
@@ -242,14 +240,15 @@ class AccountDetail extends Component {
 		const borrowedCopyRfid = borrowedBook.bookCopyRfid
 		const bookId = borrowedBook.bookCopyBookId
 		const bookStatus = borrowedBook.bookStatus
-		const deposit = formatMoney(borrowedBook.deposit)
+		const formatedDeposit = formatMoney(borrowedBook.deposit)
+		const deposit = borrowedBook.deposit
 
 		return (
 			<tr key={borrowedCopyRfid}>
 				<td>{index + 1}</td>
 				<td>{borrowedCopyRfid}</td>
 				<td className="clickable" onClick={() => browserHistory.push(`/books/${bookId}`)}>{borrowedBook.bookCopyBookTitle}</td>
-				<td className="deposit">{deposit}</td>
+				<td className="deposit">{formatedDeposit}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
 				{bookStatus === null && <td>pending...</td>}
@@ -258,7 +257,7 @@ class AccountDetail extends Component {
 				<td>
 					<a
 						className={`${this.state.isAddingBook ? "disable" : ""}`}
-						onClick={() => this.onClickDeleteCopy(userId, borrowedCopyRfid)}>
+						onClick={() => this.onClickDeleteCopy(userId, borrowedCopyRfid, deposit)}>
 						<span className="glyphicon glyphicon-remove" aria-hidden="true" />
 					</a>
 				</td>
@@ -266,10 +265,8 @@ class AccountDetail extends Component {
 		)
 	}
 
-	onClickDeleteCopy(userId, borrowedCopyRfid) {
-		this.props.deleteBorrowedCopy(userId, borrowedCopyRfid)
-		// TODO: hack code. Fix with dividing account detail & its borrow books into 2 apis
-		window.location.reload()
+	onClickDeleteCopy(userId, borrowedCopyRfid, deletedCopyDeposit) {
+		this.props.deleteBorrowedCopy(userId, borrowedCopyRfid, deletedCopyDeposit)
 	}
 }
 

@@ -31,7 +31,7 @@ export function checkout(userId, ibeaconId) {
 	}
 }
 
-export function deleteBorrowedCopy(userId, borrowedCopyRfid) {
+export function deleteBorrowedCopy(userId, borrowedCopyRfid, deletedCopyDeposit) {
 	const request = axios({
 		method: 'DELETE',
 		url: `${Api.ROOT_URL}${Api.DELETE_COPY}`,
@@ -43,7 +43,8 @@ export function deleteBorrowedCopy(userId, borrowedCopyRfid) {
 
 	return {
 		type: Types.DELETE_ACCOUNT_COPY,
-		payload: request
+		payload: request,
+		meta: { deletedCopyDeposit: deletedCopyDeposit }
 	}
 }
 

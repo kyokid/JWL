@@ -40,6 +40,7 @@ export default function (state = INITIAL_STATE, action) {
 				...state,
 				account: {
 					...state.account,
+					usableBalance: state.account.usableBalance + action.meta.deletedCopyDeposit,
 					borrowedBookCopies: action.payload.data.data
 				}
 			}
@@ -54,6 +55,7 @@ export default function (state = INITIAL_STATE, action) {
 				...state,
 				account: {
 					...state.account,
+					usableBalance: state.account.usableBalance - action.payload.data.deposit,
 					borrowedBookCopies: [action.payload.data, ...state.account.borrowedBookCopies]
 				}
 			}
