@@ -16,6 +16,7 @@ public class BorrowedBookCopyEntity {
     private Integer extendNumber;
     private Integer rootId;
     private Integer deposit;
+    private Integer notiStatus;
     private BookCopyEntity bookCopy;
     private AccountEntity account;
 
@@ -149,5 +150,15 @@ public class BorrowedBookCopyEntity {
 
     public void setDeposit(Integer deposit) {
         this.deposit = deposit;
+    }
+
+    @Basic
+    @Column(name = "noti_status")
+    public Integer getNotiStatus() {
+        return notiStatus;
+    }
+
+    public void setNotiStatus(Integer notiStatus) {
+        this.notiStatus = notiStatus;
     }
 }
