@@ -723,6 +723,34 @@ public class BookBorrowService implements IBookBorrowService {
         return usableBalance;
     }
 
+    @Override
+    public void sendNotificationForLateDeadline() {
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByNotiStatus(NEED_TO_PUSH_NOTIFICATION);
+        List<AccountDto> listUser = new ArrayList<>();
+        if (borrowedBookCopyEntities != null || borrowedBookCopyEntities.size() > 0) {
+            //push notification
+            for (BorrowedBookCopyEntity book : borrowedBookCopyEntities) {
+                book.setNotiStatus(PUSHED_NOTIFICATION);
+                book = borrowedBookCopyRepo.save(book);
+                AccountDto accountDto = modelMapper.map(book.getAccount(), AccountDto.class);
+                if (!listUser.contains(accountDto)) {
+                    listUser.add(accountDto);
+                }
+            }
+        }
+        if (listUser.size() > 0) {
+            for (AccountDto dto : listUser) {
+                try {
+                    // push noti
+                    NotificationUtils.pushNotificationDeadline(dto.getGoogleToken(),
+                            "Bạn có sách phải trả cho thư viện");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private int calculateRemainUsableBalanceIfBorrowCopy(BookCopyEntity bookCopyEntity, int currentUsableBalance) {
         BookEntity bookEntity = bookCopyEntity.getBook();
         BookTypeEntity bookTypeEntity = bookEntity.getBookType();
@@ -764,44 +792,29 @@ public class BookBorrowService implements IBookBorrowService {
         Logger logger = LoggerFactory.getLogger(getClass());
 
         logger.info("The check deadline has begun...");
-        int count = 0;
-        List<BorrowedBookCopyDto> result = new ArrayList<>();
         // ngày hiện tại
         LocalDate currentLocal = new LocalDate();
         // ngày deadline của book
         LocalDate deadLineLocal;
         // biến để so sánh ngày
         Days diffDate;
-        String messageBody = "";
         // list sách đang mượn
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByReturnDateIsNullAndNotiStatusIsNull();
-        // list sách còn 3 ngày là deadline
-        List<BorrowedBookCopyEntity> borrowedBook3DayDeadline = new ArrayList<>();
-        // list sách tới hạn deadline
-        List<BorrowedBookCopyEntity> borrowedBookDeadline = new ArrayList<>();
 
         List<BorrowedBookCopyEntity> missDeadlineCopies = new ArrayList<>();
 
         List<BorrowedBookCopyEntity> lostCopies = new ArrayList<>();
 
-        List<String> user2Deadline = new ArrayList<>();
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 borrowedBookCopyEntities) {
             deadLineLocal = LocalDate.fromDateFields(borrowedBookCopyEntity.getDeadlineDate());
             diffDate = Days.daysBetween(currentLocal, deadLineLocal);
             int diffDays = diffDate.getDays();
 
-            // deadline - current = 3 thì push notiviện
-            if (diffDays == DAY_REMAIN_DEADLINE) {
-                borrowedBook3DayDeadline.add(borrowedBookCopyEntity);
-                logger.info("còn 3 ngày nữa là đến deadline sách: {} ", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
-                count++;
-            }
-            // tới ngày deadline -> noti
-            if (diffDays == DAY_OF_DEADLINE) {
-                borrowedBookDeadline.add(borrowedBookCopyEntity);
-                logger.info("sách {} đã hết hạn, vui lòng trả lại thư viện", borrowedBookCopyEntity.getBookCopy().getBook().getTitle());
-                count++;
+            // deadline - current <= 3 thì push noti
+            if (diffDays <= DAY_REMAIN_DEADLINE) {
+                borrowedBookCopyEntity.setNotiStatus(NEED_TO_PUSH_NOTIFICATION);
+                borrowedBookCopyEntity = borrowedBookCopyRepo.save(borrowedBookCopyEntity);
             }
 
             int lateDaysLimit = borrowedBookCopyEntity.getBookCopy().getBook().getBookType().getLateDaysLimit();
@@ -811,16 +824,16 @@ public class BookBorrowService implements IBookBorrowService {
                 lostCopies.add(borrowedBookCopyEntity);
             }
         }
-        if (count == 0) {
-            logger.info("không có sách nào phải noti");
-        } else if (borrowedBook3DayDeadline.size() != 0) {
-            messageBody = "Bạn có sách phải trả sau 3 ngày nữa";
-            pushNotificationBook(user2Deadline, borrowedBook3DayDeadline, result, messageBody, 0);
-        }
-        if (borrowedBookDeadline.size() != 0) {
-            messageBody = "Bạn có sách phải trả vào hôm nay";
-            pushNotificationBook(user2Deadline, borrowedBookDeadline, result, messageBody, 1);
-        }
+//        if (count == 0) {
+//            logger.info("không có sách nào phải noti");
+//        } else if (borrowedBook3DayDeadline.size() != 0) {
+//            messageBody = "Bạn có sách phải trả sau 3 ngày nữa";
+//            pushNotificationBook(user2Deadline, borrowedBook3DayDeadline, result, messageBody, 0);
+//        }
+//        if (borrowedBookDeadline.size() != 0) {
+//            messageBody = "Bạn có sách phải trả vào hôm nay";
+//            pushNotificationBook(user2Deadline, borrowedBookDeadline, result, messageBody, 1);
+//        }
 
         handlePenalty(missDeadlineCopies, false);
         handlePenalty(lostCopies, true);
@@ -828,7 +841,7 @@ public class BookBorrowService implements IBookBorrowService {
         // TODO: push noti after fined user.
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             logger.error("Error while executing check deadline job", e);
         } finally {
