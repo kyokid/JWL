@@ -123,7 +123,7 @@ public class UserService implements IUserService {
         String password = accountDto.getPassword();
         AccountEntity entity = accountRepository.login(userId, password);
         if (entity == null) {
-            result.setFailData(null, "Invalid userID or password.");
+            result.setFailData(null, "Sai userID hoặc mật khẩu.");
             return result;
         }
 

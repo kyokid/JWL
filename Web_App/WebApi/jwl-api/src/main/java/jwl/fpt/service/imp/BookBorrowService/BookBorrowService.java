@@ -126,7 +126,7 @@ public class BookBorrowService implements IBookBorrowService {
         boolean validInput = BookBorrowServiceValidator
                 .validateBorrowerDto(borrowerDto, accountRepository, isLibrarian);
         if (!validInput) {
-            result.setFailData(null, "Initiate borrow cart failed. Please contact librarian!");
+            result.setFailData(null, "Có lỗi xảy ra. Vui lòng liên hệ thủ thư!");
             return result;
         }
 
@@ -140,6 +140,7 @@ public class BookBorrowService implements IBookBorrowService {
     @Override
     public RestServiceModel<RfidDtoList> scanCopiesToCart(RfidDtoList rfidDtoList) {
         // TODO: Add necessary validations.
+        // TODO: check to conform business with scanCopyToCart
         RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
         boolean validInput = BookBorrowServiceValidator.validateRfidDtoList(rfidDtoList);
         if (!validInput) {
@@ -242,6 +243,7 @@ public class BookBorrowService implements IBookBorrowService {
         List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
         for (BorrowedBookCopyEntity entity : bookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
+            BorrowedBookCopyDto.setBookStatusForOneDto(dto);
             borrowedBookCopyDtos.add(dto);
         }
         return borrowedBookCopyDtos;
@@ -363,8 +365,9 @@ public class BookBorrowService implements IBookBorrowService {
         BookTypeEntity bookTypeEntity = bookCopyEntity.getBook().getBookType();
         int maxExtend = bookTypeEntity.getExtendTimesLimit();
         if (currentExtentNumber == maxExtend) {
-            String message = "Gia hạn không thành công. Bạn vui lòng mang sách " + bookCopyEntity.getBook().getTitle() +
-                    " tới thư viện để kiểm tra lại tình trạng của sách.";
+            String message = "Gia hạn sách "
+                    + bookCopyEntity.getBook().getTitle()
+                    + " không thành công. Bạn vui lòng mang sách tới thư viện để kiểm tra lại tình trạng của sách.";
             result.setFailData(null, message);
             return result;
         }
@@ -463,7 +466,7 @@ public class BookBorrowService implements IBookBorrowService {
         RestServiceModel<List<BorrowedBookCopyDto>> result = new RestServiceModel<>();
         Set<String> rfids = borrowCart.getRfids();
         if (rfids == null || rfids.isEmpty()) {
-            result.setSuccessData(null, "Checked out successfully! No book added.");
+            result.setSuccessData(null, "Cảm ơn bạn đã sử dụng thư viện.");
             return result;
         }
         rfids.remove(null);
@@ -471,7 +474,7 @@ public class BookBorrowService implements IBookBorrowService {
         List<BookCopyEntity> bookCopyEntities = bookCopyRepo.findAvailableCopies(rfids);
         // the books with those rfids are not available, or invalid
         if (bookCopyEntities == null || bookCopyEntities.isEmpty()) {
-            result.setSuccessData(null, "Checked out successfully! No book added.");
+            result.setSuccessData(null, "Cảm ơn bạn đã sử dụng thư viện.");
             return result;
         }
 
@@ -479,7 +482,7 @@ public class BookBorrowService implements IBookBorrowService {
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = createBorrowedBookCopyEntities(bookCopyEntities, userId);
         borrowedBookCopyEntities = borrowedBookCopyRepo.save(borrowedBookCopyEntities);
         if (borrowedBookCopyEntities.isEmpty()) {
-            result.setFailData(null, "Check out failed system! Please contact admin/librarian!");
+            result.setFailData(null, "Có lỗi xảy ra. Vui lòng liên hệ thủ thư!");
             return result;
         }
 
@@ -491,7 +494,7 @@ public class BookBorrowService implements IBookBorrowService {
             borrowedBookCopyDtos.add(dto);
         }
 
-        result.setSuccessData(borrowedBookCopyDtos, "Checked out with book(s) successfully!");
+        result.setSuccessData(borrowedBookCopyDtos, "Mượn sách thành công! Vui lòng ấn để xem chi tiết.");
         return result;
     }
 
@@ -608,9 +611,9 @@ public class BookBorrowService implements IBookBorrowService {
 
             // check userId in cart.
             if (userId.equals(userIdInCart)) {
-                result.setSuccessData(borrowerDto, "Please scan your books.");
+                result.setSuccessData(borrowerDto, "Bạn có thể quét sách rồi.");
             } else {
-                result.setFailData(null, "Please wait for other to complete checkout!");
+                result.setFailData(null, "Vui lòng chờ tới lượt bạn!");
             }
             return result;
         }
@@ -620,7 +623,7 @@ public class BookBorrowService implements IBookBorrowService {
         }
 
         createNewBorrowCart(borrowerDto);
-        result.setSuccessData(borrowerDto, "You can scan book now.");
+        result.setSuccessData(borrowerDto, "Bạn có thể quét sách.");
         return result;
     }
 
@@ -799,7 +802,7 @@ public class BookBorrowService implements IBookBorrowService {
         // biến để so sánh ngày
         Days diffDate;
         // list sách đang mượn
-        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByReturnDateIsNullAndNotiStatusIsNull();
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByReturnDateIsNull();
 
         List<BorrowedBookCopyEntity> missDeadlineCopies = new ArrayList<>();
 
@@ -810,30 +813,21 @@ public class BookBorrowService implements IBookBorrowService {
             deadLineLocal = LocalDate.fromDateFields(borrowedBookCopyEntity.getDeadlineDate());
             diffDate = Days.daysBetween(currentLocal, deadLineLocal);
             int diffDays = diffDate.getDays();
-
-            // deadline - current <= 3 thì push noti
-            if (diffDays <= DAY_REMAIN_DEADLINE) {
-                borrowedBookCopyEntity.setNotiStatus(NEED_TO_PUSH_NOTIFICATION);
-                borrowedBookCopyEntity = borrowedBookCopyRepo.save(borrowedBookCopyEntity);
+            if (borrowedBookCopyEntity.getNotiStatus() == null) {
+                // deadline - current <= 3 thì push noti
+                if (diffDays <= DAY_REMAIN_DEADLINE) {
+                    borrowedBookCopyEntity.setNotiStatus(NEED_TO_PUSH_NOTIFICATION);
+                    borrowedBookCopyEntity = borrowedBookCopyRepo.save(borrowedBookCopyEntity);
+                }
             }
 
             int lateDaysLimit = borrowedBookCopyEntity.getBookCopy().getBook().getBookType().getLateDaysLimit();
-            if (diffDays < 0 && diffDays > -lateDaysLimit) {
+            if (diffDays < 0 && diffDays >= -lateDaysLimit) {
                 missDeadlineCopies.add(borrowedBookCopyEntity);
             } else if (diffDays < -lateDaysLimit) {
                 lostCopies.add(borrowedBookCopyEntity);
             }
         }
-//        if (count == 0) {
-//            logger.info("không có sách nào phải noti");
-//        } else if (borrowedBook3DayDeadline.size() != 0) {
-//            messageBody = "Bạn có sách phải trả sau 3 ngày nữa";
-//            pushNotificationBook(user2Deadline, borrowedBook3DayDeadline, result, messageBody, 0);
-//        }
-//        if (borrowedBookDeadline.size() != 0) {
-//            messageBody = "Bạn có sách phải trả vào hôm nay";
-//            pushNotificationBook(user2Deadline, borrowedBookDeadline, result, messageBody, 1);
-//        }
 
         handlePenalty(missDeadlineCopies, false);
         handlePenalty(lostCopies, true);
@@ -856,6 +850,7 @@ public class BookBorrowService implements IBookBorrowService {
         }
 
         List<AccountEntity> finedAccountEntities = new ArrayList<>();
+        List<String> finedUserIds = new ArrayList<>();
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 afterDeadlineCopies) {
             AccountEntity finedAccountEntity = borrowedBookCopyEntity.getAccount();
@@ -866,7 +861,16 @@ public class BookBorrowService implements IBookBorrowService {
                 continue;
             }
 
-            finedAccountEntities.add(finedAccountEntity);
+            // check if the user is not already in the list
+            String finedUserId = finedAccountEntity.getUserId();
+            if (!finedUserIds.contains(finedUserId)) {
+                finedUserIds.add(finedUserId);
+                finedAccountEntities.add(finedAccountEntity);
+            } else {
+                // get the user that is currently in the list
+                finedAccountEntity = finedAccountEntities.get(finedUserIds.indexOf(finedUserId));
+            }
+
             if (lostBook) {
                 int bookPrice = borrowedBookCopyEntity.getBookCopy().getBook().getPrice();
                 totalBalance -= bookPrice;
@@ -883,41 +887,4 @@ public class BookBorrowService implements IBookBorrowService {
         accountRepository.save(finedAccountEntities);
         borrowedBookCopyRepo.save(afterDeadlineCopies);
     }
-
-    private void pushNotificationBook(List<String> user2Deadline, List<BorrowedBookCopyEntity> books, List<BorrowedBookCopyDto> result, String messageBody, int behavior) {
-        List<AccountDto> listUser = new ArrayList<>();
-        for (BorrowedBookCopyEntity borrowedBookCopyEntity :
-                books) {
-            AccountDto accountDto = modelMapper.map(borrowedBookCopyEntity.getAccount(), AccountDto.class);
-            // lấy danh sách userId không trùng để gửi
-            if (!listUser.contains(accountDto)) {
-                listUser.add(accountDto);
-            }
-//            BorrowedBookCopyDto dto = modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
-//            result.add(dto);
-        }
-        for (AccountDto dto : listUser) {
-            List<BorrowedBookCopyDto> bookDeadlines = new ArrayList<>();
-
-            if (behavior == 0) {
-                user2Deadline.add(dto.getUserId());
-            } else if (behavior == 1) {
-                if (user2Deadline.contains(dto.getUserId())) {
-                    messageBody = "Bạn có sách phải trả vào hôm nay và sau 3 ngày nữa";
-                }
-            }
-//            for (BorrowedBookCopyDto borrowedBookCopyDto : result) {
-//                if (dto.getUserId().equals(borrowedBookCopyDto.getAccountUserId())) {
-//                    bookDeadlines.add(borrowedBookCopyDto);
-//                }
-//            }
-            try {
-                // push noti
-                NotificationUtils.pushNotificationDeadline(dto.getGoogleToken(), messageBody);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 }

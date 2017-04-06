@@ -52,7 +52,7 @@ public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEnti
             "where copies.bookCopy.book.id = ?1 and copies.returnDate is null")
     List<BorrowedBookCopyEntity> findBorrowingCopiesOfBook(Integer bookId);
 
-    List<BorrowedBookCopyEntity> findByReturnDateIsNullAndNotiStatusIsNull();
+    List<BorrowedBookCopyEntity> findByReturnDateIsNull();
 
     @Query(value = "select copies " +
             "from BorrowedBookCopyEntity copies " +

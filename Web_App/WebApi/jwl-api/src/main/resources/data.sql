@@ -37,8 +37,8 @@ VALUES (6, 'business', ''), (7, 'Ruby', ''), (8, 'Java', ''), (9, 'Xml', ''), (1
 INSERT INTO book_category (id, book_id, category_id)
 VALUES (1, 1, 5), (2, 1, 8), (3, 2, 5), (4, 2, 7), (5, 3, 5), (6, 3, 9), (7, 4, 5), (8, 5, 6);
 
-INSERT INTO book_type (id, name, borrow_limit_days, days_per_extend, extend_times_limit)
-VALUES (1, 'Reference', 5, 3, 3), (2, 'textbook', 90, 7, 3);
+INSERT INTO book_type (id, name, borrow_limit_days, days_per_extend, extend_times_limit, late_days_limit)
+VALUES (1, 'Reference', 4, 4, 3, 5), (2, 'textbook', 5, 7, 3, 7);
 
 INSERT INTO book_position (id, shelf, floor)
 VALUES (1, 'A', 'ground'), (2, 'B', 'ground'), (3, 'A', '1st floor'), (4, 'B', '1st floor');

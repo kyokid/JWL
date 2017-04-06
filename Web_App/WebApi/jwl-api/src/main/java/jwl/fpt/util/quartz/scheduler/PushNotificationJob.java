@@ -21,7 +21,7 @@ public class PushNotificationJob implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         logger.info("Job ** {} ** fired @ {}", jobExecutionContext.getJobDetail().getKey().getName(), jobExecutionContext.getFireTime());
-//        bookBorrowService.sendNotificationForLateDeadline();
+        bookBorrowService.sendNotificationForLateDeadline();
         logger.info("Next job scheduled @ {}", jobExecutionContext.getNextFireTime());
 
 
