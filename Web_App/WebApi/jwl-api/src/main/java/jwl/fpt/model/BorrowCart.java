@@ -14,10 +14,12 @@ public class BorrowCart {
     private String ibeaconId;
     private Set<String> rfids;
     private int usableBalance;
+    private int bookLimit;
 
     public BorrowCart() {
         rfids = new HashSet<>();
         usableBalance = 0;
+        bookLimit = 0;
     }
     // TODO: add expire date.
 }

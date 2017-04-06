@@ -100,6 +100,9 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     @Query("update AccountEntity acc set acc.inLibrary = false where acc.inLibrary = true")
     int updateInLibrary();
 
+    @Query("select a.maxNumberOfBooks from AccountEntity a where a.userId = ?1")
+    int findMaxNumberOfBooksByUserId(String userId);
+
 //    @Transactional
 //    @Modifying
 //    @Query("update AccountEntity a set a.checkinKey = ?1 where a.userId = ?2")

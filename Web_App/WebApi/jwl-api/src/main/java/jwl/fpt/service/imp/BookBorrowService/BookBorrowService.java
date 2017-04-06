@@ -296,6 +296,14 @@ public class BookBorrowService implements IBookBorrowService {
         if (checkFoundCart != null) {
             return checkFoundCart;
         }
+        int newBookLimit = borrowCart.getBookLimit();
+        if (newBookLimit == 0) {
+            result.setFailData(null,
+                    "Borrower can not borrow anymore",
+                    "Can not borrow anymore");
+            return result;
+        }
+        newBookLimit -= 1;
 
         Set<String> cartRfids = borrowCart.getRfids();
         if (cartRfids != null && cartRfids.contains(inputRfid)) {
@@ -343,6 +351,7 @@ public class BookBorrowService implements IBookBorrowService {
                 createBorrowedBookCopyEntities(bookCopyEntities, borrowCart.getUserId());
         BorrowedBookCopyDto borrowedBookCopyDto = modelMapper
                 .map(borrowedBookCopyEntities.get(0), BorrowedBookCopyDto.class);
+        borrowCart.setBookLimit(newBookLimit);
         result.setSuccessData(
                 borrowedBookCopyDto,
                 "Book copy is saved successfully!",
@@ -389,7 +398,6 @@ public class BookBorrowService implements IBookBorrowService {
             }
 
             // insert borrowedbookcopy mới
-//            List<BorrowedBookCopyEntity> borrowedBookCopyEntities = new ArrayList<>();
             BorrowedBookCopyEntity entity = new BorrowedBookCopyEntity();
             entity.setAccount(userId);
             entity.setBookCopy(bookCopyEntity);
@@ -399,16 +407,11 @@ public class BookBorrowService implements IBookBorrowService {
             entity.setExtendNumber(currentExtentNumber + 1);
             entity.setRootId(rootId);
             entity.setDeposit(deposit);
-//            borrowedBookCopyEntities.add(entity);
+            entity.setNotiStatus(null);
             //save to db
             entity = borrowedBookCopyRepo.save(entity);
 
-//            List<BorrowedBookCopyDto> borrowedBookCopyDtos = new ArrayList<>();
-//            for (BorrowedBookCopyEntity borrowedBookCopyEntity :
-//                    borrowedBookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
-//                borrowedBookCopyDtos.add(dto);
-//            }
             String message = "Bạn đã gia hạn sách " + dto.getBookCopyBookTitle() + " thành công.";
             result.setSuccessData(dto, message);
         }
@@ -423,7 +426,7 @@ public class BookBorrowService implements IBookBorrowService {
         List<BorrowedBookCopyEntity> listKhongGiaHan = borrowedBookCopyRepo.findByUserIdAndRootIdNULL(userId);
         //2. convert list 1 to dto
         List<BorrowedBookCopyDto> listKhongGiaHanDTO = new ArrayList<>();
-        for (BorrowedBookCopyEntity borrowedBookCopyEntity: listKhongGiaHan){
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity : listKhongGiaHan) {
             BorrowedBookCopyDto borrowedBookCopyDto =
                     modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
             listKhongGiaHanDTO.add(borrowedBookCopyDto);
@@ -433,27 +436,27 @@ public class BookBorrowService implements IBookBorrowService {
         List<BorrowedBookCopyEntity> listGiaHanVaDaTra = borrowedBookCopyRepo.getListLast(userId);
         //4. convert list 3
         List<BorrowedBookCopyDto> listGiaHanVaDaTraDTO = new ArrayList<>();
-        for (BorrowedBookCopyEntity borrowedBookCopyEntity: listGiaHanVaDaTra){
+        for (BorrowedBookCopyEntity borrowedBookCopyEntity : listGiaHanVaDaTra) {
             BorrowedBookCopyDto borrowedBookCopyDto =
                     modelMapper.map(borrowedBookCopyEntity, BorrowedBookCopyDto.class);
             listGiaHanVaDaTraDTO.add(borrowedBookCopyDto);
         }
         //5. set borrow_date
         List<BorrowedBookCopyEntity> listFirstGiaHan = borrowedBookCopyRepo.getListFirst(userId);
-        for (int i = 0; i < listGiaHanVaDaTraDTO.size(); i++){
+        for (int i = 0; i < listGiaHanVaDaTraDTO.size(); i++) {
             listGiaHanVaDaTraDTO.get(i).setBorrowedDate(listFirstGiaHan.get(i).getBorrowedDate());
         }
 
         listKhongGiaHanDTO.addAll(listGiaHanVaDaTraDTO);
-        for (BorrowedBookCopyDto dto: listKhongGiaHanDTO){
+        for (BorrowedBookCopyDto dto : listKhongGiaHanDTO) {
             Date deadline = dto.getDeadlineDate();
             Date returnDate = dto.getReturnDate();
             long aaa = (deadline.getTime() - returnDate.getTime()) / MILISECOND_PER_DAYS;
             System.out.println("So ngay: " + aaa);
-            if (aaa >= 0){
+            if (aaa >= 0) {
                 dto.setBookStatus(BOOK_STATUS_OK);
-            }else {
-                dto.setBookStatus((int)aaa);
+            } else {
+                dto.setBookStatus((int) aaa);
             }
         }
         result.setData(listKhongGiaHanDTO);
@@ -596,7 +599,18 @@ public class BookBorrowService implements IBookBorrowService {
         borrowCart.setIbeaconId(borrowerDto.getIBeaconId());
         borrowCart.setUserId(borrowerDto.getUserId());
         borrowCart.setUsableBalance(calculateUsableBalanceFromDb(borrowerDto.getUserId()));
+        borrowCart.setBookLimit(calculateBookLimit(borrowerDto.getUserId()));
         borrowCarts.add(borrowCart);
+    }
+
+    private int calculateBookLimit(String userId) {
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(userId);
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities =
+                borrowedBookCopyRepo.findByAccountAndReturnDateIsNull(accountEntity);
+        int maxBook = accountRepository.findMaxNumberOfBooksByUserId(userId);
+        int bookLimit = maxBook - borrowedBookCopyEntities.size();
+        return bookLimit < 0 ? 0 : bookLimit;
     }
 
     private RestServiceModel<BorrowerDto> checkToInitBorrowCart(BorrowerDto borrowerDto,
@@ -650,13 +664,20 @@ public class BookBorrowService implements IBookBorrowService {
     }
 
     private RestServiceModel<RfidDtoList> checkToAddCopyToBorrowCart(RfidDto rfidDto,
-                                                                       BorrowCart borrowCart) {
+                                                                     BorrowCart borrowCart) {
         RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
         RestServiceModel checkFoundCart = BookBorrowServiceValidator
                 .validateFoundBorrowCart(borrowCart, false);
         if (checkFoundCart != null) {
             return checkFoundCart;
         }
+        if (borrowCart.getBookLimit() == 0) {
+            result.setFailData(null,
+                    "Borrower can not borrow anymore",
+                    SoundMessages.ERROR);
+            return result;
+        }
+        int newBookLimit = borrowCart.getBookLimit() - 1;
 
         String inputRfid = rfidDto.getRfid();
         Set<String> cartRfids = borrowCart.getRfids();
@@ -701,6 +722,7 @@ public class BookBorrowService implements IBookBorrowService {
         RfidDtoList rfidDtoList = new RfidDtoList();
         rfidDtoList.setRfids(rfids);
         rfidDtoList.setIbeaconId(rfidDto.getIbeaconId());
+        borrowCart.setBookLimit(newBookLimit);
 
         result.setSuccessData(
                 rfidDtoList,
