@@ -82,3 +82,19 @@ export function createAccount(newAccData) {
 		payload: request
 	}
 }
+
+export function updateTotalBalance(userId, newTotalBalance) {
+	const request = axios({
+		method: 'POST',
+		url: `${Api.ROOT_URL}${Api.UPDATE_TOTAL_BALANCE}`,
+		data: {
+			"userId": userId,
+			"totalBalance": newTotalBalance
+		}
+	})
+
+	return {
+		type: Types.FETCH_TOTAL_BALANCE,
+		payload: request
+	}
+}

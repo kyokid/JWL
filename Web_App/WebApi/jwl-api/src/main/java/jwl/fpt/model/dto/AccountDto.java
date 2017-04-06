@@ -15,4 +15,5 @@ public class AccountDto {
     private boolean isActivated;
     private String googleToken;
     private String checkinKey;
+    private Integer totalBalance;
 }

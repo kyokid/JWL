@@ -16,6 +16,7 @@ public class UserDto {
     private String confirmPassword;
     private boolean isInLibrary;
     private boolean isActivated;
+    private Integer totalBalance;
     // role
     private Integer userRoleId;
     private String userRoleRole;

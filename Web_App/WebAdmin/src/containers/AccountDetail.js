@@ -8,6 +8,7 @@ import { switchStateNavBar } from '../actions/RouteAction'
 import * as Socket from '../helpers/Socket'
 import { UNDEFINED, MANAGE_ACCOUNTS, ROLE_LIBRARIAN, DEFAULT_IMG, BOOK_STATUS_OK } from '../constants/common'
 import formatMoney from '../helpers/CurrencyFormatter'
+import TotalBalance from './AccountTotalBalance'
 
 class AccountDetail extends Component {
 	librarianId = 1
@@ -31,6 +32,8 @@ class AccountDetail extends Component {
 			ibeaconId: this.librarianId,	// Each librarian should have a RFID Reader -> pair reader-borrowCart with his id,
 																		// but for demo purpose, we pair with ibeaconId = 1
 			isAddingBook: false,
+			isEditingTotalBalance: false,
+			newTotalBalance: "",
 			beforeAdd: {}
 		}
 	}
@@ -63,14 +66,12 @@ class AccountDetail extends Component {
 	render() {
 		const { account } = this.props
 		const { userRole } = localStorage
+		const { isAddingBook, userId, ibeaconId } = this.state
 
 		if (!account) {
 			return <div>Loading...</div>
 		}
 
-		const userId = this.state.userId
-		const ibeaconId = this.state.ibeaconId
-		const totalBalance = formatMoney(account.totalBalance)
 		const usableBalance = formatMoney(account.usableBalance)
 
 		return (
@@ -90,7 +91,9 @@ class AccountDetail extends Component {
 							<p>Address: {account.profile.address}</p>
 							<p>Place of Work: {account.profile.placeOfWork}</p>
 							<p>Date of Birth: {account.profile.dateOfBirth}</p>
-							<p className="balance">Total Balance: {totalBalance}</p>
+							<TotalBalance totalBalance={account.totalBalance}
+														userId={userId}
+														isAddingBook={isAddingBook} />
 							<p className="balance">Usable Balance: {usableBalance}</p>
 						</div>
 						<div className="col-md-6 col-sm-6">

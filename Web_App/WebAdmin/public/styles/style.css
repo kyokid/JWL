@@ -321,6 +321,17 @@ input[type="password"]{
   font-weight: bold;
   color: #ff7d3c
 }
+
+.balance .edit-balance-icon {
+  font-size: 15px;
+  padding-right: 5px;
+}
+
+.balance input[type="text"] {
+  font-weight: normal;
+  margin-right: 5px;
+}
+
 .deposit {
   color: #ff7d3c
 }

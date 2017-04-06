@@ -234,6 +234,22 @@ public class UserService implements IUserService {
         accountRepository.updateGoogleToken(googleToken, userId);
     }
 
+    @Override
+    public RestServiceModel<AccountDetailDto> updateTotalBalance(AccountDto accountDto) {
+        // TODO: Add necessary validations.
+        RestServiceModel<AccountDetailDto> result = new RestServiceModel<>();
+        String userId = accountDto.getUserId();
+        AccountEntity accountEntity = accountRepository.findByUserId(userId);
+        accountEntity.setTotalBalance(accountDto.getTotalBalance());
+        accountRepository.save(accountEntity);
+
+        AccountDetailDto accountDetailDto = new AccountDetailDto();
+        accountDetailDto.setTotalBalance(accountEntity.getTotalBalance());
+        accountDetailDto.setUsableBalance(bookBorrowService.calculateUsableBalanceFromDb(userId));
+        result.setSuccessData(accountDetailDto, "Total Balance updated.");
+        return result;
+    }
+
 //    @Override
 //    public String requestKey(String userId) {
 //        // TODO: Thiendn

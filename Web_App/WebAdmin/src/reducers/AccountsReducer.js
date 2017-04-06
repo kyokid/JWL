@@ -81,6 +81,20 @@ export default function (state = INITIAL_STATE, action) {
 					borrowedBookCopies: [...updatedBorrowedBookCopies, ...borrowedBookCopies]
 				}
 			}
+
+		case Types.FETCH_TOTAL_BALANCE:
+			if (!action.payload) {
+				return state
+			}
+
+			return {
+				...state,
+				account: {
+					...state.account,
+					totalBalance: action.payload.data.data.totalBalance,
+					usableBalance: action.payload.data.data.usableBalance
+				}
+			}
 	}
 	return state
 }

@@ -26,7 +26,6 @@ class SearchBar extends Component {
 
 					<p className="help-block" style={{ marginLeft: "10px" }}>Enter user ID.</p>
 				</div>
-
 			</form>
 		)
 	}

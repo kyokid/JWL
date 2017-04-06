@@ -147,12 +147,20 @@ class AccountNew extends Component {
 				</div>
 				<div className="col-md-12 col-sm-12">
 					<Fields id="userRole"
-									className="col-md-6 col-sm-6"
+									className="col-md-5 col-sm-5"
 									names={["userRoleId"]}
 									labels={["Admin", "Librarian", "Borrower"]}
 									values={["1", "2", "3"]}
 									helpBlock="Choose the new user's Role in the library."
 									component={renderUserRoleRadioGroup} />
+					<div className="col-md-1 col-sm-1" />
+					<Field id="totalBalance"
+								 className="col-md-5 col-sm-5"
+								 name="totalBalance"
+								 label="Total Balance"
+								 type="text"
+								 helpBlock="Enter the new user's Total Balance."
+								 component={renderCommonField} />
 				</div>
 
 				<div className="col-md-12 col-sm-12">

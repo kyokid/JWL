@@ -186,4 +186,9 @@ public class UserController {
         result.setSuccessData(currentDate.toString(), null);
         return result;
     }
+
+    @RequestMapping(path = "user/update/balance", method = RequestMethod.POST)
+    public RestServiceModel<AccountDetailDto> updateTotalBalance(@RequestBody AccountDto accountDto) {
+        return userService.updateTotalBalance(accountDto);
+    }
 }

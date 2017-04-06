@@ -39,6 +39,8 @@ public interface IUserService {
     // TODO: Thiendn - update return type
     void updateGoogleToken(String googleToken, String userId);
 
+    RestServiceModel<AccountDetailDto> updateTotalBalance(AccountDto accountDto);
+
 //    String requestKey(String userId);
 
 //    Boolean checkin(String key, String userId);
