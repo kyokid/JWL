@@ -75,6 +75,11 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     @Query("select acc.activated from AccountEntity acc where acc.userId = ?1")
     Boolean getActivate(String userId);
 
+    @Transactional
+    @Modifying
+    @Query("update AccountEntity a set a.activated = ?2 where a.userId = ?1")
+    int setActivate(String userId, boolean isActivate);
+
     @Query("select acc.userId " +
             "from AccountEntity acc " +
             "where acc.userId = ?1 " +

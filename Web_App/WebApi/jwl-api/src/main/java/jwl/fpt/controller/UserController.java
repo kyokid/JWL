@@ -191,4 +191,10 @@ public class UserController {
     public RestServiceModel<AccountDetailDto> updateTotalBalance(@RequestBody AccountDto accountDto) {
         return userService.updateTotalBalance(accountDto);
     }
+
+    @RequestMapping(path = "/users/{id}/set_activate/{is_activate}", method = RequestMethod.GET)
+    public RestServiceModel<Boolean> setIsActivate(@PathVariable("is_activate") boolean isActivate,
+                                                   @PathVariable("id") String userId){
+        return userService.setIsActivate(userId, isActivate);
+    }
 }

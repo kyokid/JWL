@@ -52,7 +52,7 @@ public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEnti
             "where copies.bookCopy.book.id = ?1 and copies.returnDate is null")
     List<BorrowedBookCopyEntity> findBorrowingCopiesOfBook(Integer bookId);
 
-    List<BorrowedBookCopyEntity> findByReturnDateIsNull();
+    List<BorrowedBookCopyEntity> findByReturnDateIsNullAndNotiStatusIsNull();
 
     @Query(value = "select copies " +
             "from BorrowedBookCopyEntity copies " +
@@ -80,4 +80,6 @@ public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEnti
             "ON a.root_id = b.root_id AND a.extend_number = b.first_extend_number " +
             "WHERE a.return_date IS NOT NULL AND a.user_id = ?1" , nativeQuery = true)
     List<BorrowedBookCopyEntity> getListFirst(String userId);
+
+    List<BorrowedBookCopyEntity> findByNotiStatus(int notiStatus);
 }

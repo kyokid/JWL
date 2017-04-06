@@ -774,7 +774,7 @@ public class BookBorrowService implements IBookBorrowService {
         Days diffDate;
         String messageBody = "";
         // list sách đang mượn
-        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByReturnDateIsNull();
+        List<BorrowedBookCopyEntity> borrowedBookCopyEntities = borrowedBookCopyRepo.findByReturnDateIsNullAndNotiStatusIsNull();
         // list sách còn 3 ngày là deadline
         List<BorrowedBookCopyEntity> borrowedBook3DayDeadline = new ArrayList<>();
         // list sách tới hạn deadline
