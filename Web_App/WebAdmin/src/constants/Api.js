@@ -10,6 +10,7 @@ export const INIT_BORROW_BY_LIBRARIAN = "librarian/init/borrow"
 export const CHECKOUT = "librarian/checkout"
 export const CANCEL_ADDING_COPIES = "librarian/cancel"
 export const UPDATE_TOTAL_BALANCE = "user/update/balance"
+export const SET_ACTIVATE_PATH = "set_activate"
 
 // uploads.im api
 export const IMG_UPLOAD = "http://uploads.im/api?upload&resize_width=200"

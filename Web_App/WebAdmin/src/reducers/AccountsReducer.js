@@ -95,6 +95,18 @@ export default function (state = INITIAL_STATE, action) {
 					usableBalance: action.payload.data.data.usableBalance
 				}
 			}
+
+		case Types.FETCH_ACTIVATED:
+			if (!action.payload) {
+				return state
+			}
+
+			return {
+				...state,
+				all: state.all.map(account =>
+					account.userId === action.meta.userId ?
+						{ ...account, activated: action.payload.data.data } : account)
+			}
 	}
 	return state
 }

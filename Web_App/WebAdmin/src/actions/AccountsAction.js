@@ -98,3 +98,16 @@ export function updateTotalBalance(userId, newTotalBalance) {
 		payload: request
 	}
 }
+
+export function setActivate(userId, isActivated) {
+	const request = axios({
+		method: 'GET',
+		url: `${Api.ROOT_URL}${Api.USERS}/${userId}/${Api.SET_ACTIVATE_PATH}/${isActivated}`
+	})
+
+	return {
+		type: Types.FETCH_ACTIVATED,
+		payload: request,
+		meta: { userId: userId }
+	}
+}

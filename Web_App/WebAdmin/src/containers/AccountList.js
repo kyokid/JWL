@@ -4,13 +4,15 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { browserHistory, Link } from "react-router"
 
-import { getAllAccounts, getAllBorrowers } from '../actions/AccountsAction'
+import { getAllAccounts, getAllBorrowers, setActivate } from '../actions/AccountsAction'
 import { switchStateNavBar } from '../actions/RouteAction'
 import { MANAGE_ACCOUNTS, ROLE_ADMIN, ROLE_LIBRARIAN } from '../constants/common'
 
 class AccountList extends Component {
 	constructor(props) {
 		super(props)
+
+		this.renderActivateButtons = this.renderActivateButtons.bind(this)
 	}
 
 	componentWillMount() {
@@ -69,12 +71,28 @@ class AccountList extends Component {
 				<td>{account.profileFullname}</td>
 				<td>{account.profileEmail}</td>
 				<td>{account.inLibrary? "True" : "False"}</td>
-				<td>{account.activated? "True" : "False"}</td>
+				<td>{this.renderActivateButtons(userId, account.activated)}</td>
 				<td>
 					<a href="#"><span className="glyphicon glyphicon-pencil" aria-hidden="true" /></a>
 					<a href="#"><span className="glyphicon glyphicon-remove" aria-hidden="true" /></a>
 				</td>
 			</tr>
+		)
+	}
+
+	renderActivateButtons(userId, isActivated) {
+		const { setActivate } = this.props
+		if (isActivated) {
+			return (
+				<a style={{ color: "green" }} onClick={() => setActivate(userId, false)}>
+					<span className="glyphicon glyphicon-ok" aria-hidden="true" />
+				</a>
+			)
+		}
+		return (
+			<a style={{ color: "gray" }} onClick={() => setActivate(userId, true)}>
+				<span className="glyphicon glyphicon-remove" aria-hidden="true" />
+			</a>
 		)
 	}
 }
@@ -87,7 +105,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-	return bindActionCreators({ getAllAccounts, switchStateNavBar, getAllBorrowers }, dispatch)
+	return bindActionCreators({ getAllAccounts, switchStateNavBar, getAllBorrowers, setActivate }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountList)
