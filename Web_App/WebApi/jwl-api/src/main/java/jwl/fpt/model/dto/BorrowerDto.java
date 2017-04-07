@@ -9,4 +9,14 @@ import lombok.Data;
 public class BorrowerDto {
     private String iBeaconId;
     private String userId;
+
+    public BorrowerDto(String iBeaconId, String userId) {
+        this.iBeaconId = iBeaconId;
+        this.userId = userId;
+    }
+
+    public BorrowerDto() {
+        iBeaconId = "";
+        userId = "";
+    }
 }

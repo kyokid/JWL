@@ -15,6 +15,11 @@ public class BorrowCart {
     private Set<String> rfids;
     private int usableBalance;
     private int bookLimit;
+    // When borrower scans fail and raises the alarm, scanFailed = true
+    // This field helps:
+    // * next borrower to be able to init checkout if the current borrower failed
+    // * checkout the current failed borrower
+    private boolean scanFailed;
 
     public BorrowCart() {
         rfids = new HashSet<>();

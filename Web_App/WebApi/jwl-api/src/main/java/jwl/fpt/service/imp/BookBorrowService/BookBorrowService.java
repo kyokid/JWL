@@ -638,14 +638,22 @@ public class BookBorrowService implements IBookBorrowService {
         // ibeacon already initiated its borrow cart.
         if (borrowCart != null && !isLibrarian) {
             String userIdInCart = borrowCart.getUserId();
+            boolean scanFailed = borrowCart.isScanFailed();
 
             // check userId in cart.
+            // if still a same borrower
             if (userId.equals(userIdInCart)) {
                 result.setSuccessData(borrowerDto, "Bạn có thể quét sách rồi.");
-            } else {
-                result.setFailData(null, "Vui lòng chờ tới lượt bạn!");
+                return result;
             }
-            return result;
+            // if found another borrower, and the current borrower still checking out
+            if (!scanFailed) {
+                result.setFailData(null, "Vui lòng chờ tới lượt bạn!");
+                return result;
+            }
+            // if found another borrower, and the current borrower failed (alarm raised)
+            BorrowerDto currentFailedBorrower = new BorrowerDto(borrowerDto.getIBeaconId(), borrowCart.getUserId());
+            checkoutCart(currentFailedBorrower, false);
         }
 
         if (borrowCart != null && isLibrarian) {
@@ -688,6 +696,7 @@ public class BookBorrowService implements IBookBorrowService {
             return checkFoundCart;
         }
         if (borrowCart.getBookLimit() == 0) {
+            borrowCart.setScanFailed(true);
             result.setFailData(null,
                     "Borrower can not borrow anymore",
                     SoundMessages.ERROR);
@@ -716,6 +725,7 @@ public class BookBorrowService implements IBookBorrowService {
                         "The book copy " + inputRfid + " had already been borrowed.",
                         SoundMessages.ALREADY);
             } else {
+                borrowCart.setScanFailed(true);
                 result.setFailData(
                         null,
                         "Invalid book copy rfid!",
@@ -726,6 +736,7 @@ public class BookBorrowService implements IBookBorrowService {
             int currentUsableBalance = borrowCart.getUsableBalance();
             newUsableBalance = calculateRemainUsableBalanceIfBorrowCopy(bookCopyEntity, currentUsableBalance);
             if (newUsableBalance < 0) {
+                borrowCart.setScanFailed(true);
                 result.setFailData(
                         null,
                         "User " + borrowCart.getUserId() + " does not have enough to borrow copy " + inputRfid,

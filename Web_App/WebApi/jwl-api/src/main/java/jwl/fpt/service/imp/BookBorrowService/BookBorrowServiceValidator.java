@@ -15,9 +15,7 @@ class BookBorrowServiceValidator {
     static boolean validateBorrowerDto(BorrowerDto borrowerDto,
                                        AccountRepository accountRepository,
                                        boolean isLibrarian) {
-        if (borrowerDto == null
-                || borrowerDto.getIBeaconId() == null || borrowerDto.getUserId() == null
-                || borrowerDto.getIBeaconId().isEmpty() || borrowerDto.getUserId().isEmpty()) {
+        if (borrowerDto == null || borrowerDto.getIBeaconId().isEmpty() || borrowerDto.getUserId().isEmpty()) {
             return false;
         }
 
