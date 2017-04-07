@@ -32,4 +32,5 @@ public interface IBookBorrowService {
     void checkBorrowingBookCopyDeadline() throws UnsupportedEncodingException;
     int calculateUsableBalanceFromDb(String userId);
     void sendNotificationForLateDeadline();
+    boolean updateUsableBalanceInBorrowCartOf(String userId, int difference);
 }

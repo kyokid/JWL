@@ -517,6 +517,22 @@ public class BookBorrowService implements IBookBorrowService {
         return null;
     }
 
+    private BorrowCart getCartByUserId(String userId) {
+        // TODO: check expire date.
+        if (borrowCarts == null || borrowCarts.isEmpty()) {
+            return null;
+        }
+
+        for (BorrowCart borrowCart :
+                borrowCarts) {
+            if (borrowCart.getUserId().equals(userId)) {
+                return borrowCart;
+            }
+        }
+
+        return null;
+    }
+
     private List<BorrowedBookCopyDto> saveBorrowedCopies(Session session) {
         // TODO: Add necessary validations.
         RfidDtoList rfidDtoList = session.getAttribute(Constant.SESSION_PENDING_COPIES);
@@ -774,6 +790,18 @@ public class BookBorrowService implements IBookBorrowService {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean updateUsableBalanceInBorrowCartOf(String userId, int difference) {
+        BorrowCart borrowCart = getCartByUserId(userId);
+        if (borrowCart == null) {
+            return false;
+        }
+
+        int currentUsableBalance = borrowCart.getUsableBalance();
+        borrowCart.setUsableBalance(currentUsableBalance + difference);
+        return true;
     }
 
     private int calculateRemainUsableBalanceIfBorrowCopy(BookCopyEntity bookCopyEntity, int currentUsableBalance) {

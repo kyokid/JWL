@@ -240,8 +240,12 @@ public class UserService implements IUserService {
         RestServiceModel<AccountDetailDto> result = new RestServiceModel<>();
         String userId = accountDto.getUserId();
         AccountEntity accountEntity = accountRepository.findByUserId(userId);
-        accountEntity.setTotalBalance(accountDto.getTotalBalance());
-        accountRepository.save(accountEntity);
+        int currentTotalBalance = accountEntity.getTotalBalance();
+        int newTotalBalance = accountDto.getTotalBalance();
+        accountEntity.setTotalBalance(newTotalBalance);
+        accountRepository.saveAndFlush(accountEntity);
+        // update usableBalance in user's current borrow cart
+        bookBorrowService.updateUsableBalanceInBorrowCartOf(userId, newTotalBalance - currentTotalBalance);
 
         AccountDetailDto accountDetailDto = new AccountDetailDto();
         accountDetailDto.setTotalBalance(accountEntity.getTotalBalance());
@@ -268,39 +272,6 @@ public class UserService implements IUserService {
         }
         return result;
     }
-
-//    @Override
-//    public String requestKey(String userId) {
-//        // TODO: Thiendn
-//        Date now = new Date(Calendar.getInstance().getTimeInMillis());
-//        System.out.println("Now: " + now);
-//        String beforeEncrypt = userId + now.toString();
-//        System.out.println("Before encrypt: " + beforeEncrypt);
-//        String finalKey = EncryptUtils.generateHash(beforeEncrypt);
-//        System.out.println("After encrypt: " + finalKey);
-////        accountRepository.updateCheckinKey(finalKey, userId);
-//        return finalKey;
-//    }
-
-//    @Override
-//    public Boolean checkin(String key, String userId) {
-//        // TODO: Thiendn: thao luan lai van de luu vao ticket.
-//        String keyInDB = accountRepository.getCheckinKey(userId);
-//        boolean result = keyInDB.equals(key);
-//        if (result){
-//            String token = findByUsername(userId).getGoogleToken();
-//            NotificationUtils.callNotification(userId, token);
-//            //Update Database
-////            accountRepository.setStatus(true, userId);
-////            BorrowerTicketEntity ticket = new BorrowerTicketEntity();
-////            ticket.setQrId(ticketId);
-////            ticket.setAccount(searchTerm);
-////            ticket.setCreateDate(createDate);
-////            ticket.setScanDate(new Date(Calendar.getInstance().getTimeInMillis()));
-////            borrowerTicketRepo.save(ticket);
-//        }
-//        return result;
-//    }
 
     @Override
     public AccountDetailDto getAccountDetail(String userId) {
