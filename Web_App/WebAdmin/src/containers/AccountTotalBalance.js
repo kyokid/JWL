@@ -48,10 +48,10 @@ class AccountTotalBalance extends Component {
 			)
 		}
 
-		const formatedTotalBalance = formatMoney(totalBalance)
+		const formattedTotalBalance = formatMoney(totalBalance)
 		return (
 			<p className="balance">
-				Total Balance: {formatedTotalBalance}&nbsp;
+				Total Balance: {formattedTotalBalance}&nbsp;
 				<a onClick={() => this.onStartEditing(totalBalance)}
 					 className={this.props.isAddingBook ? 'disable' : ''}>
 					<span className="glyphicon glyphicon-pencil edit-balance-icon" aria-hidden="true" />

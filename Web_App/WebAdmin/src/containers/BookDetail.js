@@ -4,9 +4,9 @@ import { Link, browserHistory } from 'react-router'
 
 import { getBookDetail, getBorrowingCopies } from '../actions/BooksAction'
 import { switchStateNavBar } from '../actions/RouteAction'
-import { BOOK_LIST } from '../constants/url-path'
 import { MANAGE_BOOKS, DEFAULT_BOOK_IMG } from '../constants/common'
 import { checkLibrarian } from '../helpers/Authorization'
+import formatMoney from '../helpers/CurrencyFormatter'
 
 class BookDetail extends Component {
 	constructor(props) {
@@ -39,6 +39,9 @@ class BookDetail extends Component {
 			return <div>Loading...</div>
 		}
 
+		const formattedPrice = formatMoney(book.price)
+		const formattedCautionMoney = formatMoney(book.cautionMoney)
+
 		return (
 			<div className="book-detail">
 				<a onClick={browserHistory.goBack} className="back">Back</a>
@@ -56,7 +59,9 @@ class BookDetail extends Component {
 							<p>Published Year: {book.publishYear}</p>
 							<p>Number of Copies: {book.numberOfCopies}</p>
 							<p>Number of Pages: {book.numberOfPages}</p>
-							<p>Price: {book.price}</p>
+							<p>Price: {formattedPrice}</p>
+							<p className="caution-money">Caution Money: {formattedCautionMoney}</p>
+							<p className="caution-day">Max number of late days: {book.bookType.lateDaysLimit}</p>
 							<p>Type: {book.bookType.name}</p>
 							<p>
 								<span>Categories: </span>

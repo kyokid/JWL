@@ -19,6 +19,7 @@ public class BookDetailDto {
     private String isbn;
     private int price;
     private String thumbnail;
+    private Integer cautionMoney;
     private BookTypeDto bookType;
     private BookPositionDto bookPosition;
     private List<BookAuthorDto> bookAuthors;

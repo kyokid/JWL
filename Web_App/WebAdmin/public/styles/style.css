@@ -332,7 +332,8 @@ input[type="password"]{
   margin-right: 5px;
 }
 
-.caution-money {
+.caution-money,
+.caution-day {
   color: #ff7d3c
 }
 

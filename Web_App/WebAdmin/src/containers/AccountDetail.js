@@ -243,7 +243,7 @@ class AccountDetail extends Component {
 		const borrowedCopyRfid = borrowedBook.bookCopyRfid
 		const bookId = borrowedBook.bookCopyBookId
 		const bookStatus = borrowedBook.bookStatus
-		const formatedCautionMoney = formatMoney(borrowedBook.cautionMoney)
+		const formattedCautionMoney = formatMoney(borrowedBook.cautionMoney)
 		const cautionMoney = borrowedBook.cautionMoney
 
 		return (
@@ -251,7 +251,7 @@ class AccountDetail extends Component {
 				<td>{index + 1}</td>
 				<td>{borrowedCopyRfid}</td>
 				<td className="clickable" onClick={() => browserHistory.push(`/books/${bookId}`)}>{borrowedBook.bookCopyBookTitle}</td>
-				<td className="caution-money">{formatedCautionMoney}</td>
+				<td className="caution-money">{formattedCautionMoney}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
 				{bookStatus === null && <td>pending...</td>}

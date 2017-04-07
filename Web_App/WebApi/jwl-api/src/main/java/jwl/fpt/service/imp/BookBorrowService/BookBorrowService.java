@@ -8,6 +8,7 @@ import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BookCopyRepo;
 import jwl.fpt.repository.BorrowedBookCopyRepo;
 import jwl.fpt.service.IBookBorrowService;
+import jwl.fpt.service.IBookService;
 import jwl.fpt.util.Constant;
 import jwl.fpt.util.Constant.SoundMessages;
 import jwl.fpt.util.Helper;
@@ -49,6 +50,8 @@ public class BookBorrowService implements IBookBorrowService {
     private FindByIndexNameSessionRepository sessionRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private IBookService bookService;
 
     @Value("${library.fine.cost}")
     private Integer fineCost;
@@ -598,12 +601,7 @@ public class BookBorrowService implements IBookBorrowService {
             Date deadline = Helper.getDateAfter(entity.getBorrowedDate(), bookTypeEntity.getBorrowLimitDays());
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(0);
-
-            // Calculate and set caution_money
-            int maxLateDate = bookTypeEntity.getLateDaysLimit();
-            int bookPrice = bookEntity.getPrice();
-            int cautionMoney = fineCost * maxLateDate + bookPrice;
-            entity.setCautionMoney(cautionMoney);
+            entity.setCautionMoney(bookService.calculateCautionMoney(bookEntity));
 
             borrowedBookCopyEntities.add(entity);
         }
@@ -817,14 +815,9 @@ public class BookBorrowService implements IBookBorrowService {
 
     private int calculateRemainUsableBalanceIfBorrowCopy(BookCopyEntity bookCopyEntity, int currentUsableBalance) {
         BookEntity bookEntity = bookCopyEntity.getBook();
-        BookTypeEntity bookTypeEntity = bookEntity.getBookType();
-        int maxLateDate = bookTypeEntity.getLateDaysLimit();
-        int bookPrice = bookEntity.getPrice();
-        int neededCautionMoney = fineCost * maxLateDate + bookPrice;
-        int usableBalance = currentUsableBalance;
-        if (usableBalance >= neededCautionMoney) {
-            int newUsableBalance = usableBalance - neededCautionMoney;
-            return newUsableBalance;
+        int neededCautionMoney = bookService.calculateCautionMoney(bookEntity);
+        if (currentUsableBalance >= neededCautionMoney) {
+            return currentUsableBalance - neededCautionMoney;
         }
         return -1;
     }

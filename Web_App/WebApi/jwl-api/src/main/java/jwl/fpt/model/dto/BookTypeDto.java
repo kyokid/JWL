@@ -12,4 +12,5 @@ public class BookTypeDto {
     private Integer borrowLimitDays;
     private Integer daysPerExtend;
     private Integer extendTimesLimit;
+    private Integer lateDaysLimit;
 }

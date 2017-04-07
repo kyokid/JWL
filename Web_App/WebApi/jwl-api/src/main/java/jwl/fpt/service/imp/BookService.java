@@ -1,6 +1,7 @@
 package jwl.fpt.service.imp;
 
 import jwl.fpt.entity.BookEntity;
+import jwl.fpt.entity.BookTypeEntity;
 import jwl.fpt.entity.BorrowedBookCopyEntity;
 import jwl.fpt.entity.WishBookEntity;
 import jwl.fpt.model.RestServiceModel;
@@ -13,6 +14,7 @@ import jwl.fpt.repository.WishBookRepository;
 import jwl.fpt.service.IBookService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +33,9 @@ public class BookService implements IBookService {
     private ModelMapper modelMapper;
     @Autowired
     private WishBookRepository wishBookRepository;
+
+    @Value("${library.fine.cost}")
+    private Integer fineCost;
 
     @Override
     public RestServiceModel<List<BookDto>> getAllBooks() {
@@ -68,6 +73,7 @@ public class BookService implements IBookService {
         }
 
         BookDetailDto bookDetailDto = modelMapper.map(bookEntity, BookDetailDto.class);
+        bookDetailDto.setCautionMoney(calculateCautionMoney(bookEntity));
         result.setSuccessData(bookDetailDto, "Here is the detail of the book " + bookId);
 
         return result;
@@ -130,5 +136,13 @@ public class BookService implements IBookService {
         result.setSuccessData(bookDtos, "Found " + bookDtos.size() + " book(s).");
 
         return result;
+    }
+
+    @Override
+    public int calculateCautionMoney(BookEntity bookEntity) {
+        BookTypeEntity bookTypeEntity = bookEntity.getBookType();
+        int maxLateDate = bookTypeEntity.getLateDaysLimit();
+        int bookPrice = bookEntity.getPrice();
+        return fineCost * maxLateDate + bookPrice;
     }
 }
