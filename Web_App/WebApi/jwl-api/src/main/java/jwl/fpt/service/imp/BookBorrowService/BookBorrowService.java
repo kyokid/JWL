@@ -641,7 +641,7 @@ public class BookBorrowService implements IBookBorrowService {
 
             // check userId in cart.
             if (userId.equals(userIdInCart)) {
-                result.setSuccessData(borrowerDto, "Bạn có thể quét sách rồi.");
+                result.setSuccessData(borrowerDto, "Bạn có thể mượn sách rồi.");
             } else {
                 result.setFailData(null, "Vui lòng chờ tới lượt bạn!");
             }
@@ -653,7 +653,7 @@ public class BookBorrowService implements IBookBorrowService {
         }
 
         createNewBorrowCart(borrowerDto);
-        result.setSuccessData(borrowerDto, "Bạn có thể quét sách.");
+        result.setSuccessData(borrowerDto, "Bạn có thể mượn sách.");
         return result;
     }
 
