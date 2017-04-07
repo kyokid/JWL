@@ -224,7 +224,7 @@ class AccountDetail extends Component {
 						<th>No.</th>
 						<th>RFID</th>
 						<th>Title</th>
-						<th>Deposit</th>
+						<th>Caution Money</th>
 						<th>Borrowed Date</th>
 						<th>Dealine Date</th>
 						<th>Book Status</th>
@@ -243,15 +243,15 @@ class AccountDetail extends Component {
 		const borrowedCopyRfid = borrowedBook.bookCopyRfid
 		const bookId = borrowedBook.bookCopyBookId
 		const bookStatus = borrowedBook.bookStatus
-		const formatedDeposit = formatMoney(borrowedBook.deposit)
-		const deposit = borrowedBook.deposit
+		const formatedCautionMoney = formatMoney(borrowedBook.cautionMoney)
+		const cautionMoney = borrowedBook.cautionMoney
 
 		return (
 			<tr key={borrowedCopyRfid}>
 				<td>{index + 1}</td>
 				<td>{borrowedCopyRfid}</td>
 				<td className="clickable" onClick={() => browserHistory.push(`/books/${bookId}`)}>{borrowedBook.bookCopyBookTitle}</td>
-				<td className="deposit">{formatedDeposit}</td>
+				<td className="caution-money">{formatedCautionMoney}</td>
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
 				{bookStatus === null && <td>pending...</td>}
@@ -260,7 +260,7 @@ class AccountDetail extends Component {
 				<td>
 					<a
 						className={`${this.state.isAddingBook ? "disable" : ""}`}
-						onClick={() => this.onClickDeleteCopy(userId, borrowedCopyRfid, deposit)}>
+						onClick={() => this.onClickDeleteCopy(userId, borrowedCopyRfid, cautionMoney)}>
 						<span className="glyphicon glyphicon-remove" aria-hidden="true" />
 					</a>
 				</td>
@@ -268,8 +268,8 @@ class AccountDetail extends Component {
 		)
 	}
 
-	onClickDeleteCopy(userId, borrowedCopyRfid, deletedCopyDeposit) {
-		this.props.deleteBorrowedCopy(userId, borrowedCopyRfid, deletedCopyDeposit)
+	onClickDeleteCopy(userId, borrowedCopyRfid, deletedCopyCautionMoney) {
+		this.props.deleteBorrowedCopy(userId, borrowedCopyRfid, deletedCopyCautionMoney)
 	}
 }
 

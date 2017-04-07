@@ -240,7 +240,7 @@ ALTER TABLE public.borrowed_book_copy DROP COLUMN days_per_extend;
 ALTER TABLE public.borrowed_book_copy ADD COLUMN extend_number INTEGER NOT NULL;
 ALTER TABLE public.borrowed_book_copy ADD COLUMN root_id INTEGER;
 ALTER TABLE public.borrowed_book_copy ADD COLUMN deadline_date DATE NOT NULL;
-ALTER TABLE public.borrowed_book_copy ADD COLUMN deposit INTEGER DEFAULT 0;
+ALTER TABLE public.borrowed_book_copy ADD COLUMN caution_money INTEGER DEFAULT 0;
 ALTER TABLE public.borrowed_book_copy ADD COLUMN noti_status INTEGER DEFAULT NULL;
 
 -- borrower_ticket:

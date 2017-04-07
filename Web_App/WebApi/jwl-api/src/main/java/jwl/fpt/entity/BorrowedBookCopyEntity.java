@@ -15,7 +15,7 @@ public class BorrowedBookCopyEntity {
     private Date deadlineDate;
     private Integer extendNumber;
     private Integer rootId;
-    private Integer deposit;
+    private Integer cautionMoney;
     private Integer notiStatus;
     private BookCopyEntity bookCopy;
     private AccountEntity account;
@@ -143,13 +143,13 @@ public class BorrowedBookCopyEntity {
     }
 
     @Basic
-    @Column(name = "deposit")
-    public Integer getDeposit() {
-        return deposit;
+    @Column(name = "caution_money")
+    public Integer getCautionMoney() {
+        return cautionMoney;
     }
 
-    public void setDeposit(Integer deposit) {
-        this.deposit = deposit;
+    public void setCautionMoney(Integer cautionMoney) {
+        this.cautionMoney = cautionMoney;
     }
 
     @Basic

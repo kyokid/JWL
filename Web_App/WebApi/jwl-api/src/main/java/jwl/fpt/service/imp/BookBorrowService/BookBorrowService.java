@@ -388,7 +388,7 @@ public class BookBorrowService implements IBookBorrowService {
         }
         if (resultUpdate != 0) {
             //get information sách mới trả
-            int deposit = currentBook.getDeposit();
+            int cautionMoney = currentBook.getCautionMoney();
             String userId = currentBook.getAccount().getUserId();
             int rootId;
             if (currentExtentNumber == 0) {
@@ -406,7 +406,7 @@ public class BookBorrowService implements IBookBorrowService {
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(currentExtentNumber + 1);
             entity.setRootId(rootId);
-            entity.setDeposit(deposit);
+            entity.setCautionMoney(cautionMoney);
             entity.setNotiStatus(null);
             //save to db
             entity = borrowedBookCopyRepo.save(entity);
@@ -599,11 +599,11 @@ public class BookBorrowService implements IBookBorrowService {
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(0);
 
-            // Calculate and set deposit
+            // Calculate and set caution_money
             int maxLateDate = bookTypeEntity.getLateDaysLimit();
             int bookPrice = bookEntity.getPrice();
-            int neededDeposit = fineCost * maxLateDate + bookPrice;
-            entity.setDeposit(neededDeposit);
+            int cautionMoney = fineCost * maxLateDate + bookPrice;
+            entity.setCautionMoney(cautionMoney);
 
             borrowedBookCopyEntities.add(entity);
         }
@@ -667,7 +667,7 @@ public class BookBorrowService implements IBookBorrowService {
 
     private RestServiceModel<RfidDtoList> checkToAddCopiesToBorrowCart(RfidDtoList rfidDtoList,
                                                                        BorrowCart borrowCart) {
-        // TODO: check usable_balance and update deposit case many copies are scanned at the same time
+        // TODO: check usable_balance and update caution_money case many copies are scanned at the same time
         // TODO: check validation
         RestServiceModel<RfidDtoList> result = new RestServiceModel<>();
         RestServiceModel checkFoundCart = BookBorrowServiceValidator
@@ -769,8 +769,8 @@ public class BookBorrowService implements IBookBorrowService {
         List<BorrowedBookCopyEntity> borrowedBookCopyEntities = (List<BorrowedBookCopyEntity>) accountEntity.getBorrowedBookCopies();
         for (BorrowedBookCopyEntity borrowedBookCopyEntity :
                 borrowedBookCopyEntities) {
-            int deposit = borrowedBookCopyEntity.getDeposit();
-            usableBalance -= deposit;
+            int cautionMoney = borrowedBookCopyEntity.getCautionMoney();
+            usableBalance -= cautionMoney;
         }
         return usableBalance;
     }
@@ -820,10 +820,10 @@ public class BookBorrowService implements IBookBorrowService {
         BookTypeEntity bookTypeEntity = bookEntity.getBookType();
         int maxLateDate = bookTypeEntity.getLateDaysLimit();
         int bookPrice = bookEntity.getPrice();
-        int neededDeposit = fineCost * maxLateDate + bookPrice;
+        int neededCautionMoney = fineCost * maxLateDate + bookPrice;
         int usableBalance = currentUsableBalance;
-        if (usableBalance >= neededDeposit) {
-            int newUsableBalance = usableBalance - neededDeposit;
+        if (usableBalance >= neededCautionMoney) {
+            int newUsableBalance = usableBalance - neededCautionMoney;
             return newUsableBalance;
         }
         return -1;
@@ -916,9 +916,9 @@ public class BookBorrowService implements IBookBorrowService {
                 afterDeadlineCopies) {
             AccountEntity finedAccountEntity = borrowedBookCopyEntity.getAccount();
             int totalBalance = finedAccountEntity.getTotalBalance();
-            int deposit = borrowedBookCopyEntity.getDeposit();
+            int cautionMoney = borrowedBookCopyEntity.getCautionMoney();
 
-            if (totalBalance == 0 || deposit == 0) {
+            if (totalBalance == 0 || cautionMoney == 0) {
                 continue;
             }
 
@@ -935,15 +935,15 @@ public class BookBorrowService implements IBookBorrowService {
             if (lostBook) {
                 int bookPrice = borrowedBookCopyEntity.getBookCopy().getBook().getPrice();
                 totalBalance -= bookPrice;
-                deposit -= bookPrice;
+                cautionMoney -= bookPrice;
 
                 // TODO: what to do if a book copy is lost? Delete it? Or add more fields to mark lost status?
             } else {
                 totalBalance -= fineCost;
-                deposit -= fineCost;
+                cautionMoney -= fineCost;
             }
             finedAccountEntity.setTotalBalance(totalBalance);
-            borrowedBookCopyEntity.setDeposit(deposit);
+            borrowedBookCopyEntity.setCautionMoney(cautionMoney);
         }
         accountRepository.save(finedAccountEntities);
         borrowedBookCopyRepo.save(afterDeadlineCopies);
