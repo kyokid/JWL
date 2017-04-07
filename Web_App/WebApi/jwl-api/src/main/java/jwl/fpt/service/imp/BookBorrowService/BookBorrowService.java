@@ -926,19 +926,24 @@ public class BookBorrowService implements IBookBorrowService {
             }
 
             if (lostBook) {
-                int bookPrice = borrowedBookCopyEntity.getBookCopy().getBook().getPrice();
-                totalBalance -= bookPrice;
-                cautionMoney -= bookPrice;
-
-                // TODO: what to do if a book copy is lost? Delete it? Or add more fields to mark lost status?
+                totalBalance -= cautionMoney;
+                cautionMoney = 0;
             } else {
-                totalBalance -= fineCost;
-                cautionMoney -= fineCost;
+                // in case the scheduler fails to run in some days, the server still calculates the right fine value to borrower.
+                int daysInterval = calculateNumberOfLateDays(borrowedBookCopyEntity.getDeadlineDate());
+                totalBalance -= fineCost * daysInterval;
+                cautionMoney -= fineCost * daysInterval;
             }
             finedAccountEntity.setTotalBalance(totalBalance);
             borrowedBookCopyEntity.setCautionMoney(cautionMoney);
+            // TODO: what to do if a book copy is lost? Delete it? Or add more fields to mark lost status?
         }
         accountRepository.save(finedAccountEntities);
         borrowedBookCopyRepo.save(afterDeadlineCopies);
+    }
+
+    private int calculateNumberOfLateDays(Date deadline) {
+        Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
+        return Helper.getDaysInterval(deadline, currentDate);
     }
 }
