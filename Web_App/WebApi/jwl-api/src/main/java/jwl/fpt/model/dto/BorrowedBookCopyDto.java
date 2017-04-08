@@ -37,6 +37,7 @@ public class BorrowedBookCopyDto {
     private String bookCopyBookThumbnail;
     private Integer bookStatus;
     private Integer cautionMoney;
+    private String bookCopyBookBookTypeName;
     private List<BookAuthorDto> bookCopyBookBookAuthors;
     private List<BookCategoryDto> bookCopyBookBookCategories;
 
