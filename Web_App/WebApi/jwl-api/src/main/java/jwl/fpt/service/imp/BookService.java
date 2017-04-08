@@ -7,8 +7,10 @@ import jwl.fpt.entity.WishBookEntity;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.BookDetailDto;
 import jwl.fpt.model.dto.BookDto;
+import jwl.fpt.model.dto.BookTypeDto;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 import jwl.fpt.repository.BookRepo;
+import jwl.fpt.repository.BookTypeRepo;
 import jwl.fpt.repository.BorrowedBookCopyRepo;
 import jwl.fpt.repository.WishBookRepository;
 import jwl.fpt.service.IBookService;
@@ -33,7 +35,8 @@ public class BookService implements IBookService {
     private ModelMapper modelMapper;
     @Autowired
     private WishBookRepository wishBookRepository;
-
+    @Autowired
+    private BookTypeRepo bookTypeRepo;
     @Value("${library.fine.cost}")
     private Integer fineCost;
 
@@ -144,5 +147,16 @@ public class BookService implements IBookService {
         int maxLateDate = bookTypeEntity.getLateDaysLimit();
         int bookPrice = bookEntity.getPrice();
         return fineCost * maxLateDate + bookPrice;
+    }
+
+    @Override
+    public List<BookTypeDto> getBookType() {
+        List<BookTypeEntity> bookTypeEntitys = bookTypeRepo.findAll();
+        List<BookTypeDto> result = new ArrayList<>();
+        for (BookTypeEntity bookTypeEntity: bookTypeEntitys) {
+            BookTypeDto bookTypeDto = modelMapper.map(bookTypeEntity, BookTypeDto.class);
+            result.add(bookTypeDto);
+        }
+        return result;
     }
 }

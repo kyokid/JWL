@@ -461,6 +461,7 @@ public class BookBorrowService implements IBookBorrowService {
             } else {
                 dto.setBookStatus((int) aaa);
             }
+
         }
         result.setData(listKhongGiaHanDTO);
         result.setSucceed(true);
