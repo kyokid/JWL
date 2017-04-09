@@ -16,7 +16,7 @@ public class BorrowedBookCopyDto {
     private Integer borrowLimitDays;
     private Integer extendTimes;
     private Integer extendTimesLimit;
-    private Integer daysPerExtend;
+    private Integer bookCopyBookBookTypeDaysPerExtend;
     private Date borrowedDate;
     private Date returnDate;
     private Date deadlineDate;
