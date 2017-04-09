@@ -2,6 +2,7 @@ package jwl.fpt.util.quartz.scheduler;
 
 import jwl.fpt.service.IBookBorrowService;
 import jwl.fpt.service.imp.BookBorrowService.BookBorrowService;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -16,6 +17,7 @@ import java.util.Date;
 /**
  * Created by HaVH on 3/18/17.
  */
+@DisallowConcurrentExecution
 public class CheckDeadlineJob implements Job{
     private Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -1,8 +1,10 @@
 package jwl.fpt.util.quartz.scheduler;
 
+import com.oracle.tools.packager.Log;
 import jwl.fpt.util.quartz.config.AutoWiringSpringBeanJobFactory;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.listeners.JobChainingJobListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.List;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -51,19 +54,16 @@ public class QrtzScheduler {
 
         JobDetail jobCheckout = newJob()
                 .ofType(AutoCheckoutJob.class)
-                .storeDurably()
                 .withIdentity(JobKey.jobKey("Check_Out_Detail"))
                 .withDescription("Invoke Check Out Job service...").build();
 
         JobDetail jobCheckDeadline = newJob()
                 .ofType(CheckDeadlineJob.class)
-                .storeDurably()
                 .withIdentity(JobKey.jobKey("Check_Deadline_Detail"))
                 .withDescription("Invoke Check Deadline Job service...").build();
 
         JobDetail jobPushNotifcation = newJob()
                 .ofType(PushNotificationJob.class)
-                .storeDurably()
                 .withIdentity(JobKey.jobKey("Push_Noti_Detail"))
                 .withDescription("Invoke Push Noti Job service...").build();
 
@@ -76,16 +76,24 @@ public class QrtzScheduler {
         Trigger deadlineTrigger = newTrigger()
                 .withIdentity(TriggerKey.triggerKey("Deadline_Trigger"))
                 .withDescription("deadline trigger")
+                .withPriority(9)
                 .startNow()
-                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(2, 0)).build();
+                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(2, 0))
+                .build();
 
         Trigger pushNotiTrigger = newTrigger()
                 .withIdentity(TriggerKey.triggerKey("Push_Noti_Trigger"))
                 .withDescription("push noti trigger")
                 .startNow()
-                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(8, 0)).build();
+                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(8, 0))
+                .build();
 
         logger.debug("Getting a handle to the Scheduler");
+
+        JobChainingJobListener jobChainingJobListener = new JobChainingJobListener("myChainListener");
+        jobChainingJobListener.addJobChainLink(jobCheckDeadline.getKey(), jobPushNotifcation.getKey());
+
+
         Scheduler scheduler = factory.getScheduler();
         scheduler.setJobFactory(springBeanJobFactory());
         scheduler.scheduleJob(jobCheckout, checkoutTrigger);
@@ -93,27 +101,17 @@ public class QrtzScheduler {
         scheduler.scheduleJob(jobPushNotifcation, pushNotiTrigger);
 
         logger.debug("Starting Scheduler threads");
+        scheduler.getListenerManager().addJobListener(jobChainingJobListener);
         scheduler.start();
         return scheduler;
     }
 
-//    @Bean
-//    public JobDetail jobDetail() {
-//
-//        return newJob().ofType(CheckDeadlineJob.class).storeDurably().withIdentity(JobKey.jobKey("Qrtz_Job_Detail")).withDescription("Invoke Sample Job service...").build();
-//    }
-//
-//    @Bean
-//    public Trigger trigger(JobDetail job) {
-//
-//        int frequencyInSec = 10;
-//        logger.info("Configuring trigger to fire every {} seconds", frequencyInSec);
-//
-//        return newTrigger()
-//                .forJob(job)
-//                .withIdentity(TriggerKey.triggerKey("Qrtz_Trigger"))
-//                .withDescription("Sample trigger")
-//                .startNow()
-//                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(8, 0)).build();
-//    }
+    @Bean
+    public boolean checkJob(Scheduler scheduler) throws IOException, SchedulerException {
+        List<JobExecutionContext> jobs = scheduler.getCurrentlyExecutingJobs();
+        for (JobExecutionContext job : jobs) {
+            logger.debug("check job {}", job.getJobDetail().getDescription());
+        }
+        return true;
+    }
 }

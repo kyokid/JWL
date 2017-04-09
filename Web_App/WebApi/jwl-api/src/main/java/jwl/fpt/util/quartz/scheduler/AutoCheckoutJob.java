@@ -1,6 +1,7 @@
 package jwl.fpt.util.quartz.scheduler;
 
 import jwl.fpt.service.imp.UserService.UserService;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by HaVH on 4/10/17.
  */
+@DisallowConcurrentExecution
 public class AutoCheckoutJob implements Job {
 
     Logger logger = LoggerFactory.getLogger(getClass());
