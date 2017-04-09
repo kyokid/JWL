@@ -9,6 +9,7 @@ import jwl.fpt.model.dto.UserDto;
 import jwl.fpt.repository.AccountRepository;
 import jwl.fpt.repository.BorrowerTicketRepo;
 import jwl.fpt.service.IUserService;
+import jwl.fpt.util.Constant;
 import jwl.fpt.util.EncryptUtils;
 import jwl.fpt.util.NotificationUtils;
 import org.json.JSONObject;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
+
+import static jwl.fpt.util.Constant.BANNED_ACCOUNT;
+import static jwl.fpt.util.Constant.INVALID_ACCOUNT;
 
 /**
  * Created by HaVH on 1/9/17.
@@ -78,7 +82,7 @@ public class UserController {
         System.out.println("request detection");
         if (profileDTO != null) {
             String token = userService.findByUsername(searchTerm).getGoogleToken();
-            NotificationUtils.callNotification(profileDTO.getUserId(), token);
+//            NotificationUtils.callNotification(profileDTO.getUserId(), token);
             //Update Database
             accountRepository.setStatus(true, searchTerm);
             BorrowerTicketEntity ticket = new BorrowerTicketEntity();
@@ -166,14 +170,18 @@ public class UserController {
         String token = userService.findByUsername(userId).getGoogleToken();
         boolean isActivate_of_user = userService.getActivate(userId);
         if (result && isActivate_of_user) {
-            NotificationUtils.callNotification(userId, token);
+            NotificationUtils.callNotification(userId, token, Constant.VALID_ACCOUNT);
             accountRepository.setStatus(true, userId);
             responseObj.setData(userId);
             responseObj.setSucceed(true);
-        }else {
-            NotificationUtils.callNotificationFail(userId, token);
+        }else if(result && !isActivate_of_user){
+            NotificationUtils.callNotification(userId, token, BANNED_ACCOUNT);
+            responseObj.setData("Account " + userId + " has been banned!");
             responseObj.setSucceed(false);
-            responseObj.setData("Keys are equal?: " + result + "\n" + "isActivate: " + isActivate_of_user);
+        }else if(!result){
+            NotificationUtils.callNotification(userId, token, INVALID_ACCOUNT);
+            responseObj.setSucceed(false);
+            responseObj.setData("Check in fail!");
         }
 
         return responseObj;

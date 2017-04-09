@@ -46,4 +46,8 @@ public class Constant {
         public static final String LIBRARIAN = "librarian";
         public static final String BORROWER = "borrower";
     }
+
+    public static int INVALID_ACCOUNT = -1;
+    public static int BANNED_ACCOUNT = 0;
+    public static int VALID_ACCOUNT = 1;
 }

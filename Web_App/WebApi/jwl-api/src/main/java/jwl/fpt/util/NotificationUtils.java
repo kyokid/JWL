@@ -1,6 +1,7 @@
 package jwl.fpt.util;
 
 
+import jwl.fpt.controller.UserController;
 import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.BookEntity;
 import jwl.fpt.model.dto.AccountDto;
@@ -32,9 +33,7 @@ import java.util.List;
 public class NotificationUtils {
     private static String url = "https://fcm.googleapis.com/fcm/send";
 
-    public static void callNotification(String userId, String googleToken){
-
-
+    public static void callNotification(String userId, String googleToken, int type){
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
 
@@ -42,9 +41,14 @@ public class NotificationUtils {
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Authorization", "key=" + Constant.APP_TOKEN);
         JSONObject body = new JSONObject();
-        body.put("body", true);
+//        body.put("body", true);
         JSONObject entity = new JSONObject();
         entity.put("to", googleToken);
+        switch (type){
+            case -1: body.put("body", Constant.INVALID_ACCOUNT); break;
+            case 0: body.put("body", Constant.BANNED_ACCOUNT); break;
+            case 1: body.put("body", Constant.VALID_ACCOUNT); break;
+        }
         entity.put("notification", body);
         System.out.println(entity.toString());
         try {
