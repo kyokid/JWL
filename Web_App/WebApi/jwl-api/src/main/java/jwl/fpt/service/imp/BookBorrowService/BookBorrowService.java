@@ -372,7 +372,7 @@ public class BookBorrowService implements IBookBorrowService {
             entity.setAccount(userId);
             entity.setBookCopy(bookCopyEntity);
             entity.setBorrowedDate(new Date(Calendar.getInstance().getTimeInMillis()));
-            Date deadline = Helper.GetDateAfter(entity.getBorrowedDate(), bookTypeEntity.getBorrowLimitDays());
+            Date deadline = Helper.GetDateAfter(currentBook.getDeadlineDate(), bookTypeEntity.getDaysPerExtend());
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(currentExtentNumber + 1);
             entity.setRootId(rootId);
