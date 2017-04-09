@@ -37,22 +37,19 @@ public class BorrowedBookCopyDto {
     private String bookCopyBookThumbnail;
     private Integer bookStatus;
     private Integer cautionMoney;
+    private String bookCopyBookBookTypeName;
     private List<BookAuthorDto> bookCopyBookBookAuthors;
     private List<BookCategoryDto> bookCopyBookBookCategories;
+    private Integer fineCost;
 
     public static void setBookStatusForOneDto(BorrowedBookCopyDto borrowedBookCopyDto) {
         if (borrowedBookCopyDto == null || borrowedBookCopyDto.getDeadlineDate() == null) {
             return;
         }
-
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
         Date deadline = borrowedBookCopyDto.getDeadlineDate();
         int daysInterval = Helper.getDaysInterval(deadline, currentDate);
-        if (daysInterval > 0) {
-            borrowedBookCopyDto.setBookStatus(BOOK_STATUS_OK);
-        } else {
-            borrowedBookCopyDto.setBookStatus(daysInterval);
-        }
+        borrowedBookCopyDto.setBookStatus(daysInterval);
     }
 
     public static void setBookStatusForListDtos(List<BorrowedBookCopyDto> borrowedBookCopyDtos) {

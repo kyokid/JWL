@@ -4,6 +4,7 @@ import jwl.fpt.entity.BookEntity;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.BookDetailDto;
 import jwl.fpt.model.dto.BookDto;
+import jwl.fpt.model.dto.BookTypeDto;
 import jwl.fpt.model.dto.BorrowedBookCopyDto;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface IBookService {
     RestServiceModel<List<BookDto>> searchBooks(String searchTerm, String userId);
 
     int calculateCautionMoney(BookEntity bookEntity);
+
+    List<BookTypeDto> getBookType();
 }

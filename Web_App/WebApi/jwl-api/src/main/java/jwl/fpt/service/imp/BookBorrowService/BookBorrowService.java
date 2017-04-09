@@ -247,6 +247,7 @@ public class BookBorrowService implements IBookBorrowService {
         for (BorrowedBookCopyEntity entity : bookCopyEntities) {
             BorrowedBookCopyDto dto = modelMapper.map(entity, BorrowedBookCopyDto.class);
             BorrowedBookCopyDto.setBookStatusForOneDto(dto);
+            dto.setFineCost(fineCost);
             borrowedBookCopyDtos.add(dto);
         }
         return borrowedBookCopyDtos;
@@ -461,6 +462,7 @@ public class BookBorrowService implements IBookBorrowService {
             } else {
                 dto.setBookStatus((int) aaa);
             }
+
         }
         result.setData(listKhongGiaHanDTO);
         result.setSucceed(true);
