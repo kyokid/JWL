@@ -42,7 +42,7 @@ public class NotificationUtils {
         post.setHeader("Content-Type", "application/json");
         post.setHeader("Authorization", "key=" + Constant.APP_TOKEN);
         JSONObject body = new JSONObject();
-        body.put("body", "Welcome" + userId);
+        body.put("body", true);
         JSONObject entity = new JSONObject();
         entity.put("to", googleToken);
         entity.put("notification", body);
@@ -113,6 +113,38 @@ public class NotificationUtils {
         JSONObject entity = new JSONObject();
         entity.put("to", googleToken);
         entity.put("data", body);
+        try {
+            post.setEntity(new StringEntity(entity.toString()));
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            HttpResponse response = client.execute(post);
+            System.out.println(response.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void callNotificationFail(String userId, String googleToken){
+        HttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost(url);
+
+        // add header
+        post.setHeader("Content-Type", "application/json");
+        post.setHeader("Authorization", "key=" + Constant.APP_TOKEN);
+        JSONObject body = new JSONObject();
+        body.put("body", false);
+        JSONObject entity = new JSONObject();
+        entity.put("to", googleToken);
+        entity.put("notification", body);
+        System.out.println(entity.toString());
         try {
             post.setEntity(new StringEntity(entity.toString()));
 

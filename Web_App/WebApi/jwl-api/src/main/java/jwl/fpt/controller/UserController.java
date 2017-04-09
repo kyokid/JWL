@@ -161,10 +161,13 @@ public class UserController {
         System.out.println("Key generate from server: " + finalKey);
         //so sanh key hien tai voi key client send.
         boolean result = finalKey.equals(privateKey);
+        String token = userService.findByUsername(userId).getGoogleToken();
         if (result) {
-            String token = userService.findByUsername(userId).getGoogleToken();
+
             NotificationUtils.callNotification(userId, token);
             accountRepository.setStatus(true, userId);
+        }else {
+            NotificationUtils.callNotificationFail(userId, token);
         }
         responseObj.setSucceed(true);
         responseObj.setData(result);
