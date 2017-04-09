@@ -349,7 +349,8 @@ public class BookBorrowService implements IBookBorrowService {
         BookTypeEntity bookTypeEntity = bookCopyEntity.getBook().getBookType();
         int maxExtend = bookTypeEntity.getExtendTimesLimit();
         if (currentExtentNumber == maxExtend) {
-            String message = "Bạn không thể gia hạn sách " + bookCopyEntity.getBook().getTitle() + " do vượt quá số lần cho phép, vui lòng trả lại sách cho thư viện.";
+            String message = "Gia hạn không thành công. Bạn vui lòng mang sách " + bookCopyEntity.getBook().getTitle() +
+                    " tới thư viện để kiểm tra lại tình trạng của sách.";
             result.setFailData(null, message);
             return result;
         }
