@@ -62,7 +62,7 @@ public class QrtzScheduler {
                 .withDescription("Invoke Check Deadline Job service...").build();
 
         JobDetail jobPushNotifcation = newJob()
-                .ofType(CheckDeadlineJob.class)
+                .ofType(PushNotificationJob.class)
                 .storeDurably()
                 .withIdentity(JobKey.jobKey("Push_Noti_Detail"))
                 .withDescription("Invoke Push Noti Job service...").build();
