@@ -38,7 +38,7 @@ public class BookReturnController {
         if (responseObj.isSucceed()){
             String userId = responseObj.getData().get(0).getAccountUserId();
             String token = userService.findByUsername(userId).getGoogleToken();
-            NotificationUtils.pushNotiRefreshBorrowedBook(token);
+            NotificationUtils.pushNotiRefreshBorrowedBook(token, responseObj.getData());
         }
         return responseObj;
     }

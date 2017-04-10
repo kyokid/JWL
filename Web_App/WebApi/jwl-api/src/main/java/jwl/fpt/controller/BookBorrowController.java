@@ -65,7 +65,7 @@ public class BookBorrowController {
         if (result.isSucceed()){
             String userId = borrowerDto.getUserId();
             String token = userService.findByUsername(userId).getGoogleToken();
-            NotificationUtils.pushNotiRefreshBorrowedBook(token);
+            NotificationUtils.pushNotiRefreshBorrowedBook(token, result.getData());
         }
         return result;
     }

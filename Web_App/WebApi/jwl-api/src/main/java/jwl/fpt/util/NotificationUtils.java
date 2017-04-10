@@ -168,7 +168,7 @@ public class NotificationUtils {
         }
     }
 
-    public static void pushNotiRefreshBorrowedBook(String googleToken){
+    public static void pushNotiRefreshBorrowedBook(String googleToken, List<BorrowedBookCopyDto> recentList){
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
 
@@ -177,6 +177,7 @@ public class NotificationUtils {
         post.setHeader("Authorization", "key=" + Constant.APP_TOKEN);
         JSONObject body = new JSONObject();
         body.put("title", "Refresh");
+        body.put("list", recentList);
         JSONObject entity = new JSONObject();
         entity.put("to", googleToken);
         entity.put("data", body);
