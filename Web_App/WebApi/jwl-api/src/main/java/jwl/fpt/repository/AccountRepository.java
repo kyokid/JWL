@@ -15,7 +15,7 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<AccountEntity, String> {
     @Query("select user " +
             "from AccountEntity user " +
-            "where user.userId = ?1 and user.password = ?2 and user.activated = true")
+            "where user.userId = ?1 and user.password = ?2")
     AccountEntity login(String userId, String password);
 
     @Query("select user " +
