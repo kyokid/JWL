@@ -49,7 +49,7 @@ public class NotificationUtils {
             case 0: body.put("body", Constant.BANNED_ACCOUNT); break;
             case 1: body.put("body", Constant.VALID_ACCOUNT); break;
         }
-        entity.put("notification", body);
+        entity.put("data", body);
         System.out.println(entity.toString());
         try {
             post.setEntity(new StringEntity(entity.toString()));
