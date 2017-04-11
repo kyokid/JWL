@@ -3,6 +3,7 @@ package jwl.fpt.service.imp.UserService;
 import jwl.fpt.entity.AccountEntity;
 import jwl.fpt.entity.BorrowerTicketEntity;
 import jwl.fpt.entity.ProfileEntity;
+import jwl.fpt.model.BorrowCart;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 import jwl.fpt.repository.AccountRepository;
@@ -301,6 +302,10 @@ public class UserService implements IUserService {
     }
 
     public void autoCheckOutUser() {
+        List<BorrowCart> borrowCarts = bookBorrowService.getListBorrowCart();
+        if (borrowCarts != null && borrowCarts.size() > 0) {
+            borrowCarts.clear();
+        }
         accountRepository.updateInLibrary();
     }
 }

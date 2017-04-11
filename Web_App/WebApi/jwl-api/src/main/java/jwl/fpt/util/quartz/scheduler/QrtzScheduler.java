@@ -1,6 +1,5 @@
 package jwl.fpt.util.quartz.scheduler;
 
-import com.oracle.tools.packager.Log;
 import jwl.fpt.util.quartz.config.AutoWiringSpringBeanJobFactory;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
@@ -8,10 +7,13 @@ import org.quartz.listeners.JobChainingJobListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
@@ -26,8 +28,28 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * Created by HaVH on 3/19/17.
  */
 @Configuration
+@PropertySource("classpath:values.properties")
 public class QrtzScheduler {
     Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Value("${checkout.hour}")
+    private Integer checkoutHour;
+
+    @Value("${checkout.minute}")
+    private Integer checkoutMinute;
+
+    @Value("${checkDeadline.hour}")
+    private Integer checkDeadlineHour;
+
+    @Value("${checkDeadline.minute}")
+    private Integer checkDeadlineMinute;
+
+    @Value("${pushNoti.hour}")
+    private Integer pushNotiHour;
+
+    @Value("${pushNoti.minute}")
+    private Integer pushNotiMinute;
+
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -36,6 +58,14 @@ public class QrtzScheduler {
     public void init() {
         logger.info("Hello world from Quartz...");
     }
+
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
+        return c;
+    }
+
 
     @Bean
     public SpringBeanJobFactory springBeanJobFactory() {
@@ -71,21 +101,21 @@ public class QrtzScheduler {
                 .withIdentity(TriggerKey.triggerKey("Check_Out_Trigger"))
                 .withDescription("check out trigger")
                 .startNow()
-                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(19, 0)).build();
+                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(checkoutHour, checkoutMinute)).build();
 
         Trigger deadlineTrigger = newTrigger()
                 .withIdentity(TriggerKey.triggerKey("Deadline_Trigger"))
                 .withDescription("deadline trigger")
                 .withPriority(9)
                 .startNow()
-                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(2, 0))
+                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(checkDeadlineHour, checkDeadlineMinute))
                 .build();
 
         Trigger pushNotiTrigger = newTrigger()
                 .withIdentity(TriggerKey.triggerKey("Push_Noti_Trigger"))
                 .withDescription("push noti trigger")
                 .startNow()
-                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(8, 0))
+                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(pushNotiHour, pushNotiMinute))
                 .build();
 
         logger.debug("Getting a handle to the Scheduler");

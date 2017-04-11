@@ -1,5 +1,6 @@
 package jwl.fpt.service;
 
+import jwl.fpt.model.BorrowCart;
 import jwl.fpt.model.RestServiceModel;
 import jwl.fpt.model.dto.*;
 
@@ -33,4 +34,6 @@ public interface IBookBorrowService {
     int calculateUsableBalanceFromDb(String userId);
     void sendNotificationForLateDeadline();
     boolean updateUsableBalanceInBorrowCartOf(String userId, int difference);
+
+    List<BorrowCart> getListBorrowCart();
 }

@@ -815,6 +815,11 @@ public class BookBorrowService implements IBookBorrowService {
         return true;
     }
 
+    @Override
+    public List<BorrowCart> getListBorrowCart() {
+        return borrowCarts;
+    }
+
     private int calculateRemainUsableBalanceIfBorrowCopy(BookCopyEntity bookCopyEntity, int currentUsableBalance) {
         BookEntity bookEntity = bookCopyEntity.getBook();
         int neededCautionMoney = bookService.calculateCautionMoney(bookEntity);
