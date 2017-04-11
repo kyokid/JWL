@@ -45,15 +45,10 @@ public class BorrowedBookCopyDto {
         if (borrowedBookCopyDto == null || borrowedBookCopyDto.getDeadlineDate() == null) {
             return;
         }
-
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
         Date deadline = borrowedBookCopyDto.getDeadlineDate();
         int daysInterval = Helper.getDaysInterval(deadline, currentDate);
-        if (daysInterval > 0) {
-            borrowedBookCopyDto.setBookStatus(BOOK_STATUS_OK);
-        } else {
-            borrowedBookCopyDto.setBookStatus(daysInterval);
-        }
+        borrowedBookCopyDto.setBookStatus(daysInterval);
     }
 
     public static void setBookStatusForListDtos(List<BorrowedBookCopyDto> borrowedBookCopyDtos) {
