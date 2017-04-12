@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by HaVH on 4/6/17.
  */
@@ -22,10 +25,14 @@ public class PushNotificationJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        logger.info("Job ** {} ** fired @ {}", jobExecutionContext.getJobDetail().getKey().getName(), jobExecutionContext.getFireTime());
-        bookBorrowService.sendNotificationForLateDeadline();
-        logger.info("Next job scheduled @ {}", jobExecutionContext.getNextFireTime());
-
-
+        Calendar cal = Calendar.getInstance();
+        Date fireTime = jobExecutionContext.getFireTime();
+        cal.setTime(fireTime);
+        int hours = cal.get(Calendar.HOUR_OF_DAY);
+        if (hours >= 8) {
+            logger.info("Job ** {} ** fired @ {}", jobExecutionContext.getJobDetail().getKey().getName(), jobExecutionContext.getFireTime());
+            bookBorrowService.sendNotificationForLateDeadline();
+            logger.info("Next job scheduled @ {}", jobExecutionContext.getNextFireTime());
+        }
     }
 }
