@@ -6,7 +6,7 @@ import { getAccountDetail } from '../actions/AccountsAction'
 import { initBorrow, checkout, deleteBorrowedCopy, fetchCopyFromCart, cancelAddingCopies } from '../actions/BookBorrowAction'
 import { switchStateNavBar } from '../actions/RouteAction'
 import * as Socket from '../helpers/Socket'
-import { UNDEFINED, MANAGE_ACCOUNTS, ROLE_LIBRARIAN, DEFAULT_IMG, BOOK_STATUS_OK } from '../constants/common'
+import { UNDEFINED, MANAGE_ACCOUNTS, ROLE_LIBRARIAN, DEFAULT_IMG } from '../constants/common'
 import formatMoney from '../helpers/CurrencyFormatter'
 import TotalBalance from './AccountTotalBalance'
 
@@ -255,8 +255,8 @@ class AccountDetail extends Component {
 				<td>{borrowedBook.borrowedDate}</td>
 				<td>{borrowedBook.deadlineDate}</td>
 				{bookStatus === null && <td>pending...</td>}
-				{bookStatus === BOOK_STATUS_OK && <td style={{ color: "green" }}>OK</td>}
-				{bookStatus !== null && bookStatus !== BOOK_STATUS_OK && <td style={{ color: "red" }}>{`${-bookStatus} day(s) late`}</td>}
+				{bookStatus >= 0 && <td style={{ color: "green" }}>OK</td>}
+				{bookStatus !== null && bookStatus < 0 && <td style={{ color: "red" }}>{`${-bookStatus} day(s) late`}</td>}
 				<td>
 					<a
 						className={`${this.state.isAddingBook ? "disable" : ""}`}

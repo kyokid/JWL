@@ -6,4 +6,3 @@ export const ROLE_ADMIN = "admin"
 export const ROLE_LIBRARIAN = "librarian"
 export const DEFAULT_IMG = "/imgDefault.png"
 export const DEFAULT_BOOK_IMG = "/bookImgDefault.png"
-export const BOOK_STATUS_OK = 0
