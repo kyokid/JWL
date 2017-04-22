@@ -1,6 +1,7 @@
 package jwl.fpt.entity;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.Collection;
 
 /**
@@ -11,6 +12,8 @@ import java.util.Collection;
 public class BookCopyEntity {
     private String rfid;
     private BookEntity book;
+    private Date lostDate;
+    private String lostReason;
     private Collection<BorrowedBookCopyEntity> borrowedBookCopies;
 
     @Id
@@ -67,5 +70,31 @@ public class BookCopyEntity {
 
     public void setBorrowedBookCopies(Collection<BorrowedBookCopyEntity> borrowedBookCopiesByRfid) {
         this.borrowedBookCopies = borrowedBookCopiesByRfid;
+    }
+
+
+
+    @Basic
+    @Column(name = "lost_date")
+    public Date getLostDate() {
+        return lostDate;
+    }
+
+    @Basic
+    @Column(name = "lost_date")
+    public void setLostDate(Date lostDate) {
+        this.lostDate = lostDate;
+    }
+
+    @Basic
+    @Column(name = "lost_reason")
+    public String getLostReason() {
+        return lostReason;
+    }
+
+    @Basic
+    @Column(name = "lost_reason")
+    public void setLostReason(String lostReason) {
+        this.lostReason = lostReason;
     }
 }

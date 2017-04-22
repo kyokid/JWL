@@ -216,6 +216,8 @@ CREATE TABLE IF NOT EXISTS public.book_copy
   ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 ALTER TABLE public.book_copy DROP COLUMN price;
+ALTER TABLE public.book_copy ADD COLUMN lost_date DATE;
+ALTER TABLE public.book_copy ADD COLUMN lost_reason TEXT;
 
 -- borrowed_book_copy:
 -- A copy that is being borrowed.

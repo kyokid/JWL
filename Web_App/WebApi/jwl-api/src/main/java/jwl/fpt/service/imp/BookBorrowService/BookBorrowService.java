@@ -400,12 +400,19 @@ public class BookBorrowService implements IBookBorrowService {
             } else {
                 rootId = currentBook.getRootId();
             }
+            Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
+            Date newBorrowedDate;
+            if (currentDate.before(currentBook.getDeadlineDate())) {
+                newBorrowedDate = currentBook.getDeadlineDate();
+            } else {
+                newBorrowedDate = currentDate;
+            }
 
             // insert borrowedbookcopy mới
             BorrowedBookCopyEntity entity = new BorrowedBookCopyEntity();
             entity.setAccount(userId);
             entity.setBookCopy(bookCopyEntity);
-            entity.setBorrowedDate(new Date(Calendar.getInstance().getTimeInMillis()));
+            entity.setBorrowedDate(newBorrowedDate);
             Date deadline = Helper.getDateAfter(currentBook.getDeadlineDate(), bookTypeEntity.getDaysPerExtend());
             entity.setDeadlineDate(deadline);
             entity.setExtendNumber(currentExtentNumber + 1);
@@ -887,6 +894,7 @@ public class BookBorrowService implements IBookBorrowService {
                 missDeadlineCopies.add(borrowedBookCopyEntity);
             } else if (diffDays < -lateDaysLimit) {
                 lostCopies.add(borrowedBookCopyEntity);
+
             }
         }
 
@@ -912,11 +920,12 @@ public class BookBorrowService implements IBookBorrowService {
 
         List<AccountEntity> finedAccountEntities = new ArrayList<>();
         List<String> finedUserIds = new ArrayList<>();
-        for (BorrowedBookCopyEntity borrowedBookCopyEntity :
-                afterDeadlineCopies) {
-            AccountEntity finedAccountEntity = borrowedBookCopyEntity.getAccount();
+        Iterator<BorrowedBookCopyEntity> iterator = afterDeadlineCopies.iterator();
+        while (iterator.hasNext()) {
+            BorrowedBookCopyEntity entity = iterator.next();
+            AccountEntity finedAccountEntity = entity.getAccount();
             int totalBalance = finedAccountEntity.getTotalBalance();
-            int cautionMoney = borrowedBookCopyEntity.getCautionMoney();
+            int cautionMoney = entity.getCautionMoney();
 
             if (totalBalance == 0 || cautionMoney == 0) {
                 continue;
@@ -931,19 +940,21 @@ public class BookBorrowService implements IBookBorrowService {
                 // get the user that is currently in the list
                 finedAccountEntity = finedAccountEntities.get(finedUserIds.indexOf(finedUserId));
             }
-
             if (lostBook) {
                 totalBalance -= cautionMoney;
-                cautionMoney = 0;
+                lostBookProcess(finedUserId, entity);
+                iterator.remove();
             } else {
                 // in case the scheduler fails to run in some days, the server still calculates the right fine value to borrower.
-                int daysInterval = calculateNumberOfLateDays(borrowedBookCopyEntity.getDeadlineDate());
+                int daysInterval = calculateNumberOfLateDays(entity.getDeadlineDate());
                 totalBalance -= fineCost * daysInterval;
                 cautionMoney -= fineCost * daysInterval;
+                entity.setCautionMoney(cautionMoney);
+
             }
             finedAccountEntity.setTotalBalance(totalBalance);
-            borrowedBookCopyEntity.setCautionMoney(cautionMoney);
-            // TODO: what to do if a book copy is lost? Delete it? Or add more fields to mark lost status?
+
+
         }
         accountRepository.save(finedAccountEntities);
         borrowedBookCopyRepo.save(afterDeadlineCopies);
@@ -952,5 +963,14 @@ public class BookBorrowService implements IBookBorrowService {
     private int calculateNumberOfLateDays(Date deadline) {
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
         return Helper.getDaysInterval(deadline, currentDate);
+    }
+
+    private void lostBookProcess(String finedUserId, BorrowedBookCopyEntity borrowedBookCopyEntity) {
+        String lostReasonMessage = finedUserId + " - Quá ngày deadline cho phép";
+        BookCopyEntity bookCopy = borrowedBookCopyEntity.getBookCopy();
+        bookCopy.setLostDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        bookCopy.setLostReason(lostReasonMessage);
+        bookCopyRepo.save(bookCopy);
+        borrowedBookCopyRepo.deleteById(borrowedBookCopyEntity.getId());
     }
 }

@@ -82,4 +82,8 @@ public interface BorrowedBookCopyRepo extends JpaRepository<BorrowedBookCopyEnti
     List<BorrowedBookCopyEntity> getListFirst(String userId);
 
     List<BorrowedBookCopyEntity> findByNotiStatus(int notiStatus);
+
+    @Transactional
+    @Modifying
+    int deleteById(int id);
 }
