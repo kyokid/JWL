@@ -946,9 +946,20 @@ public class BookBorrowService implements IBookBorrowService {
                 iterator.remove();
             } else {
                 // in case the scheduler fails to run in some days, the server still calculates the right fine value to borrower.
-                int daysInterval = calculateNumberOfLateDays(entity.getDeadlineDate());
-                totalBalance -= fineCost * daysInterval;
-                cautionMoney -= fineCost * daysInterval;
+                // ngày chênh lệch từ current -> deadline
+                int daysInterval = Math.abs(calculateNumberOfLateDays(entity.getDeadlineDate()));
+                // caution money original
+                int totalCaution = bookService.calculateCautionMoney(entity.getBookCopy().getBook());
+                // caution money current
+                int daysPenalty = totalCaution - cautionMoney;
+                if (daysPenalty != 0) {
+                    daysPenalty = daysPenalty / fineCost;
+                    daysPenalty = daysInterval - daysPenalty;
+                } else {
+                    daysPenalty = daysInterval;
+                }
+                totalBalance -= fineCost * daysPenalty;
+                cautionMoney -= fineCost * daysPenalty;
                 entity.setCautionMoney(cautionMoney);
 
             }
